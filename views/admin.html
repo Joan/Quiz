@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<title>QUIZ Admin</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="stylesheet" href="/static/common.css">
+	<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+	
+	<ul class="scores"></ul>
+	
+	<template id="team-template">
+		<li class="team" id="">
+			<div class="team-infos">
+				<div class="team-name"></div>
+				<div class="team-score"><input data-team="" type="number"></div>
+			</div>
+			<div class="team-actions">
+				<button data-team="" data-inc="1">+ 1</button>
+				<button data-team="" data-inc="2">+ 2</button>
+				<button data-team="" data-inc="-1">- 1</button>
+			</div>
+		</li>
+	</template>
+	
+	<template id="reset-template">
+		<li class="reset">
+			<button class="reset-button">Remise à zéro…</button>
+		</li>
+	</template>
+	
+	<ul class="riddles"></ul>
+	
+	<template id="riddle-template">
+		<li class="riddle" id="" data-riddle="">
+			<span class="riddle-type"></span><span class="riddle-count"></span>
+			<span class="riddle-answer"></span>
+			<span class="riddle-answer_subtitle"></span>
+		</li>
+	</template>
+	
+	<ul class="helper" data-current-riddle="">
+		<li class="helper-entry"><kbd>espace</kbd> Lecture / Pause / Buzzer suivant</li>
+		<li class="helper-entry"><kbd>↩</kbd> Quiz suivant</li>
+		<li class="helper-entry"><kbd>←</kbd> / <kbd>→</kbd> Quiz suivant / précédent rapidement et lecture</li>
+		<li class="helper-entry"><kbd>esc</kbd> Vider la liste des buzzers</li>
+		<li class="helper-entry" data-applies-to="image"><kbd>A</kbd> afficher l'image réponse</li>
+		<li class="helper-entry"><kbd>S</kbd> Afficher les scores</li>
+		<li class="helper-entry"><kbd>H</kbd> Afficher le QR code (buzzers tactiles)</li>
+	</ul>
+	
+	<style>.team_color_0{color:#62b529;}.team_color_1{color:#ed1d24;}.team_color_2{color:#e8ae00;}.team_color_3{color:#1782e1;}</style>
+	
+	<script src="/static/jquery.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/static/admin.js"></script>
+</body>
+</html>

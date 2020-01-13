@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<title>QUIZ Buzzers</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link href="https://fonts.googleapis.com/css?family=Solway:400,700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/static/buzzers.css">
+</head>
+<body>
+	
+	<template id="teams-template">
+		<ul class="teams">
+			<li>Quelle équipe ?</li>
+		</ul>
+	</template>
+	
+	<template id="team-template">
+		<li class="team">
+			<a href=""></a>
+		</li>
+	</template>
+	
+	<template id="team-buzzer-template">
+		<button class="buzzer">
+			<span class="button"><span class="name"></span></span>
+		</button>
+	</template>
+	
+	<script src="/static/jquery.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/static/buzzers.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+	{
+		"name": "Verts",
+		"color": "#62b529",
+		"keycode": 49,
+		"keycode_name": "Digit1 (&)"
+	},
+	{
+		"name": "Rouges",
+		"color": "#ed1d24",
+		"keycode": 50,
+		"keycode_name": "Digit2 (é)"
+	},
+	{
+		"name": "Jaunes",
+		"color": "#e8ae00",
+		"keycode": 51,
+		"keycode_name": "Digit3 (”)"
+	},
+	{
+		"name": "Bleus",
+		"color": "#1782e1",
+		"keycode": 52,
+		"keycode_name": "Digit4 (’)"
+	}
+]

@@ -1,0 +1,17 @@
+{
+	"name": "Quiz",
+	"version": "2.0.0",
+	"description": "Web based movies music and images riddles with buzzers",
+	"author": "Joan V-A",
+	"repository": "",
+	"license": "MIT",
+	"dependencies": {
+		"express": "^4.17.1",
+		"ip": "^1.1.5",
+		"socket.io": "^2.3.0"
+	},
+	"main": "server.js",
+	"nodemonConfig": {
+		"watch": ["server.js"]
+	}
+}

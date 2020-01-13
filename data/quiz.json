@@ -1,0 +1,490 @@
+[
+	{
+		"type": "video",
+		"filename": "The_Goodfellas.mp4",
+		"answer": "Les Affranchis",
+		"answer_subtitle": "Martin Scorsese (1990)"
+	},
+	{
+		"type": "video",
+		"filename": "Fight_Club.mp4",
+		"answer": "Fight Club",
+		"answer_subtitle": "David Fincher (1999)"
+	},
+	{
+		"type": "video",
+		"filename": "Pulp_Fiction.mp4",
+		"answer": "Pulp Fiction",
+		"answer_subtitle": "Quentin Tarantino (1994)"
+	},
+	{
+		"type": "video",
+		"filename": "Jurassic_Park.mp4",
+		"answer": "Jurassic Park",
+		"answer_subtitle": "Steven Spielberg (1993)"
+	},
+	{
+		"type": "video",
+		"filename": "The_Lion_King.mp4",
+		"answer": "Le Roi Lion",
+		"answer_subtitle": "Roger Allers, Rob Minkoff (1994)"
+	},
+	{
+		"type": "video",
+		"filename": "The_Silence_of_the_Lambs.mp4",
+		"answer": "Le Silence des Agneaux",
+		"answer_subtitle": "Jonathan Demme (1991)"
+	},
+	{
+		"type": "video",
+		"filename": "The_Usual_Suspects.mp4",
+		"answer": "The Usual Suspects",
+		"answer_subtitle": "Bryan Singer (1995)"
+	},
+	{
+		"type": "audio",
+		"filename": "Tomber_La_Chemise.mp3",
+		"answer": "Tomber La Chemise",
+		"answer_subtitle": "Zebda (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Baby_One_More_Time.mp3",
+		"answer": "Baby One More Time",
+		"answer_subtitle": "Britney Spears (1999)"
+	},
+	{
+		"type": "audio",
+		"filename": "Revolution_909.mp3",
+		"answer": "Revolution 909",
+		"answer_subtitle": "Daft Punk (1997)"
+	},
+	{
+		"type": "audio",
+		"filename": "Ma_Benz.mp3",
+		"answer": "Ma Benz",
+		"answer_subtitle": "Suprême NTM (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Comme_Un_Homme.mp3",
+		"answer": "Comme Un Homme (Mulan)",
+		"answer_subtitle": "Patrick Fiori, José Garcia, Michel Vigné, Thierry Ragueneau, Pierre Francois Pistorio (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Bittersweet_Symphony.mp3",
+		"answer": "Bittersweet Symphony",
+		"answer_subtitle": "The Verve (1997)"
+	},
+	{
+		"type": "audio",
+		"filename": "Californication.mp3",
+		"answer": "Californication",
+		"answer_subtitle": "Red Hot Chili Peppers (1999)"
+	},
+	{
+		"type": "audio",
+		"filename": "Tailler_La_Zone.mp3",
+		"answer": "Tailler La Zone",
+		"answer_subtitle": "Alain Souchon (1999)"
+	},
+	{
+		"type": "image",
+		"filename": "Philadelphia-hidden.jpg",
+		"filename_answer": "Philadelphia.jpg",
+		"answer": "Philadelphia",
+		"answer_subtitle": "Jonathan Demme (1993)"
+	},
+	{
+		"type": "image",
+		"filename": "Reservoir_Dogs-hidden.jpg",
+		"filename_answer": "Reservoir_Dogs.jpg",
+		"answer": "Reservoir Dogs",
+		"answer_subtitle": "Quentin Tarantino (1992)"
+	},
+	{
+		"type": "image",
+		"filename": "La_Liste_de_Schindler-hidden.jpg",
+		"filename_answer": "La_Liste_de_Schindler.jpg",
+		"answer": "La Liste de Schindler",
+		"answer_subtitle": "Steven Spielberg (1993)"
+	},
+	{
+		"type": "image",
+		"filename": "Il-faut-sauver-le-soldat-ryan-hidden.jpg",
+		"filename_answer": "Il-faut-sauver-le-soldat-ryan.jpg",
+		"answer": "Il faut sauver le soldat Ryan",
+		"answer_subtitle": "Steven Spielberg (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Amours.mp3",
+		"answer": "Amours",
+		"answer_subtitle": "Louise Attaque (1997)"
+	},
+	{
+		"type": "audio",
+		"filename": "Tonton_Du_Bled.mp3",
+		"answer": "Tonton Du Bled",
+		"answer_subtitle": "113 (1999)"
+	},
+	{
+		"type": "audio",
+		"filename": "Still_DRE_feat_Snoop_Dogg.mp3",
+		"answer": "Still D.R.E. (feat. Snoop Dogg)",
+		"answer_subtitle": "Dr. Dre (1999)"
+	},
+	{
+		"type": "audio",
+		"filename": "Enjoy_the_Silence.mp3",
+		"answer": "Enjoy the Silence",
+		"answer_subtitle": "Depeche Mode (1990)"
+	},
+	{
+		"type": "video",
+		"filename": "The_Matrix.mp4",
+		"answer": "The Matrix",
+		"answer_subtitle": "Lilly & Lana Wachowski (1999)"
+	},
+	{
+		"type": "video",
+		"filename": "The_Big_Lebowski.mp4",
+		"answer": "The Big Lebowski",
+		"answer_subtitle": "Joel & Ethan Coen (1998)"
+	},
+	{
+		"type": "video",
+		"filename": "Seven.mp4",
+		"answer": "Seven",
+		"answer_subtitle": "David Fincher (1995)"
+	},
+	{
+		"type": "video",
+		"filename": "Forrest_Gump.mp4",
+		"answer": "Forrest Gump",
+		"answer_subtitle": "Robert Zemeckis (1994)"
+	},
+	{
+		"type": "video",
+		"filename": "Eyes_Wide_Shut.mp4",
+		"answer": "Eyes Wide Shut",
+		"answer_subtitle": "Stanley Kubrick (1999)"
+	},
+	{
+		"type": "video",
+		"filename": "The_Truman_Show.mp4",
+		"answer": "The Truman Show",
+		"answer_subtitle": "Peter Weir (1998)"
+	},
+	{
+		"type": "video",
+		"filename": "12_Monkeys.mp4",
+		"answer": "L'Armée des 12 singes",
+		"answer_subtitle": "Terry Gilliam (1995)"
+	},
+	{
+		"type": "video",
+		"filename": "Edward_Scissorhands.mp4",
+		"answer": "Edward aux mains d'argent",
+		"answer_subtitle": "Tim Burton (1990)"
+	},
+	{
+		"type": "video",
+		"filename": "Gattaca.mp4",
+		"answer": "Bienvenue à Gattaca",
+		"answer_subtitle": "Andrew Niccol (1997)"
+	},
+	{
+		"type": "image",
+		"filename": "La_Ligne_verte-hidden.jpg",
+		"filename_answer": "La_Ligne_verte.jpg",
+		"answer": "La Ligne verte",
+		"answer_subtitle": "Frank Darabont (1999)"
+	},
+	{
+		"type": "image",
+		"filename": "Pretty_Woman-hidden.png",
+		"filename_answer": "Pretty_Woman.png",
+		"answer": "Pretty Woman",
+		"answer_subtitle": "Garry Marshall (1990)"
+	},
+	{
+		"type": "image",
+		"filename": "Thelma_Louise-hidden.jpg",
+		"filename_answer": "Thelma_Louise.jpg",
+		"answer": "Thelma et Louise",
+		"answer_subtitle": "Ridley Scott (1991)"
+	},
+	{
+		"type": "image",
+		"filename": "Une_journee_en_enfer-hidden.jpg",
+		"filename_answer": "Une_journee_en_enfer.jpg",
+		"answer": "Une journée en enfer",
+		"answer_subtitle": "John McTiernan (1995)"
+	},
+	{
+		"type": "image",
+		"filename": "American_History_X-hidden.jpg",
+		"filename_answer": "American_History_X.jpg",
+		"answer": "American History X",
+		"answer_subtitle": "Tony Kaye (1998)"
+	},
+	{
+		"type": "video",
+		"filename": "La_Haine.mp4",
+		"answer": "La Haine",
+		"answer_subtitle": "Mathieu Kassovitz (1995)"
+	},
+	{
+		"type": "video",
+		"filename": "American_Beauty.mp4",
+		"answer": "American Beauty",
+		"answer_subtitle": "Sam Mendes (1999)"
+	},
+	{
+		"type": "video",
+		"filename": "Porco_Rosso.mp4",
+		"answer": "Porco Rosso",
+		"answer_subtitle": "Hayao Miyazaki (1992)"
+	},
+	{
+		"type": "video",
+		"filename": "Good_Will_Hunting.mp4",
+		"answer": "Good Will Hunting",
+		"answer_subtitle": "Gus Van Sant (1997)"
+	},
+	{
+		"type": "video",
+		"filename": "Leon.mp4",
+		"answer": "Léon",
+		"answer_subtitle": "Luc Besson (1994)"
+	},
+	{
+		"type": "video",
+		"filename": "Les_Visiteurs.mp4",
+		"answer": "Les Visiteurs",
+		"answer_subtitle": "Jean-Marie Poiré (1993)"
+	},
+	{
+		"type": "audio",
+		"filename": "Freed_From_Desire.mp3",
+		"answer": "Freed From Desire",
+		"answer_subtitle": "Gala (1996)"
+	},
+	{
+		"type": "audio",
+		"filename": "L_air_du_vent.mp3",
+		"answer": "L'air du vent (Pocahontas)",
+		"answer_subtitle": "Laura Mayne (1995)"
+	},
+	{
+		"type": "audio",
+		"filename": "Hallelujah.mp3",
+		"answer": "Hallelujah",
+		"answer_subtitle": "Jeff Buckley (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Karma_Police.mp3",
+		"answer": "Karma Police",
+		"answer_subtitle": "Radiohead (1999)"
+	},
+	{
+		"type": "audio",
+		"filename": "Music_Sounds_Better_With_You.mp3",
+		"answer": "Music Sounds Better With You",
+		"answer_subtitle": "Stardust (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Barbie_Girl.mp3",
+		"answer": "Barbie Girl",
+		"answer_subtitle": "Aqua (1997)"
+	},
+	{
+		"type": "audio",
+		"filename": "Wonderwall.mp3",
+		"answer": "Wonderwall",
+		"answer_subtitle": "Oasis (1995)"
+	},
+	{
+		"type": "audio",
+		"filename": "Je_danse_le_Mia.mp3",
+		"answer": "Je danse le Mia",
+		"answer_subtitle": "IAM (1993)"
+	},
+	{
+		"type": "audio",
+		"filename": "La_Tribu_De_Dana.mp3",
+		"answer": "La Tribu De Dana",
+		"answer_subtitle": "Manau (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Seven_Seconds_feat_Neneh_Cherry.mp3",
+		"answer": "Seven Seconds (feat. Neneh Cherry)",
+		"answer_subtitle": "Youssou N'Dour (1994)"
+	},
+	{
+		"type": "image",
+		"filename": "The_Game-hidden.jpg",
+		"filename_answer": "The_Game.jpg",
+		"answer": "The Game",
+		"answer_subtitle": "David Fincher (1997)"
+	},
+	{
+		"type": "image",
+		"filename": "Sixieme_sens-hidden.jpg",
+		"filename_answer": "Sixieme_sens.jpg",
+		"answer": "Sixième Sens",
+		"answer_subtitle": "M. Night Shyamalan (1999)"
+	},
+	{
+		"type": "image",
+		"filename": "Tout_sur_ma_mere-hidden.jpg",
+		"filename_answer": "Tout_sur_ma_mere.jpg",
+		"answer": "Tout sur ma mère",
+		"answer_subtitle": "Pedro Almodóvar (1999)"
+	},
+	{
+		"type": "image",
+		"filename": "Rasta_Rockett-hidden.jpg",
+		"filename_answer": "Rasta_Rockett.jpg",
+		"answer": "Rasta Rockett",
+		"answer_subtitle": "Jon Turteltaub (1993)"
+	},
+	{
+		"type": "image",
+		"filename": "Le_Peril_jeune-hidden.jpg",
+		"filename_answer": "Le_Peril_jeune.jpg",
+		"answer": "Le Péril jeune",
+		"answer_subtitle": "Cédric Klapisch (1994)"
+	},
+	{
+		"type": "video",
+		"filename": "Titanic.mp4",
+		"answer": "Titanic",
+		"answer_subtitle": "James Cameron (1997)"
+	},
+	{
+		"type": "video",
+		"filename": "Trainspotting.mp4",
+		"answer": "Trainspotting",
+		"answer_subtitle": "Danny Boyle (1996)"
+	},
+	{
+		"type": "video",
+		"filename": "Toy_Story.mp4",
+		"answer": "Toy Story",
+		"answer_subtitle": "John Lasseter (1995)"
+	},
+	{
+		"type": "video",
+		"filename": "Jackie_Brown.mp4",
+		"answer": "Jackie Brown",
+		"answer_subtitle": "Quentin Tarantino (1997)"
+	},
+	{
+		"type": "video",
+		"filename": "La_Cite_de_la_Peur.mp4",
+		"answer": "La Cité de la Peur",
+		"answer_subtitle": "Alain Berbérian (1994)"
+	},
+	{
+		"type": "video",
+		"filename": "The_Fifth_Element.mp4",
+		"answer": "Le Cinquième élément",
+		"answer_subtitle": "Luc Besson (1997)"
+	},
+	{
+		"type": "video",
+		"filename": "The_Mask.mp4",
+		"answer": "The Mask",
+		"answer_subtitle": "Chuck Russell (1994)"
+	},
+	{
+		"type": "video",
+		"filename": "Jumanji.mp4",
+		"answer": "Jumanji",
+		"answer_subtitle": "Joe Johnston (1995)"
+	},
+	{
+		"type": "audio",
+		"filename": "Lambe_An_Dro.mp3",
+		"answer": "Lambé An Dro",
+		"answer_subtitle": "Matmatah (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Zombie.mp3",
+		"answer": "Zombie",
+		"answer_subtitle": "The Cranberries (1994)"
+	},
+	{
+		"type": "audio",
+		"filename": "Losing_My_Religion.mp3",
+		"answer": "Losing My Religion",
+		"answer_subtitle": "R.E.M. (1991)"
+	},
+	{
+		"type": "audio",
+		"filename": "Lemon_Tree.mp3",
+		"answer": "Lemon Tree",
+		"answer_subtitle": "Fool's Garden (1995)"
+	},
+	{
+		"type": "audio",
+		"filename": "Ameno.mp3",
+		"answer": "Ameno",
+		"answer_subtitle": "Era (1996)"
+	},
+	{
+		"type": "audio",
+		"filename": "Natural_Blues.mp3",
+		"answer": "Natural Blues",
+		"answer_subtitle": "Moby (1999)"
+	},
+	{
+		"type": "audio",
+		"filename": "On_ne_change_pas.mp3",
+		"answer": "On ne change pas",
+		"answer_subtitle": "Céline Dion (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Wannabe.mp3",
+		"answer": "Wannabe",
+		"answer_subtitle": "Spice Girls (1996)"
+	},
+	{
+		"type": "audio",
+		"filename": "Praise_You.mp3",
+		"answer": "Praise You",
+		"answer_subtitle": "FatBoy Slim (1998)"
+	},
+	{
+		"type": "audio",
+		"filename": "Prince_Ali.mp3",
+		"answer": "Prince Ali",
+		"answer_subtitle": "Richard Darbois (1992)"
+	},
+	{
+		"type": "audio",
+		"filename": "Que_Sera_Sera.mp3",
+		"answer": "Que Sera Sera",
+		"answer_subtitle": "Pink Martini (1997)"
+	},
+	{
+		"type": "audio",
+		"filename": "Save_Tonight.mp3",
+		"answer": "Save Tonight",
+		"answer_subtitle": "Eagle-Eye Cherry (1997)"
+	},
+	{
+		"type": "video",
+		"filename": "Cest_arrivee_pres_de_chez_vous.mp4",
+		"answer": "C'est arrivé près de chez vous",
+		"answer_subtitle": "Rémy Belvaux, André Bonzel, Benoît Poelvoorde (1992)"
+	}
+]
