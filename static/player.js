@@ -32,7 +32,8 @@
 	
 	const videos_path = '/media/videos/',
 		audios_path = '/media/audios/',
-		images_path = '/media/images/';
+		images_path = '/media/images/',
+		poster_path = '/media/intro-poster.png';
 	
 	const socket = io();
 	
@@ -124,11 +125,31 @@
 			player.loaded = false;
 			player.launched = false;
 			player.paused = false;
+			player.poster_displayed = false;
+			
+			player.send_riddle_change(0);
 			
 			console.info('Player ready');
 			
-			player.next(); // load the first riddle
+			// Try to load poster image
+			player.poster = new Image();
+			player.poster.onload = player.init_poster;
+			player.poster.onerror = player.next; // load the first riddle if no poster
+			player.poster.src = poster_path;
 			
+		},
+		
+		init_poster: function() {
+			player.$poster = $('<div class="poster"/>').insertAfter(player.$el).css('opacity', 0);
+			player.$poster.append(player.poster);
+			player.$poster.animate({opacity: 1}, 500);
+			player.poster_displayed = true;
+		},
+		
+		hide_poster: function(callback) {
+			callback = callback || function() {};
+			player.$poster.fadeOut(800, callback);
+			player.poster_displayed = false;
 		},
 		
 		play: function() {
@@ -291,6 +312,7 @@
 		
 		prev: function(immediate) {
 			
+			immediate = immediate === true; // Error object can be sent by player.init if no poster
 			var riddle_num = current_riddle_num - 1;
 			
 			if (riddle_num < 1) {
@@ -304,6 +326,7 @@
 		
 		next: function(immediate) {
 			
+			immediate = immediate === true; // Error object can be sent by player.init if no poster
 			var riddle_num = current_riddle_num + 1;
 			
 			if (riddle_num > riddle_count)
@@ -319,6 +342,12 @@
 			
 			buzzer.empty_queue();
 			scoreboard.hide();
+			
+			// Hide poster if displayed first
+			if (player.poster_displayed) {
+				player.hide_poster(function() {player.change_to(riddle_num, immediate)});
+				return;
+			}
 			
 			// Hide current
 			
@@ -608,7 +637,7 @@
 				var url_short = local_ip + ':' + local_port,
 					url_long = window.location.protocol + '//' + url_short;
 				
-				qr_helper.$el = $('<div class="qr_helper"/>').insertAfter(buzzer.$el).append('<div class="qr_helper-image"/>');
+				qr_helper.$el = $('<div class="qr_helper"/>').insertAfter($body.children(':not(script):not(style)').last()).append('<div class="qr_helper-image"/>');
 				
 				$('<div class="qr_helper-url"/>').text(url_short).appendTo(qr_helper.$el);
 				

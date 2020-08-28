@@ -216,15 +216,20 @@
 			
 			riddleboard.$el.children('.current').removeClass('current');
 			
-			if (riddle_num < 1)
-				return;
+			if (riddle_num < 1) {
+				var scroll_target = 0,
+					current_riddle_type = '';
+			}
 			
-			let $target = $('#riddle_' + riddle_num),
-				scroll_target = $target.position().top + riddleboard.$el[0].scrollTop - riddleboard.$el.offset().top - 20;
+			else {
+				var $target = $('#riddle_' + riddle_num),
+					scroll_target = $target.position().top + riddleboard.$el[0].scrollTop - riddleboard.$el.offset().top - 20,
+					current_riddle_type = riddles[riddle_num - 1].type;
+				$target.addClass('current');
+			}
 			
-			$target.addClass('current');
 			riddleboard.$el.stop(true).animate({scrollTop: scroll_target}, 500);
-			riddleboard.$helper.attr('data-current-riddle', riddles[riddle_num - 1].type);
+			riddleboard.$helper.attr('data-current-riddle-type', current_riddle_type);
 			
 		},
 		

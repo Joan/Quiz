@@ -219,7 +219,7 @@ body {
 
 		.helper kbd:last-of-type {margin-right: 10px;}
 
-		.helper:not([data-current-riddle="image"]) .helper-entry[data-applies-to="image"] {
+		.helper:not([data-current-riddle-type="image"]) .helper-entry[data-applies-to="image"] {
 			opacity: 0.2;
 		}
 
