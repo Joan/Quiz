@@ -1,6 +1,6 @@
 # Quiz
 
-A web based movies music and images riddles with buzzers
+A web based movies music and images riddles with buzzers  
 v2.4.2
 
 ## Installation
@@ -22,7 +22,7 @@ npm install
 
 #### Quiz data
 
-* The riddles files are in **`media/videos`** / **`media/audios`** / **`media/images`**.  
+* The riddles files go in **`media/videos`** / **`media/audios`** / **`media/images`**.  
 Ideally, export videos as *MP4*, audio files as *MP3* and images as ~*MP2*~ *JPEG* (depending on the browser you'll use, but these filetypes are supported by all major browser at this time).
 
 * The riddles data is in **`media/_data/quiz.json`**.  
@@ -33,6 +33,8 @@ Edit it directly or use a spreadsheet JSON export like [this one](https://docs.g
   * `answer` and `answer_subtitle`: displayed in the admin panel
 
 * A poster image can be displayed before the first riddle, by adding a PNG image at **`media/intro-poster.png`**. <kbd>Enter</kbd> to hide it and load the first riddle.
+
+Nb: Rename the `media-sample` folder to `media`, or duplicate it to create a new clean copy for a new quiz game session.
 
 #### Teams
 
