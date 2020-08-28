@@ -12,6 +12,13 @@ app.use('/static', express.static(__dirname + '/static'));
 app.use('/data', express.static(__dirname + '/data'));
 app.use('/media', express.static(__dirname + '/media'));
 
+// No favicon to serve
+app.use(function(req, res, next) {
+	if (req.originalUrl && req.originalUrl.split('/').pop().includes('favicon'))
+		return res.sendStatus(204);
+	return next();
+});
+
 app.get('/', function (req, res) {
 	res.redirect('/buzzers');
 });
