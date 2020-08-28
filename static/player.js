@@ -75,6 +75,7 @@
 			buzzer.init(); // buzzer can take over on player so initiated first
 			player.init();
 			qr_helper.init();
+			keyboard.init();
 			
 			socket.emit('connection_player');
 		
@@ -200,7 +201,7 @@
 			
 			// Load new riddle
 			
-			switch (riddle.type) {
+			switch(riddle.type) {
 				
 				case 'video':
 					player.$video_player.attr('src', videos_path + riddle.filename);
@@ -657,6 +658,19 @@
 	
 	var keyboard = {
 		
+		init: function() {
+			
+			// Handle the warning in admin to prevent DOMException for play event
+			socket.emit('player_interact_state', false);
+			$body.on('click.only-once keydown.only-once', function() {
+				socket.emit('player_interact_state', true);
+				$(this).off('click.only-once keydown.only-once');
+			});
+			
+			$window.on('keydown', keyboard.keydown);
+			
+		},
+		
 		keydown: function(e) {
 			
 			// Abort if meta
@@ -665,7 +679,13 @@
 			
 			e.preventDefault();
 			
-			switch (e.originalEvent.keyCode) {
+			keyboard.shortcut(e.originalEvent.keyCode);
+			
+		},
+		
+		shortcut: function(keycode) {
+			
+			switch(keycode) {
 				
 				// Enter (normal next riddle)
 				case 13:
@@ -710,7 +730,7 @@
 					break;
 				
 				default: // else, check for a team buzzer key
-					buzzer.key_buzz(e.originalEvent.keyCode);
+					buzzer.key_buzz(keycode);
 					break;
 			}
 			
@@ -718,7 +738,9 @@
 		
 	};
 	
-	$window.on('keydown', keyboard.keydown);
+	socket.on('shortcut_press', function(keycode) {
+		keyboard.shortcut(keycode);
+	});
 	
 	/*
 	 * INITIATE

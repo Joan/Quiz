@@ -142,6 +142,16 @@ io.sockets.on('connection', function (socket) {
 		socket.broadcast.emit('buzzer_press', team_keycode);
 	});
 	
+	/* Shortcut trigger in admin */
+	
+	socket.on('shortcut_press', function(keycode) {
+		socket.broadcast.emit('shortcut_press', keycode);
+	});
+	
+	socket.on('player_interact_state', function(interacted) {
+		socket.broadcast.emit('player_interact_state', interacted);
+	});
+	
 	/* QR Code Helper get IP */
 	
 	socket.on('get_local_ip', function(callback) {
@@ -152,4 +162,5 @@ io.sockets.on('connection', function (socket) {
 
 server.listen(port);
 
-console.info('Quiz server ready.\nLocal URL is http://' + ip.address() + ':' + port + ' /player /admin /buzzers /receiver');
+var url = 'http://' + ip.address() + ':' + port;
+console.info('Quiz server ready.\nPlayer: '+url+'/player \nAdmin: '+url+'/admin \nMobile buzzers: '+url+' (/buzzers) \nBuzzer receiver: '+url+'/receiver');

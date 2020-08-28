@@ -260,3 +260,7 @@ body {
 	}
 
 }
+
+.helper-warning {
+	cursor: help;
+}

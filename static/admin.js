@@ -239,6 +239,45 @@
 	});
 	
 	/*
+	 * DELEGATED KEYBOARD MANAGEMENT
+	 *
+	 */
+	
+	var keydown = function(e) {
+		
+		// Abort if meta
+		if (e.originalEvent.keyCode === undefined || e.originalEvent.metaKey || e.originalEvent.ctrlKey || e.originalEvent.altKey)
+			return;
+		
+		switch(e.originalEvent.keyCode) {
+			
+			// Player shortcuts
+			case 13: // Enter
+			case 37: // Left
+			case 39: // Right
+			case 32: // Space
+			case 27: // Esc
+			case 65: // A
+			case 83: // S
+			case 72: // H
+				// Send to player
+				e.preventDefault();
+				socket.emit('shortcut_press', e.originalEvent.keyCode);
+				break;
+			
+			default: // Else, nothing yet.
+				break;
+		}
+		
+	};
+	
+	$window.on('keydown', keydown);
+	
+	socket.on('player_interact_state', function(interacted) {
+		$('.helper-warning')[interacted ? 'hide' : 'show']();
+	});
+	
+	/*
 	 * INITIATE
 	 *
 	 */
