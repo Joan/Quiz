@@ -17,7 +17,7 @@
 		$body = $('body');
 	
 	const json_pathes = [
-		'/data/teams.json'
+		'/media/_data/teams.json'
 	];
 	
 	const socket = io();

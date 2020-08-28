@@ -1,0 +1,21 @@
+[
+	{
+		"type": "video",
+		"filename": "The_Goodfellas.mp4",
+		"answer": "Les Affranchis",
+		"answer_subtitle": "Martin Scorsese (1990)"
+	},
+	{
+		"type": "audio",
+		"filename": "Tomber_La_Chemise.mp3",
+		"answer": "Tomber La Chemise",
+		"answer_subtitle": "Zebda (1998)"
+	},
+	{
+		"type": "image",
+		"filename": "Philadelphia-hidden.jpg",
+		"filename_answer": "Philadelphia.jpg",
+		"answer": "Philadelphia",
+		"answer_subtitle": "Jonathan Demme (1993)"
+	}
+]

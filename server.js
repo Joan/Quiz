@@ -9,7 +9,6 @@ const express = require('express'),
 	views_dir = '/views';
 
 app.use('/static', express.static(__dirname + '/static'));
-app.use('/data', express.static(__dirname + '/data'));
 app.use('/media', express.static(__dirname + '/media'));
 
 // No favicon to serve
@@ -40,9 +39,9 @@ app.get('/buzzers(/[0-9]+)?', function (req, res) {
 });
 
 const rawdata = [
-	fs.readFileSync(__dirname + '/data/quiz.json'),
-	fs.readFileSync(__dirname + '/data/teams.json'),
-	fs.readFileSync(__dirname + '/data/scores.json')
+	fs.readFileSync(__dirname + '/media/_data/quiz.json'),
+	fs.readFileSync(__dirname + '/media/_data/teams.json'),
+	fs.readFileSync(__dirname + '/media/_data/scores.json')
 ];
 
 const riddles = JSON.parse(rawdata[0]),
@@ -116,7 +115,7 @@ io.sockets.on('connection', function (socket) {
 	
 	var send_scores = function() {
 		
-		fs.writeFileSync(__dirname + '/data/scores.json', JSON.stringify(scores));
+		fs.writeFileSync(__dirname + '/media/_data/scores.json', JSON.stringify(scores));
 		
 		socket.emit('update_scores', scores);
 		socket.broadcast.emit('update_scores', scores);
