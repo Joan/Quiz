@@ -1,7 +1,7 @@
 # Quiz
 
 A web based movies music and images riddles with buzzers
-v2.4.1
+v2.4.2
 
 ## Installation
 

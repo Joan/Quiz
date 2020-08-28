@@ -129,6 +129,11 @@
 			
 			player.send_riddle_change(0);
 			
+			// Attach event when audio or video reaches the end
+			player.$video_player.add(player.$audio_player).on('ended', function() {
+				player.pause();
+			});
+			
 			console.info('Player ready');
 			
 			// Try to load poster image
