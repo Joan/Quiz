@@ -493,6 +493,10 @@
 			
 			scoreboard.$el = $('.scoreboard');
 			
+			// Hide for real and launch the first hide animation
+			scoreboard.$el.css('opacity', 0);
+			setTimeout(scoreboard.hide, 1);
+			
 			for (let i in teams) {
 				$('<li class="team"/>')
 					.attr('id', 'team_' + i)
@@ -502,11 +506,9 @@
 					.appendTo(scoreboard.$el);
 			}
 			
-			// Hide for real and launch the first hide animation
-			scoreboard.$el.css('opacity', 0);
-			setTimeout(scoreboard.hide, 1);
+			// Remove opacity when last animation is finished
 			scoreboard.$el.children().first().on('animationend.only-once', function() {
-				scoreboard.$el.removeAttr('style');
+				setTimeout(function() {scoreboard.$el.removeAttr('style');}, 1e3);
 				$(this).off('animationend.only-once');
 			});
 			
