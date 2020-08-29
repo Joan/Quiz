@@ -60,6 +60,7 @@
 			write_colors();
 			scoreboard.init();
 			riddleboard.init();
+			keyboard.init();
 			
 			socket.emit('connection_admin');
 		
@@ -248,35 +249,53 @@
 	 *
 	 */
 	
-	var keydown = function(e) {
+	var keyboard = {
 		
-		// Abort if meta
-		if (e.originalEvent.keyCode === undefined || e.originalEvent.metaKey || e.originalEvent.ctrlKey || e.originalEvent.altKey)
-			return;
+		init: function() {
+			
+			keyboard.$inputs = $('input');
+			$window.on('keydown', keyboard.keydown);
+			
+		},
 		
-		switch(e.originalEvent.keyCode) {
+		keydown: function(e) {
+			
+			var keycode = e.originalEvent.keyCode,
+				input_focused = keyboard.$inputs.is(':focus'); // If one of inputs has focus
+			
+			// Abort if meta
+			if (keycode === undefined || input_focused || e.originalEvent.metaKey || e.originalEvent.ctrlKey || e.originalEvent.altKey || e.originalEvent.shiftKey)
+				return;
+			
+			// Team keycodes
+			for (let i in teams) {
+				if (keycode === teams[i].keycode) {
+					e.preventDefault();
+					socket.emit('buzzer_press', keycode);
+					return;
+					break;
+				}
+			}
 			
 			// Player shortcuts
-			case 13: // Enter
-			case 37: // Left
-			case 39: // Right
-			case 32: // Space
-			case 27: // Esc
-			case 65: // A
-			case 83: // S
-			case 72: // H
-				// Send to player
-				e.preventDefault();
-				socket.emit('shortcut_press', e.originalEvent.keyCode);
-				break;
+			switch(keycode) {
+				case 13: // Enter
+				case 37: // Left
+				case 39: // Right
+				case 32: // Space
+				case 27: // Esc
+				case 65: // A
+				case 83: // S
+				case 72: // H
+					// Send to player
+					e.preventDefault();
+					socket.emit('shortcut_press', e.originalEvent.keyCode);
+					break;
+			}
 			
-			default: // Else, nothing yet.
-				break;
 		}
 		
 	};
-	
-	$window.on('keydown', keydown);
 	
 	socket.on('player_interact_state', function(interacted) {
 		$('.helper-warning')[interacted ? 'hide' : 'show']();

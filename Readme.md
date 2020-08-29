@@ -1,7 +1,7 @@
 # Quiz
 
 A web based movies music and images riddles with buzzers  
-v2.4.2
+v2.4.3
 
 ## Installation
 
@@ -63,7 +63,7 @@ It displays your local IP and URLs for the different screens (replace *localhost
 Displayed in front of the players, and receives keyboard events so need to be focused on.
 
 * **Admin** – http://localhost:8080/admin  
-Displayed on a separate device – triggers player shortcuts to `/player`.
+Displayed on a separate device – triggers player shortcuts & teams keycode to `/player`.
 
 * **Buzzers signal reception** – http://localhost:8080/receiver  
 Receives buzzers signal on a different device – triggers buzzers keycode to `/player`.
