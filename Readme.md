@@ -1,7 +1,26 @@
 # Quiz
 
-A web based movies music and images riddles with buzzers  
-v2.4.3
+A web based movies music and images riddle system with buzzers
+
+`v2.4.3`
+
+## Screenshots
+
+### Main screen
+Scoreboard and buzz queue (media is blurred when paused)
+
+<img width="600" alt="" src="https://user-images.githubusercontent.com/471627/91641124-acf8de00-ea22-11ea-99b7-bce01f894213.png">
+
+### Admin
+Scores management, answers (and quick jump), shortcuts helper
+
+<img width="600" alt="" src="https://user-images.githubusercontent.com/471627/91641130-aff3ce80-ea22-11ea-9c39-960c0db2a74d.png">
+
+### Smartphone buzzers
+Team selection, on-screen buzzers – for use instead of proper buzzer devices
+
+<img width="250" alt="" src="https://user-images.githubusercontent.com/471627/91641131-b124fb80-ea22-11ea-8854-5ab7f398b026.png"> <img width="250" alt="" src="https://user-images.githubusercontent.com/471627/91641132-b2eebf00-ea22-11ea-8070-308492a35077.png"> <img width="250" alt="" src="https://user-images.githubusercontent.com/471627/91641134-b41fec00-ea22-11ea-9152-98a9abcc1b08.png">
+
 
 ## Installation
 
