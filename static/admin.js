@@ -216,6 +216,7 @@
 		change_current: function(riddle_num) {
 			
 			riddleboard.$el.children('.current').removeClass('current');
+			riddleboard.$el.children('.requested').removeClass('requested');
 			
 			if (riddle_num < 1) {
 				var scroll_target = 0,
@@ -235,6 +236,8 @@
 		},
 		
 		request_change: function(riddle_num) {
+			var $target = $('#riddle_' + riddle_num);
+			$target.addClass('requested');
 			socket.emit('riddle_request_change', riddle_num);
 		}
 		

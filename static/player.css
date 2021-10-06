@@ -94,11 +94,11 @@ body {
 			background-color: #fff;
 		}
 
-		.audio-bars i:nth-child(1)::before, .audio-bars i:nth-last-child(4)::before   {animation: bars-anim-01 0.6s ease infinite;}
+		.audio-bars i:nth-child(1)::before, .audio-bars i:nth-last-child(3)::before   {animation: bars-anim-01 0.5s ease infinite;}
 		.audio-bars i:nth-child(2)::before, .audio-bars i:nth-last-child(2)::before   {animation: bars-anim-02 0.4s ease infinite;}
 		.audio-bars i:nth-child(3)::before, .audio-bars i:nth-last-child(5)::before   {animation: bars-anim-03 0.6s ease infinite;}
-		.audio-bars i:nth-child(4)::before, .audio-bars i:nth-last-child(1)::before   {animation: bars-anim-01 0.4s ease infinite;}
-		.audio-bars i:nth-child(5)::before, .audio-bars i:nth-last-child(3)::before   {animation: bars-anim-04 0.4s ease infinite;}
+		.audio-bars i:nth-child(4)::before, .audio-bars i:nth-last-child(1)::before   {animation: bars-anim-01 0.5s ease infinite;}
+		.audio-bars i:nth-child(5)::before, .audio-bars i:nth-last-child(4)::before   {animation: bars-anim-04 0.4s ease infinite;}
 
 		.player:not(.playing) .audio-bars i::before {
 			height: 6px;

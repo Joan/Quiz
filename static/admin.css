@@ -142,6 +142,7 @@ body {
 	.riddle {
 		margin-bottom: 50px;
 		transition: opacity 0.2s;
+		cursor: pointer;
 	}
 
 	.riddle-type {
@@ -178,6 +179,9 @@ body {
 
 	.riddle:not(.current) {
 		opacity: 0.2;
+	}
+	.riddle.requested {
+		opacity: 0.4;
 	}
 	.riddle.current .riddle-answer_subtitle {
 		color: #aaa;
