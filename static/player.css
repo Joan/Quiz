@@ -162,7 +162,7 @@ body {
 		justify-content: center;
 		vertical-align: middle;
 		animation: buzzer-appear-anim .2s 1;
-		transition-property: width, height, left, top;
+		transition-property: width, height, left, top, opacity;
 	}
 	
 		@keyframes buzzer-appear-anim {
@@ -220,13 +220,27 @@ body {
 			100% {box-shadow: 0 0 20px 10px currentColor;}
 		}
 	
-	.buzzer:nth-child(1) {left: 0;}
-	.buzzer:nth-child(2) {left: 25vh;}
-	.buzzer:nth-child(3) {left: 35vh;}
-	.buzzer:nth-child(4) {left: 45vh;}
-	.buzzer:nth-child(5) {left: 55vh;}
-	.buzzer:nth-child(6) {left: 65vh;}
-	.buzzer:nth-child(n+7) {left: 75vh;}
+	.buzzer:nth-child(1)  {left: 0;}
+	.buzzer:nth-child(2)  {left: 25vh;}
+	.buzzer:nth-child(3)  {left: 35vh;}
+	.buzzer:nth-child(4)  {left: 45vh;}
+	.buzzer:nth-child(5)  {left: 55vh;}
+	.buzzer:nth-child(6)  {left: 65vh;}
+	.buzzer:nth-child(7)  {left: 75vh;}
+	.buzzer:nth-child(8)  {left: 85vh;}
+	.buzzer:nth-child(9)  {left: 95vh;}
+	.buzzer:nth-child(10) {left: 105vh;}
+	.buzzer:nth-child(11) {left: 115vh;}
+	.buzzer:nth-child(12) {left: 125vh;}
+	.buzzer:nth-child(13) {left: 135vh;}
+	.buzzer:nth-child(14) {left: 145vh;}
+	.buzzer:nth-child(15) {left: 155vh;}
+	.buzzer:nth-child(16) {left: 165vh;}
+	.buzzer:nth-child(17) {left: 175vh;}
+	.buzzer:nth-child(18) {left: 185vh;}
+	.buzzer:nth-child(19) {left: 195vh;}
+	.buzzer:nth-child(20) {left: 205vh;}
+	.buzzer:nth-child(n+21) {left: 215vh; opacity: 0;}
 
 .scoreboard {
 	position: absolute;
@@ -241,7 +255,7 @@ body {
 	.scoreboard .team {
 		display: flex;
 		position: absolute;
-		top: 12em;
+		top: 2em;
 		width: 100%;
 		height: 1.55em;
 		padding: 3px 12px;
