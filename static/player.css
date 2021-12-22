@@ -10,7 +10,7 @@ html {
 
 body {
 	background-color: #000;
-	cursor: none;
+	cursor: url("data:image/svg+xml;charset=utf8,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3e%3ccircle cx='2' cy='2' r='2' fill='white'/%3e%3c/svg%3e") 5 5, none;
 	overflow: hidden;
 }
 
@@ -246,9 +246,14 @@ body {
 	position: absolute;
 	font-size: 2.2em;
 	width: 14em;
-	height: 0;
+	height: auto;
+	top: calc(100vh - 8em);
 	bottom: 0;
 	left: 50%;
+	overflow-y: hidden;
+	transition-property: top, bottom;
+	transition-duration: .8s;
+	transition-timing-function: ease;
 	transform: translateX(-50%);
 }
 
@@ -271,13 +276,30 @@ body {
 		.scoreboard.show .team {animation: scoreboard-show-anim .4s 1 forwards;}
 		.scoreboard.hide .team {animation: scoreboard-hide-anim .4s 1 forwards;}
 	
-		.scoreboard .team[data-position="1"] {top: -7.55em;}
-		.scoreboard .team[data-position="2"] {top: -5.7em;}
-		.scoreboard .team[data-position="3"] {top: -3.85em;}
-		.scoreboard .team[data-position="4"] {top: -2em;}
-
-		.scoreboard.show .team[data-position="1"]
-		.scoreboard.hide .team[data-position="4"] {animation-delay: 0;}
+		.scoreboard .team[data-position="1"]  {top: 0em;}
+		.scoreboard .team[data-position="2"]  {top: 2em;}
+		.scoreboard .team[data-position="3"]  {top: 4em;}
+		.scoreboard .team[data-position="4"]  {top: 6em;}
+		.scoreboard .team[data-position="5"]  {top: 8em;}
+		.scoreboard .team[data-position="6"]  {top: 10em;}
+		.scoreboard .team[data-position="7"]  {top: 12em;}
+		.scoreboard .team[data-position="8"]  {top: 14em;}
+		.scoreboard .team[data-position="9"]  {top: 16em;}
+		.scoreboard .team[data-position="10"] {top: 18em;}
+		.scoreboard .team[data-position="11"] {top: 20em;}
+		.scoreboard .team[data-position="12"] {top: 22em;}
+		.scoreboard .team[data-position="13"] {top: 24em;}
+		.scoreboard .team[data-position="14"] {top: 26em;}
+		.scoreboard .team[data-position="15"] {top: 28em;}
+		.scoreboard .team[data-position="16"] {top: 30em;}
+		.scoreboard .team[data-position="17"] {top: 32em;}
+		.scoreboard .team[data-position="18"] {top: 34em;}
+		.scoreboard .team[data-position="19"] {top: 36em;}
+		.scoreboard .team[data-position="20"] {top: 38em;}
+		
+		.scoreboard.show .team {animation-delay: 200ms;}
+		.scoreboard.show .team[data-position="1"],
+		.scoreboard.hide .team[data-position="4"] {animation-delay: 0ms;}
 		.scoreboard.show .team[data-position="2"],
 		.scoreboard.hide .team[data-position="3"] {animation-delay: 50ms;}
 		.scoreboard.show .team[data-position="3"],
@@ -330,6 +352,13 @@ body {
 			70%  {opacity: 1; transform: translateX(15px);}
 			100% {opacity: 0; transform: translateX(40px);}
 		}
+	
+	.scoreboard.large {
+		top: 0.5em;
+		bottom: 0.5em;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
 
 .qr_helper {
 	position: absolute;

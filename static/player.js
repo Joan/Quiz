@@ -554,11 +554,19 @@
 		},
 		
 		hide: function() {
-			scoreboard.$el.addClass('hide').removeClass('show');
+			scoreboard.$el.addClass('hide').removeClass('show').removeClass('large');
 		},
 		
 		toggle: function() {
 			scoreboard[scoreboard.$el.hasClass('show') ? 'hide' : 'show']();
+		},
+		
+		toggle_large: function() {
+			var is_displayed = scoreboard.$el.hasClass('show');
+			
+			if (!is_displayed)
+				scoreboard.show();
+			scoreboard.$el.toggleClass('large');
 		},
 		
 		change_score: function(change_data) {
@@ -756,6 +764,10 @@
 				// S (toggle scoreboard)
 				case 83:
 					scoreboard.toggle();
+					break;
+				// L (toogle large version)
+				case 76:
+					scoreboard.toggle_large();
 					break;
 				
 				// Q (toggle QR Code)
