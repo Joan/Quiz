@@ -654,7 +654,7 @@
 					height: 1000,
 					colorDark : "#fff",
 					colorLight : "#000",
-					correctLevel : QRCode.CorrectLevel.L // M L H Q
+					correctLevel : QRCode.CorrectLevel.L // L M H Q
 				});
 				$helper_image.removeAttr('title');
 				
@@ -758,8 +758,8 @@
 					scoreboard.toggle();
 					break;
 				
-				// H (toggle QR Code)
-				case 72:
+				// Q (toggle QR Code)
+				case 81:
 					qr_helper.toggle();
 					break;
 				

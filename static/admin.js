@@ -289,7 +289,7 @@
 				case 27: // Esc
 				case 65: // A
 				case 83: // S
-				case 72: // H
+				case 81: // Q
 					// Send to player
 					e.preventDefault();
 					socket.emit('shortcut_press', e.originalEvent.keyCode);
