@@ -97,6 +97,7 @@
 			scoreboard.$options_template = $($('#options-template').html());
 			
 			scoreboard.create_teams();
+			scoreboard.scroll_to_active_team = true;
 			
 		},
 		
@@ -155,9 +156,21 @@
 		},
 		
 		change_buzzer: function(team_id) {
-			scoreboard.$el.children('.current_buzzer').removeClass('current_buzzer');
-			if (team_id >= 0)
+			
+			if (team_id >= 0) {
+				
+				scoreboard.$el.children('.current_buzzer').removeClass('current_buzzer');
+				
+				var $target = $('#team_' + team_id);
 				$('#team_' + team_id).addClass('current_buzzer');
+				
+				if (scoreboard.scroll_to_active_team) {
+					var scroll_target = team_id === 0 ? 0 : $target.position().top + scoreboard.$el[0].scrollTop - scoreboard.$el.offset().top - 20;
+					scoreboard.$el.stop(true).animate({scrollTop: scroll_target}, 500);
+				}
+				
+			}
+			
 		}
 		
 	};
@@ -276,8 +289,8 @@
 			settings.set_buzzers_enabled();
 		},
 		
-		toggle_scroll_to_active_team: function() {
-			
+		set_scroll_to_active_team: function() {
+			scoreboard.scroll_to_active_team = settings.$scroll_to_active_team_input[0].checked;
 		}
 		
 	};
