@@ -48,6 +48,14 @@ const riddles = JSON.parse(rawdata[0]),
 	teams = JSON.parse(rawdata[1]),
 	scores = JSON.parse(rawdata[2]);
 
+// Check if scores match teams number (and fix)
+if (teams.length !== scores.length) {
+	var less_scores = teams.length > scores.length;
+	while (teams.length !== scores.length)
+		less_scores ? scores.push(0) : scores.pop();
+	fs.writeFileSync(__dirname + '/media/_data/scores.json', JSON.stringify(scores));
+}
+
 var buzzers_enabled = true;
 
 io.sockets.on('connection', function (socket) {
@@ -89,7 +97,7 @@ io.sockets.on('connection', function (socket) {
 		
 		scores[team_id] = parseInt(scores[team_id]) + parseInt(inc);
 		
-		send_scores();
+		save_scores();
 		socket.broadcast.emit('change_score', {team_id: team_id, inc: inc});
 		
 	});
@@ -99,7 +107,7 @@ io.sockets.on('connection', function (socket) {
 		for (let i in scores)
 			scores[i] = 0;
 		
-		send_scores();
+		save_scores();
 		
 	});
 	
@@ -113,11 +121,11 @@ io.sockets.on('connection', function (socket) {
 		
 		scores[team_id] = parseInt(score);
 		
-		send_scores();
+		save_scores();
 		
 	});
 	
-	var send_scores = function() {
+	var save_scores = function() {
 		
 		fs.writeFileSync(__dirname + '/media/_data/scores.json', JSON.stringify(scores));
 		
