@@ -99,4 +99,4 @@ Leads to `/buzzers/[team_id]` (`[team_id]` is the team object position in teams.
 * <kbd>Esc</kbd> : remove all buzzers from queue
 * <kbd>A</kbd> : reveal answer image (if available)
 * <kbd>S</kbd> : toggle scoreboard (scoreboard is displayed immediatly when you change scores from the admin panel)
-* <kbd>H</kbd> : toggle QR Code for digital buzzer access
+* <kbd>Q</kbd> : toggle QR Code for digital buzzer access
