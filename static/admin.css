@@ -154,6 +154,10 @@ body {
 			background-color: #34404f;
 		}
 
+.helper-warning {
+	cursor: help;
+}
+
 /* 
  * SCORES PANE
  */
@@ -253,6 +257,7 @@ body {
 		bottom: 0;
 		height: 100px;
 		background: linear-gradient(to bottom,rgba(51, 51, 51, 0),#333);
+		pointer-events: none;
 	}
 
 .riddles {
@@ -368,7 +373,7 @@ body {
 	}
 	
 	.riddles,
-	.helper {
+	.helper-list {
 		padding: 20px;
 	}
 
@@ -391,6 +396,8 @@ body {
 
 }
 
-.helper-warning {
-	cursor: help;
+@media (max-width: 440px), (min-width: 600px) and (max-width: 1020px) {
+	.helper-list {
+		padding-bottom: 90px; /* for the buzzers button */
+	}
 }
