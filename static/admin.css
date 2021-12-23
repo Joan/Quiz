@@ -164,7 +164,12 @@ body {
 
 .scores {
 	padding: 20px;
+	transition: background-color .3s;
 }
+
+	.scores.edit_teams {
+		background-color: rgba(0, 112, 255, 0.3);
+	}
 
 	.team {
 		padding: 8px 20px 18px;
@@ -232,6 +237,8 @@ body {
 	.scores-options {
 		display: flex;
 		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.5em 1em;
 		font-size: 1.2em;
 		margin-top: 100px;
 	}

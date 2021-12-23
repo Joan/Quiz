@@ -27,6 +27,20 @@
 		</li>
 	</template>
 	
+	<template id="team_edit_fields-template">
+		<div class="team_edit-infos team_edit">
+			<div class="team_edit-name"><input data-team="" type="text"></div>
+			<div class="team_edit-delete"><button data-team=""></button></div>
+		</div>
+		<div class="team_edit-color team_edit">
+			<button data-team="" data-color="#62b529"></button>
+			<button data-team="" data-color="#ed1d24"></button>
+			<button data-team="" data-color="#e8ae00"></button>
+			<button data-team="" data-color="#1782e1"></button>
+			<input data-team="" type="color">
+		</div>
+	</template>
+	
 	<template id="options-template">
 		<li class="scores-options">
 			<button class="reset-button">Remise à zéro…</button>
@@ -34,6 +48,11 @@
 				<input type="checkbox" id="option-scroll_to_active_team-input" checked>
 				<span class="setting-switch"></span>
 				<span class="setting-label">Défiler à l’équipe active</span>
+			</label>
+			<label class="setting" id="option-edit_teams">
+				<input type="checkbox" id="option-edit_teams-input">
+				<span class="setting-switch"></span>
+				<span class="setting-label">Modifier les équipes</span>
 			</label>
 		</li>
 	</template>

@@ -171,6 +171,56 @@
 				
 			}
 			
+		},
+		
+		edit_teams: {
+			initiated: false,
+			
+			init: function() {
+				
+				scoreboard.$team_edit_fields_template = $($('#team_edit_fields-template').html());
+				
+				for (let i in teams) {
+					let $team = scoreboard.$el.find('#team_' + i),
+						$clone = scoreboard.$team_edit_fields_template.clone();
+					$clone.find('.team_edit-name > input')
+						.val(teams[i].name)
+						.on('change.scoreboard', scoreboard.aaa);
+					$clone.find('.team_edit-delete > button').on('click.scoreboard', scoreboard.aaa);
+					$clone.find('.team_edit-color > button').on('click.scoreboard', scoreboard.aaa);
+					$clone.find('.team_edit-color > input').on('click.scoreboard', scoreboard.aaa);
+					$clone.find('[data-team]').attr('data-team', i);
+					$clone.appendTo($team);
+					$team.find('.team-infos, .team-actions').hide();
+				}
+				
+				// keyboard.$inputs = $('input'); // update all inputs
+				
+				scoreboard.edit_teams.initiated = true;
+				
+			},
+		
+			show: function() {
+			
+				if (!scoreboard.edit_teams.initiated)
+					scoreboard.edit_teams.init();
+				
+				scoreboard.$el.find('.team_edit').show();
+				scoreboard.$el.find('.team-infos, .team-actions').hide();
+				scoreboard.$el.addClass('edit_teams');
+				
+			},
+		
+			hide: function() {
+				
+				
+				
+				scoreboard.$el.find('.team_edit').hide();
+				scoreboard.$el.find('.team-infos, .team-actions').show();
+				scoreboard.$el.removeClass('edit_teams');
+				
+			}
+			
 		}
 		
 	};
@@ -272,6 +322,7 @@
 			[
 				['buzzers_enabled', true],
 				['scroll_to_active_team', true],
+				['edit_teams', false],
 			].forEach(s => {
 				settings[s[0]] = s[1];
 				settings['$'+s[0]+'_label'] = $('#option-'+s[0]);
@@ -291,6 +342,10 @@
 		
 		set_scroll_to_active_team: function() {
 			scoreboard.scroll_to_active_team = settings.$scroll_to_active_team_input[0].checked;
+		},
+		
+		set_edit_teams: function() {
+			scoreboard.edit_teams[settings.$edit_teams_input[0].checked ? 'show' : 'hide']();
 		}
 		
 	};
