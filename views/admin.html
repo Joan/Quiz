@@ -5,6 +5,7 @@
 	<title>QUIZ Admin</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
 	<link rel="stylesheet" href="/static/common.css">
 	<link rel="stylesheet" href="/static/admin.css">
 </head>
@@ -26,13 +27,20 @@
 		</li>
 	</template>
 	
-	<template id="reset-template">
-		<li class="reset">
+	<template id="options-template">
+		<li class="scores-options">
 			<button class="reset-button">Remise à zéro…</button>
+			<label class="setting" id="option-scroll_to_active_team">
+				<input type="checkbox" id="option-scroll_to_active_team-input" checked>
+				<span class="setting-switch"></span>
+				<span class="setting-label">Défiler à l’équipe active</span>
+			</label>
 		</li>
 	</template>
 	
-	<ul class="riddles"></ul>
+	<div class="riddles_pane">
+		<ul class="riddles"></ul>
+	</div>
 	
 	<template id="riddle-template">
 		<li class="riddle" id="" data-riddle="">
@@ -42,15 +50,30 @@
 		</li>
 	</template>
 	
-	<ul class="helper" data-current-riddle-type="">
-		<li class="helper-entry"><kbd>espace</kbd> Lecture / Pause / Buzzer suivant <span class="helper-warning" title="Cliquez dans la fenêtre du player ou appuyez sur une touche pour activer la vidéo">⚠️</span></li>
-		<li class="helper-entry"><kbd>↩</kbd> Quiz suivant</li>
-		<li class="helper-entry"><kbd>←</kbd> / <kbd>→</kbd> Quiz suivant / précédent rapidement et lecture</li>
-		<li class="helper-entry"><kbd>esc</kbd> Vider la liste des buzzers</li>
-		<li class="helper-entry" data-applies-to="image"><kbd>A</kbd> afficher l'image réponse</li>
-		<li class="helper-entry"><kbd>S</kbd> Afficher les scores (Agrandir : <kbd>L</kbd>)</li>
-		<li class="helper-entry"><kbd>Q</kbd> Afficher le QR code (buzzers tactiles)</li>
-	</ul>
+	<div class="helper">
+		
+		<ul class="helper-list" data-current-riddle-type="">
+			<li class="helper-entry"><kbd>espace</kbd> Lecture / Pause / Buzzer suivant <span class="helper-warning" title="Cliquez dans la fenêtre du player ou appuyez sur une touche pour activer la vidéo">⚠️</span></li>
+			<li class="helper-entry"><kbd>↩</kbd> Quiz suivant (transition)</li>
+			<li class="helper-entry"><kbd class="--no_space">←</kbd> / <kbd>→</kbd> Quiz précédent / suivant rapidement et lecture</li>
+			<li class="helper-entry"><kbd>esc</kbd> Vider la liste des buzzers</li>
+			<li class="helper-entry" data-applies-to="image"><kbd>A</kbd> Afficher l'image réponse</li>
+			<li class="helper-entry"><kbd>S</kbd> Afficher les scores (agrandir : <kbd class="--no_space">L</kbd> )</li>
+			<li class="helper-entry"><kbd>Q</kbd> Afficher le QR code (buzzers tactiles)</li>
+		</ul>
+		
+		<div class="buzzers_controler">
+			<label class="setting --button" id="option-buzzers_enabled">
+				<input type="checkbox" id="option-buzzers_enabled-input" checked>
+				<span class="setting-switch"></span>
+				<span class="setting-label">
+					<span>Buzzers</span>
+					<span class="setting-state"><span>Activés</span><span>Désactivés</span></span>
+				</span>
+			</label>
+		</div>
+		
+	</div>
 	
 	<style>.team_color_0{color:#62b529;}.team_color_1{color:#ed1d24;}.team_color_2{color:#e8ae00;}.team_color_3{color:#1782e1;}</style>
 	

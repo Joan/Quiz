@@ -60,6 +60,7 @@
 			write_colors();
 			scoreboard.init();
 			riddleboard.init();
+			settings.init();
 			keyboard.init();
 			
 			socket.emit('connection_admin');
@@ -93,9 +94,10 @@
 			scoreboard.$el = $('.scores');
 			
 			scoreboard.$team_template = $($('#team-template').html());
-			scoreboard.$reset_template = $($('#reset-template').html());
+			scoreboard.$options_template = $($('#options-template').html());
 			
 			scoreboard.create_teams();
+			scoreboard.scroll_to_active_team = true;
 			
 		},
 		
@@ -113,7 +115,7 @@
 				$clone.appendTo(scoreboard.$el);
 			}
 			
-			scoreboard.$reset_template
+			scoreboard.$options_template
 				.appendTo(scoreboard.$el)
 				.find('.reset-button').on('click.scoreboard', scoreboard.reset_scores);
 			
@@ -137,7 +139,7 @@
 		},
 		
 		reset_scores: function() {
-			if (window.confirm("Remettre à zéro ?"))
+			if (window.confirm("Remettre les scores à zéro ?"))
 				socket.emit('reset_scores');
 		},
 		
@@ -154,9 +156,21 @@
 		},
 		
 		change_buzzer: function(team_id) {
-			scoreboard.$el.children('.current_buzzer').removeClass('current_buzzer');
-			if (team_id >= 0)
+			
+			if (team_id >= 0) {
+				
+				scoreboard.$el.children('.current_buzzer').removeClass('current_buzzer');
+				
+				var $target = $('#team_' + team_id);
 				$('#team_' + team_id).addClass('current_buzzer');
+				
+				if (scoreboard.scroll_to_active_team) {
+					var scroll_target = team_id === 0 ? 0 : $target.position().top + scoreboard.$el[0].scrollTop - scoreboard.$el.offset().top - 20;
+					scoreboard.$el.stop(true).animate({scrollTop: scroll_target}, 500);
+				}
+				
+			}
+			
 		}
 		
 	};
@@ -179,7 +193,7 @@
 		init: function() {
 			
 			riddleboard.$el = $('.riddles');
-			riddleboard.$helper = $('.helper');
+			riddleboard.$helper = $('.helper-list');
 			
 			riddleboard.$riddle_template = $($('#riddle-template').html());
 			
@@ -248,6 +262,44 @@
 	});
 	
 	/*
+	 * SETTINGS
+	 *
+	 */
+	
+	const settings = {
+		
+		init: function() {
+			[
+				['buzzers_enabled', true],
+				['scroll_to_active_team', true],
+			].forEach(s => {
+				settings[s[0]] = s[1];
+				settings['$'+s[0]+'_label'] = $('#option-'+s[0]);
+				settings['$'+s[0]+'_input'] = $('#option-'+s[0]+'-input');
+				settings['$'+s[0]+'_input'].on('change.settings', settings['set_'+s[0]]);
+			});
+		},
+		
+		set_buzzers_enabled: function() {
+			socket.emit('set_buzzers_enabled', settings.$buzzers_enabled_input[0].checked);
+		},
+		
+		toggle_buzzers_enabled: function() {
+			settings.$buzzers_enabled_input[0].checked = !settings.$buzzers_enabled_input[0].checked;
+			settings.set_buzzers_enabled();
+		},
+		
+		set_scroll_to_active_team: function() {
+			scoreboard.scroll_to_active_team = settings.$scroll_to_active_team_input[0].checked;
+		}
+		
+	};
+	
+	socket.on('set_buzzers_enabled', function(enabled) {
+		settings.$buzzers_enabled_input.prop('checked', enabled || false);
+	});
+	
+	/*
 	 * DELEGATED KEYBOARD MANAGEMENT
 	 *
 	 */
@@ -279,6 +331,10 @@
 					break;
 				}
 			}
+			
+			// Manage buzzer activation shortcut directly
+			if (keycode === 66) // B
+				settings.toggle_buzzers_enabled();
 			
 			// Player shortcuts
 			switch(keycode) {

@@ -48,6 +48,16 @@ const riddles = JSON.parse(rawdata[0]),
 	teams = JSON.parse(rawdata[1]),
 	scores = JSON.parse(rawdata[2]);
 
+// Check if scores match teams number (and fix)
+if (teams.length !== scores.length) {
+	var less_scores = teams.length > scores.length;
+	while (teams.length !== scores.length)
+		less_scores ? scores.push(0) : scores.pop();
+	fs.writeFileSync(__dirname + '/media/_data/scores.json', JSON.stringify(scores));
+}
+
+var buzzers_enabled = true;
+
 io.sockets.on('connection', function (socket) {
 	
 	/* Connections */
@@ -55,11 +65,13 @@ io.sockets.on('connection', function (socket) {
 	socket.on('connection_player', function() {
 		console.info('Player connected');
 		socket.emit('update_scores', scores);
+		socket.emit('set_buzzers_enabled', buzzers_enabled);
 	});
 	
 	socket.on('connection_admin', function() {
 		console.info('Admin connected');
 		socket.emit('update_scores', scores);
+		socket.emit('set_buzzers_enabled', buzzers_enabled);
 	});
 	
 	socket.on('connection_receiver', function() {
@@ -85,7 +97,7 @@ io.sockets.on('connection', function (socket) {
 		
 		scores[team_id] = parseInt(scores[team_id]) + parseInt(inc);
 		
-		send_scores();
+		save_scores();
 		socket.broadcast.emit('change_score', {team_id: team_id, inc: inc});
 		
 	});
@@ -95,7 +107,7 @@ io.sockets.on('connection', function (socket) {
 		for (let i in scores)
 			scores[i] = 0;
 		
-		send_scores();
+		save_scores();
 		
 	});
 	
@@ -109,11 +121,11 @@ io.sockets.on('connection', function (socket) {
 		
 		scores[team_id] = parseInt(score);
 		
-		send_scores();
+		save_scores();
 		
 	});
 	
-	var send_scores = function() {
+	var save_scores = function() {
 		
 		fs.writeFileSync(__dirname + '/media/_data/scores.json', JSON.stringify(scores));
 		
@@ -146,6 +158,13 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('buzzer_press', function(team_keycode) {
 		socket.broadcast.emit('buzzer_press', team_keycode);
+	});
+	
+	/* Buzzer activation */
+	
+	socket.on('set_buzzers_enabled', function(enabled) {
+		buzzers_enabled = enabled;
+		socket.broadcast.emit('set_buzzers_enabled', buzzers_enabled);
 	});
 	
 	/* Shortcut trigger in admin */
