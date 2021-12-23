@@ -2,7 +2,7 @@
 
 A web based movies music and images riddle system with buzzers
 
-`v2.4.3`
+`v2.5.0`
 
 ## Screenshots
 
