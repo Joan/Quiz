@@ -427,6 +427,7 @@
 			buzzer.$el = $('.buzzers');
 			buzzer.buzzable = true;
 			buzzer.has_queue = false;
+			buzzer.enabled = null;
 			
 			buzzer.empty_queue();
 			
@@ -436,7 +437,7 @@
 			
 			// Buzzers keys
 			
-			if (buzzer.buzzable) {
+			if (buzzer.buzzable && buzzer.enabled) {
 				for (let i in teams) {
 					if (keycode === teams[i].keycode) {
 						buzzer.add_to_queue(i);
@@ -509,12 +510,26 @@
 			
 			buzzer.update_current();
 			
+		},
+		
+		set_buzzers_enabled: function(enabled) {
+			buzzer.enabled = enabled;
+			player.$el[enabled ? 'removeClass' : 'addClass']('--buzzer_disabled');
+		},
+		
+		toggle_enabled: function() {
+			buzzer.set_buzzers_enabled(!buzzer.enabled);
+			socket.emit('set_buzzers_enabled', buzzer.enabled);
 		}
 		
 	};
 	
 	socket.on('buzzer_press', function(team_keycode) {
 		buzzer.key_buzz(team_keycode);
+	});
+	
+	socket.on('set_buzzers_enabled', function(enabled) {
+		buzzer.set_buzzers_enabled(enabled);
 	});
 	
 	/*
@@ -761,11 +776,16 @@
 					player.reveal();
 					break;
 				
+				// B (toggle buzzer activation)
+				case 66:
+					buzzer.toggle_enabled();
+					break;
+				
 				// S (toggle scoreboard)
 				case 83:
 					scoreboard.toggle();
 					break;
-				// L (toogle large version)
+				// L (toggle large version)
 				case 76:
 					scoreboard.toggle_large();
 					break;

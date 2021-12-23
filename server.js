@@ -48,6 +48,8 @@ const riddles = JSON.parse(rawdata[0]),
 	teams = JSON.parse(rawdata[1]),
 	scores = JSON.parse(rawdata[2]);
 
+var buzzers_enabled = true;
+
 io.sockets.on('connection', function (socket) {
 	
 	/* Connections */
@@ -55,11 +57,13 @@ io.sockets.on('connection', function (socket) {
 	socket.on('connection_player', function() {
 		console.info('Player connected');
 		socket.emit('update_scores', scores);
+		socket.emit('set_buzzers_enabled', buzzers_enabled);
 	});
 	
 	socket.on('connection_admin', function() {
 		console.info('Admin connected');
 		socket.emit('update_scores', scores);
+		socket.emit('set_buzzers_enabled', buzzers_enabled);
 	});
 	
 	socket.on('connection_receiver', function() {
@@ -146,6 +150,13 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('buzzer_press', function(team_keycode) {
 		socket.broadcast.emit('buzzer_press', team_keycode);
+	});
+	
+	/* Buzzer activation */
+	
+	socket.on('set_buzzers_enabled', function(enabled) {
+		buzzers_enabled = enabled;
+		socket.broadcast.emit('set_buzzers_enabled', buzzers_enabled);
 	});
 	
 	/* Shortcut trigger in admin */

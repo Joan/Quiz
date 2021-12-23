@@ -20,6 +20,23 @@ body {
 	height: 100vh;
 }
 
+	.player::after {
+		content: "";
+		box-shadow: inset 0 0 15px 5px rgba(255, 0, 0, 0);
+		transition: box-shadow .3s;
+		display: block;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		pointer-events: none;
+	}
+	
+		.player.--buzzer_disabled::after {
+			box-shadow: inset 0 0 15px 5px rgba(255, 0, 0, 1);
+		}
+
 	.video,
 	.audio,
 	.image {
@@ -247,13 +264,11 @@ body {
 	font-size: 2.2em;
 	width: 14em;
 	height: auto;
-	top: calc(100vh - 8em);
+	top: calc(100vh - 8.5em);
 	bottom: 0;
 	left: 50%;
 	overflow-y: hidden;
-	transition-property: top, bottom;
-	transition-duration: .8s;
-	transition-timing-function: ease;
+	transition: top .8s;
 	transform: translateX(-50%);
 }
 
@@ -265,6 +280,7 @@ body {
 		height: 1.55em;
 		padding: 3px 12px;
 		border-radius: 10px;
+		margin-top: 0.5em; /* To have a top margin on large display */
 		background-color: currentColor;
 		box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
 		transition: width .8s ease 1s;
@@ -354,8 +370,7 @@ body {
 		}
 	
 	.scoreboard.large {
-		top: 0.5em;
-		bottom: 0.5em;
+		top: 0;
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
 	}
