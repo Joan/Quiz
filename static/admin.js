@@ -181,25 +181,37 @@
 				scoreboard.$team_edit_fields_template = $($('#team_edit_fields-template').html());
 				
 				for (let i in teams) {
+					// this has to go in a fn to fire it again when adding a team
 					let $team = scoreboard.$el.find('#team_' + i),
 						$clone = scoreboard.$team_edit_fields_template.clone();
 					$clone.find('.team_edit-name > input')
 						.val(teams[i].name)
 						.on('change.scoreboard', scoreboard.aaa);
 					$clone.find('.team_edit-delete > button').on('click.scoreboard', scoreboard.aaa);
-					$clone.find('.team_edit-color > button').on('click.scoreboard', scoreboard.aaa);
-					$clone.find('.team_edit-color > input').on('click.scoreboard', scoreboard.aaa);
+					$clone.filter('.team_edit-color').find('button')
+						.each(function() {
+							console.log($(this).attr('data-color'));
+							$(this).css('color', $(this).attr('data-color'));})
+						.on('click.scoreboard', scoreboard.aaa);
+					$clone.filter('.team_edit-color').find('input').on('click.scoreboard', scoreboard.aaa);
 					$clone.find('[data-team]').attr('data-team', i);
 					$clone.appendTo($team);
 					$team.find('.team-infos, .team-actions').hide();
 				}
+				
+				// Add team_edit-add as well
 				
 				// keyboard.$inputs = $('input'); // update all inputs
 				
 				scoreboard.edit_teams.initiated = true;
 				
 			},
-		
+			
+			save: function() {
+				
+				// pretify JSON when saving it server side
+			},
+			
 			show: function() {
 			
 				if (!scoreboard.edit_teams.initiated)
@@ -210,10 +222,10 @@
 				scoreboard.$el.addClass('edit_teams');
 				
 			},
-		
+			
 			hide: function() {
 				
-				
+				// save teams here
 				
 				scoreboard.$el.find('.team_edit').hide();
 				scoreboard.$el.find('.team-infos, .team-actions').show();
