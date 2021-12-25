@@ -157,9 +157,9 @@
 		
 		change_buzzer: function(team_id) {
 			
+			scoreboard.$el.children('.current_buzzer').removeClass('current_buzzer');
+			
 			if (team_id >= 0) {
-				
-				scoreboard.$el.children('.current_buzzer').removeClass('current_buzzer');
 				
 				var $target = $('#team_' + team_id);
 				$('#team_' + team_id).addClass('current_buzzer');
