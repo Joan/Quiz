@@ -262,36 +262,57 @@ body {
 .scoreboard {
 	position: absolute;
 	font-size: 2.2em;
-	width: 14em;
-	height: auto;
-	top: calc(100vh - 8.5em);
+	height: 100vh;
+	max-height: 100vh;
 	bottom: 0;
-	left: 50%;
-	overflow-y: hidden;
-	transition: top .8s;
-	transform: translateX(-50%);
+	left: -40px; right: -40px; /* Hide scrollbars and keep centered */
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 	.scoreboard .team {
 		display: flex;
 		position: absolute;
-		top: 2em;
-		width: 100%;
+		top: 40em;
+		left: 50%;
+		width: 14em;
 		height: 1.55em;
 		padding: 3px 12px;
 		border-radius: 10px;
 		margin-top: 0.5em; /* To have a top margin on large display */
 		background-color: currentColor;
 		box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
-		transition: width .8s ease 1s;
-		transition-property: width, height, left, top;
+		transform: translateX(-50%);
+		transition: top .8s ease 1s;
 	}
 
 		.scoreboard:not(.show):not(.hide) .team,
 		.scoreboard.show .team {opacity: 0;}
 		.scoreboard.show .team {animation: scoreboard-show-anim .4s 1 forwards;}
 		.scoreboard.hide .team {animation: scoreboard-hide-anim .4s 1 forwards;}
-	
+		
+		 /* .5 for the bottom margin */
+		.scoreboard[data-teams-count="1"]  {height: 2.5em;}
+		.scoreboard[data-teams-count="2"]  {height: 4.5em;}
+		.scoreboard[data-teams-count="3"]  {height: 6.5em;}
+		.scoreboard[data-teams-count="4"]  {height: 8.5em;}
+		.scoreboard[data-teams-count="5"]  {height: 10.5em;}
+		.scoreboard[data-teams-count="6"]  {height: 12.5em;}
+		.scoreboard[data-teams-count="7"]  {height: 14.5em;}
+		.scoreboard[data-teams-count="8"]  {height: 16.5em;}
+		.scoreboard[data-teams-count="9"]  {height: 18.5em;}
+		.scoreboard[data-teams-count="10"] {height: 20.5em;}
+		.scoreboard[data-teams-count="11"] {height: 22.5em;}
+		.scoreboard[data-teams-count="12"] {height: 24.5em;}
+		.scoreboard[data-teams-count="13"] {height: 26.5em;}
+		.scoreboard[data-teams-count="14"] {height: 28.5em;}
+		.scoreboard[data-teams-count="15"] {height: 30.5em;}
+		.scoreboard[data-teams-count="16"] {height: 32.5em;}
+		.scoreboard[data-teams-count="17"] {height: 34.5em;}
+		.scoreboard[data-teams-count="18"] {height: 36.5em;}
+		.scoreboard[data-teams-count="19"] {height: 38.5em;}
+		.scoreboard[data-teams-count="20"] {height: 40.5em;}
+		
 		.scoreboard .team[data-position="1"]  {top: 0em;}
 		.scoreboard .team[data-position="2"]  {top: 2em;}
 		.scoreboard .team[data-position="3"]  {top: 4em;}
@@ -324,13 +345,13 @@ body {
 		.scoreboard.hide .team[data-position="1"] {animation-delay: 150ms;}
 
 		@keyframes scoreboard-show-anim {
-			0%   {opacity: 0; transform: translateY(15px);}
-			100% {opacity: 1; transform: translateY(0);}
+			0%   {opacity: 0; transform: translate(-50%, 15px);}
+			100% {opacity: 1; transform: translate(-50%, 0);}
 		}
 
 		@keyframes scoreboard-hide-anim {
-			0%   {opacity: 1; transform: translateY(0);}
-			100% {opacity: 0; transform: translateY(15px);}
+			0%   {opacity: 1; transform: translate(-50%, 0);}
+			100% {opacity: 0; transform: translate(-50%, 15px);}
 		}
 	
 		.scoreboard .team .name,
@@ -368,12 +389,6 @@ body {
 			70%  {opacity: 1; transform: translateX(15px);}
 			100% {opacity: 0; transform: translateX(40px);}
 		}
-	
-	.scoreboard.large {
-		top: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
-	}
 
 .qr_helper {
 	position: absolute;

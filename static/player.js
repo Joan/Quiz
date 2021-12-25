@@ -556,6 +556,8 @@
 					.appendTo(scoreboard.$el);
 			}
 			
+			scoreboard.$el.attr('data-teams-count', teams.length)
+			
 			// Remove opacity when last animation is finished
 			scoreboard.$el.children().first().on('animationend.only-once', function() {
 				setTimeout(function() {scoreboard.$el.removeAttr('style');}, 1e3);
@@ -569,19 +571,11 @@
 		},
 		
 		hide: function() {
-			scoreboard.$el.addClass('hide').removeClass('show').removeClass('large');
+			scoreboard.$el.addClass('hide').removeClass('show');
 		},
 		
 		toggle: function() {
 			scoreboard[scoreboard.$el.hasClass('show') ? 'hide' : 'show']();
-		},
-		
-		toggle_large: function() {
-			var is_displayed = scoreboard.$el.hasClass('show');
-			
-			if (!is_displayed)
-				scoreboard.show();
-			scoreboard.$el.toggleClass('large');
 		},
 		
 		change_score: function(change_data) {
@@ -784,10 +778,6 @@
 				// S (toggle scoreboard)
 				case 83:
 					scoreboard.toggle();
-					break;
-				// L (toggle large version)
-				case 76:
-					scoreboard.toggle_large();
 					break;
 				
 				// Q (toggle QR Code)

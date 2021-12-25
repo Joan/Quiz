@@ -412,7 +412,6 @@
 				case 27: // Esc
 				case 65: // A
 				case 83: // S
-				case 76: // L
 				case 81: // Q
 					// Send to player
 					e.preventDefault();
