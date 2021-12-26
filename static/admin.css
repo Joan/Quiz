@@ -170,7 +170,11 @@ body {
 	.scores.edit_teams {
 		background-color: rgba(0, 112, 255, 0.3);
 	}
-
+	
+	.teams {
+		
+	}
+	
 	.team {
 		padding: 8px 20px 18px;
 		border-radius: 10px;
@@ -221,6 +225,10 @@ body {
 				-moz-appearance: textfield;
 			}
 			input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance: none; margin: 0;}
+			
+			.teams input:focus {
+				outline: 2px solid;
+			}
 
 		.team-actions,
 		.team_edit-color {
@@ -228,19 +236,24 @@ body {
 			overflow: hidden; /* clearfix */
 		}
 
+			.team-actions button,
+			.team_edit-color button,
+			.team_edit-color input {
+				padding: 0.15em 0.6em;
+				border: none;
+				border-radius: 4px;
+				background-color: #fff;
+			}
+		
 			.team-actions button {
 				float: right;
 				font-size: 1.4em;
-				background-color: #fff;
-				padding: 4px 16px;
-				border: none;
-				border-radius: 4px;
 			}
 
 			.team-actions button[data-inc^="-"] {float: left;}
 
 			.team-actions button:not(:first-child),
-			.team_edit-color button {margin-right: 25px;}
+			.team_edit-color button {margin-right: 1em;}
 		
 		.team_edit-infos {
 			
@@ -281,10 +294,6 @@ body {
 			.team_edit-color input {
 				float: left;
 				height: calc(1.96em + 8px); /* 1.4em * 1.4 line-height + 2*padding */
-				padding: 4px 15px;
-				background-color: #fff;
-				border: 0 none;
-				border-radius: 4px;
 			}
 			
 			.team_edit-color button {
@@ -304,6 +313,15 @@ body {
 				width: 3.5em;
 				box-shadow: none;
 			}
+		
+		.team_edit-add {
+			font-size: 1.3em;
+			padding: 0.1em 0.6em 0.2em;
+			border-radius: 5px;
+			color: #333;
+			border: 0 none;
+			background-color: #fff;
+		}
 
 	.scores-options {
 		display: flex;
@@ -442,10 +460,15 @@ body {
 
 @media (max-width: 800px) {
 
-	.team-infos {
+	.team-infos,
+	.team_edit-infos {
 		font-size: 1.4em;
 	}
-
+	
+	.team_edit-color {
+		font-size: 0.8em;
+	}
+	
 	.scores-options {
 		font-size: 1em;
 		margin-top: 50px;
@@ -469,7 +492,7 @@ body {
 
 @media (max-width: 700px) {
 
-	.team-actions button {
+	.team {
 		font-size: 1em;
 	}
 

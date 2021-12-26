@@ -30,6 +30,8 @@
 		current_riddle = null,
 		current_riddle_num = 0,
 		riddle_count = 0,
+		
+		teams_default_colors = ['#62b529', '#ed1d24', '#e8ae00', '#1782e1'],
 	
 	init = function() {
 		
@@ -73,13 +75,12 @@
 	},
 	
 	write_colors = function() {
-		
-		var html = '<style>';
+		$('#teams_colors').remove();
+		var html = '<style id="teams_colors">';
 		for (let i in teams)
 			html += '.team_color_' + i + '{color:' + teams[i].color + ';}';
 		html += '</style>';
 		$('body').append(html);
-		
 	};
 	
 	/*
@@ -92,33 +93,27 @@
 		init: function() {
 			
 			scoreboard.$el = $('.scores');
+			scoreboard.$teams = $('.teams');
 			
 			scoreboard.$team_template = $($('#team-template').html());
-			scoreboard.$options_template = $($('#options-template').html());
 			
-			scoreboard.create_teams();
 			scoreboard.scroll_to_active_team = true;
+			
+			for (let i in teams)
+				scoreboard.add_team(i);
+			
+			scoreboard.$el.find('.reset-button').on('click.scoreboard', scoreboard.reset_scores);
 			
 		},
 		
-		create_teams: function() {
-			
-			scoreboard.$el.html('');
-			
-			for (let i in teams) {
-				let $clone = scoreboard.$team_template.clone();
-				$clone.attr('id', 'team_' + i).addClass('team_color_' + i);
-				$clone.find('.team-name').text(teams[i].name);
-				$clone.find('input').on('change.scoreboard', scoreboard.input_change);
-				$clone.find('button').on('click.scoreboard', scoreboard.buttons_click);
-				$clone.find('[data-team]').attr('data-team', i);
-				$clone.appendTo(scoreboard.$el);
-			}
-			
-			scoreboard.$options_template
-				.appendTo(scoreboard.$el)
-				.find('.reset-button').on('click.scoreboard', scoreboard.reset_scores);
-			
+		add_team: function(team_id) {
+			let $clone = scoreboard.$team_template.clone();
+			$clone.attr('id', 'team_' + team_id).addClass('team_color_' + team_id);
+			$clone.find('.team-name').text(teams[team_id].name);
+			$clone.find('input').on('change.scoreboard', scoreboard.input_change);
+			$clone.find('button').on('click.scoreboard', scoreboard.buttons_click);
+			$clone.find('[data-team]').attr('data-team', team_id);
+			$clone.appendTo(scoreboard.$teams);
 		},
 		
 		input_change: function(e) {
@@ -139,7 +134,7 @@
 		},
 		
 		reset_scores: function() {
-			if (window.confirm("Remettre les scores à zéro ?"))
+			if (window.confirm('Remettre les scores à zéro ?'))
 				socket.emit('reset_scores');
 		},
 		
@@ -152,12 +147,12 @@
 				scores = scores_data;
 			
 			for (let i in scores)
-				scoreboard.$el.find('input[data-team="' + i + '"]').val(scores[i]);
+				scoreboard.$teams.find('input[data-team="' + i + '"]').val(scores[i]);
 		},
 		
 		change_buzzer: function(team_id) {
 			
-			scoreboard.$el.children('.current_buzzer').removeClass('current_buzzer');
+			scoreboard.$teams.children('.current_buzzer').removeClass('current_buzzer');
 			
 			if (team_id >= 0) {
 				
@@ -178,59 +173,120 @@
 			
 			init: function() {
 				
-				scoreboard.$team_edit_fields_template = $($('#team_edit_fields-template').html());
+				for (let i in teams)
+					scoreboard.edit_teams.add_edit_fields_to_team(i);
 				
-				for (let i in teams) {
-					// this has to go in a fn to fire it again when adding a team
-					let $team = scoreboard.$el.find('#team_' + i),
-						$clone = scoreboard.$team_edit_fields_template.clone();
-					$clone.find('.team_edit-name > input')
-						.val(teams[i].name)
-						.on('change.scoreboard', scoreboard.aaa);
-					$clone.find('.team_edit-delete > button').on('click.scoreboard', scoreboard.aaa);
-					$clone.filter('.team_edit-color').find('button')
-						.each(function() {
-							console.log($(this).attr('data-color'));
-							$(this).css('color', $(this).attr('data-color'));})
-						.on('click.scoreboard', scoreboard.aaa);
-					$clone.filter('.team_edit-color').find('input').on('click.scoreboard', scoreboard.aaa);
-					$clone.find('[data-team]').attr('data-team', i);
-					$clone.appendTo($team);
-					$team.find('.team-infos, .team-actions').hide();
-				}
-				
-				// Add team_edit-add as well
-				
-				// keyboard.$inputs = $('input'); // update all inputs
+				let $add_clone = $($('#team_edit_add-template').html()).clone();
+				$add_clone.find('button.team_edit-add').on('click.edit_teams', scoreboard.edit_teams.add);
+				$add_clone.insertAfter(scoreboard.$teams);
 				
 				scoreboard.edit_teams.initiated = true;
 				
 			},
 			
-			save: function() {
+			add_edit_fields_to_team: function(team_id) {
+				let $team = $('#team_' + team_id),
+					$clone = $($('#team_edit_fields-template').html()).clone(),
+					$edit_color = $clone.find('.team_edit-color'),
+					$color_button = $clone.find('.team_edit-color button');
+				$clone.find('.team_edit-name > input').val(teams[team_id].name);
+				$clone.find('.team_edit-delete > button').on('click.edit_teams', scoreboard.edit_teams.delete);
+				for (let j = 0, k = teams_default_colors.length; j < k; j++) {
+					let $color_button_target = j === 0 ? $color_button : $color_button.clone().appendTo($edit_color);
+					$color_button_target
+						.attr('data-color', teams_default_colors[j])
+						.css('color', teams_default_colors[j])
+						.on('click.edit_teams', scoreboard.edit_teams.change_color);
+				}
+				$clone.find('.team_edit-color input')
+					.appendTo($edit_color) // Putting it at the end
+					.on('input.edit_teams', scoreboard.edit_teams.change_color);
+				$clone.find('[data-team]').attr('data-team', team_id);
+				$team.find('.team-infos, .team-actions').hide();
+				$clone.appendTo($team);
+				keyboard.$inputs = $('input'); // Update all page inputs
+			},
+			
+			change_color: function(e) {
+				var team_id = e.target.getAttribute('data-team'),
+					color = e.target.getAttribute('data-color') || e.target.value;
+				$('#team_' + team_id).css('color', color);
+				teams[team_id].color = color;
+			},
+			
+			add: function() {
+				var next_keycode = 0,
+					random_default_color = teams_default_colors[Math.floor(Math.random() * teams_default_colors.length)];
 				
-				// pretify JSON when saving it server side
+				for (let i in teams)
+					next_keycode = next_keycode > teams[i].keycode ? next_keycode : teams[i].keycode + 1;
+				
+				var team_id = teams.push({
+					name: '',
+					color: random_default_color,
+					keycode: next_keycode,
+					keycode_name: String.fromCharCode(next_keycode)
+				}) - 1;
+				
+				scoreboard.add_team(team_id);
+				scoreboard.edit_teams.add_edit_fields_to_team(team_id);
+				write_colors();
+				socket.emit('team_added', teams[team_id]); // TODO: sendback score and send new team to other and manage team addition everywhere and add fields edit if initialized
+			},
+			
+			delete: function(e) {
+				var team_id = parseInt(e.target.getAttribute('data-team')),
+					team_name = teams[team_id].name || $('#team_' + team_id + ' .team_edit-name input').val(); // If we didn't updated the teams object yet
+				if (!window.confirm(('Supprimer l’équipe ' + team_name + ' ?').replace('  ', ' ')))
+					 return;
+				
+				teams.splice(team_id, 1);
+				$('#team_' + team_id).remove();
+				socket.emit('team_deleted', team_id); // TODO: sendback scores and send deletion to others and manage deletion everywhere (do ID update in player and buzzers as well)
+				
+				// Update IDs of next elements
+				for (let i = team_id+1, j = teams.length; i <= j; i++) {
+					let $i_team = $('#team_' + i);
+					console.log(i, $i_team);
+					$i_team
+						.attr('id', 'team_' + (i-1))
+						.removeClass('team_color_'+i).addClass('team_color_'+(i-1))
+						.find('[data-team]').attr('data-team', i-1);
+				}
+				write_colors();
 			},
 			
 			show: function() {
-			
 				if (!scoreboard.edit_teams.initiated)
 					scoreboard.edit_teams.init();
-				
 				scoreboard.$el.find('.team_edit').show();
 				scoreboard.$el.find('.team-infos, .team-actions').hide();
 				scoreboard.$el.addClass('edit_teams');
 				
 			},
 			
+			save: function() {
+				// Update names
+				for (let i in teams) {
+					let team_input_val = $('#team_' + i + ' .team_edit-name input').val()
+					if (team_input_val !== '')
+						teams[i].name = team_input_val;
+				}
+				
+				// Update teams color CSS
+				scoreboard.$teams.find('.team[style]').removeAttr('style');
+				write_colors();
+				
+				// Send everything
+				socket.emit('teams_data_changed', teams);
+				// TODO: pretify JSON when saving it server side
+			},
+			
 			hide: function() {
-				
-				// save teams here
-				
+				scoreboard.edit_teams.save();
 				scoreboard.$el.find('.team_edit').hide();
 				scoreboard.$el.find('.team-infos, .team-actions').show();
 				scoreboard.$el.removeClass('edit_teams');
-				
 			}
 			
 		}
@@ -332,14 +388,17 @@
 		
 		init: function() {
 			[
-				['buzzers_enabled', true],
-				['scroll_to_active_team', true],
-				['edit_teams', false],
+				['buzzers_enabled'],
+				['scroll_to_active_team'],
+				['edit_teams'],
 			].forEach(s => {
-				settings[s[0]] = s[1];
-				settings['$'+s[0]+'_label'] = $('#option-'+s[0]);
-				settings['$'+s[0]+'_input'] = $('#option-'+s[0]+'-input');
-				settings['$'+s[0]+'_input'].on('change.settings', settings['set_'+s[0]]);
+				settings['$'+s+'_label'] = $('#option-'+s);
+				settings['$'+s+'_input'] = $('#option-'+s+'-input');
+				settings[s] = settings['$'+s+'_input'][0].hasAttribute('checked'); // instead of `.checked` to prevent form conservation
+				settings['$'+s+'_input'].prop('checked', settings[s]); // Force defaut value
+				settings['$'+s+'_input']
+					.on('change.settings', settings['set_'+s])
+					.on('change.settings_blur', function() {$(this).blur()}); // prevent focus to stay on checkbox, disabling keyboard shortcuts
 			});
 		},
 		

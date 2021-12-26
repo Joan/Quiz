@@ -74,13 +74,12 @@
 	},
 	
 	write_colors = function() {
-		
-		var html = '<style>';
+		$('#teams_colors').remove();
+		var html = '<style id="teams_colors">';
 		for (let i in teams)
 			html += '.team_color_' + i + '{color:' + teams[i].color + ';}';
 		html += '</style>';
 		$body.append(html);
-		
 	};
 	
 	/*
