@@ -216,6 +216,10 @@ body {
 			.team_edit-delete {
 				width: 3em;
 			}
+			
+			.team input {
+				border-radius: 6px;
+			}
 		
 			.team-score input {
 				border: none;
@@ -267,7 +271,6 @@ body {
 					width: calc(100% + 8px);
 					background: none;
 					border: 2px solid;
-					border-radius: 6px;
 					padding: 0 6px;
 					margin-left: -8px;
 				}

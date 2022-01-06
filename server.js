@@ -38,23 +38,34 @@ app.get('/buzzers(/[0-9]+)?', function (req, res) {
 	res.sendFile(__dirname + views_dir + '/buzzers.html');
 });
 
-const rawdata = [
-	fs.readFileSync(__dirname + '/media/_data/quiz.json'),
-	fs.readFileSync(__dirname + '/media/_data/teams.json'),
-	fs.readFileSync(__dirname + '/media/_data/scores.json')
-];
+const files = {
+	quiz:   __dirname + '/media/_data/quiz.json',
+	teams:  __dirname + '/media/_data/teams.json',
+	scores: __dirname + '/media/_data/scores.json'
+},
+riddles = JSON.parse(fs.readFileSync(files.quiz)),
+teams   = JSON.parse(fs.readFileSync(files.teams)),
+scores  = JSON.parse(fs.readFileSync(files.scores));
 
-const riddles = JSON.parse(rawdata[0]),
-	teams = JSON.parse(rawdata[1]),
-	scores = JSON.parse(rawdata[2]);
+// Write scores and teams
+const save_teams = function() {
+	fs.writeFileSync(files.teams, JSON.stringify(teams));
+},
+save_scores = function() {
+	fs.writeFileSync(files.scores, JSON.stringify(scores));
+}
 
 // Check if scores match teams number (and fix)
-if (teams.length !== scores.length) {
-	var less_scores = teams.length > scores.length;
-	while (teams.length !== scores.length)
-		less_scores ? scores.push(0) : scores.pop();
-	fs.writeFileSync(__dirname + '/media/_data/scores.json', JSON.stringify(scores));
-}
+check_scores_consistency = function() {
+	if (teams.length !== scores.length) {
+		var less_scores = teams.length > scores.length;
+		while (teams.length !== scores.length)
+			less_scores ? scores.push(0) : scores.pop();
+		save_scores();
+	}
+};
+
+check_scores_consistency();
 
 var buzzers_enabled = true;
 
@@ -87,6 +98,12 @@ io.sockets.on('connection', function (socket) {
 	
 	/* Single score change (inc) and update */
 	
+	const update_scores = function() {
+		save_scores();
+		socket.emit('update_scores', scores);
+		socket.broadcast.emit('update_scores', scores);
+	};
+	
 	socket.on('change_score', function(data) {
 		
 		var team_id = data.team_id,
@@ -97,7 +114,7 @@ io.sockets.on('connection', function (socket) {
 		
 		scores[team_id] = parseInt(scores[team_id]) + parseInt(inc);
 		
-		save_scores();
+		update_scores();
 		socket.broadcast.emit('change_score', {team_id: team_id, inc: inc});
 		
 	});
@@ -107,7 +124,7 @@ io.sockets.on('connection', function (socket) {
 		for (let i in scores)
 			scores[i] = 0;
 		
-		save_scores();
+		update_scores();
 		
 	});
 	
@@ -121,18 +138,9 @@ io.sockets.on('connection', function (socket) {
 		
 		scores[team_id] = parseInt(score);
 		
-		save_scores();
+		update_scores();
 		
 	});
-	
-	var save_scores = function() {
-		
-		fs.writeFileSync(__dirname + '/media/_data/scores.json', JSON.stringify(scores));
-		
-		socket.emit('update_scores', scores);
-		socket.broadcast.emit('update_scores', scores);
-		
-	};
 	
 	/* Riddle change */
 	
@@ -148,26 +156,24 @@ io.sockets.on('connection', function (socket) {
 		socket.broadcast.emit('riddle_request_change', riddle_num);
 	});
 	
-	/* Buzzer change */
+	/* Buzzers */
 	
 	socket.on('change_buzzer', function(team_id) {
 		socket.broadcast.emit('change_buzzer', team_id);
 	});
 	
-	/* Buzzer trigger */
-	
 	socket.on('buzzer_press', function(team_keycode) {
 		socket.broadcast.emit('buzzer_press', team_keycode);
 	});
 	
-	/* Buzzer activation */
+	// Buzzer activation
 	
 	socket.on('set_buzzers_enabled', function(enabled) {
 		buzzers_enabled = enabled;
 		socket.broadcast.emit('set_buzzers_enabled', buzzers_enabled);
 	});
 	
-	/* Shortcut trigger in admin */
+	/* Shortcut triggers in admin */
 	
 	socket.on('shortcut_press', function(keycode) {
 		socket.broadcast.emit('shortcut_press', keycode);
@@ -181,6 +187,29 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('get_local_ip', function(callback) {
 		callback(ip.address(), port);
+	});
+	
+	/* Team edition */
+	
+	socket.on('team_edited', function(data) {
+		
+		
+		check_scores_consistency();
+		
+		fs.writeFileSync(__dirname + '/media/_data/teams.json', JSON.stringify(data, null, "\t"));
+		
+	});
+	
+	socket.on('team_deleted', function(data) {
+		
+		check_scores_consistency();
+		
+	});
+	
+	socket.on('team_added', function(data) {
+		
+		check_scores_consistency();
+		
 	});
 	
 });

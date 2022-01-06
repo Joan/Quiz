@@ -256,33 +256,35 @@
 				write_colors();
 			},
 			
-			show: function() {
-				if (!scoreboard.edit_teams.initiated)
-					scoreboard.edit_teams.init();
-				scoreboard.$el.find('.team_edit').show();
-				scoreboard.$el.find('.team-infos, .team-actions').hide();
-				scoreboard.$el.addClass('edit_teams');
-				
-			},
-			
 			save: function() {
-				// Update names
+				
+				// Get and update names
 				for (let i in teams) {
 					let team_input_val = $('#team_' + i + ' .team_edit-name input').val()
 					if (team_input_val !== '')
 						teams[i].name = team_input_val;
 				}
 				
-				// Update teams color CSS
+				// Get and update teams colors
 				scoreboard.$teams.find('.team[style]').removeAttr('style');
 				write_colors();
 				
 				// Send everything
-				socket.emit('teams_data_changed', teams);
-				// TODO: pretify JSON when saving it server side
+				if (scoreboard.edit_teams.serialized_teams !== JSON.stringify(teams)) // Send only if has changes
+					socket.emit('team_edited', teams);
 			},
 			
-			hide: function() {
+			start: function() {
+				if (!scoreboard.edit_teams.initiated)
+					scoreboard.edit_teams.init();
+				scoreboard.edit_teams.serialized_teams = JSON.stringify(teams);
+				scoreboard.$el.find('.team_edit').show();
+				scoreboard.$el.find('.team-infos, .team-actions').hide();
+				scoreboard.$el.addClass('edit_teams');
+				
+			},
+			
+			end: function() {
 				scoreboard.edit_teams.save();
 				scoreboard.$el.find('.team_edit').hide();
 				scoreboard.$el.find('.team-infos, .team-actions').show();
@@ -416,7 +418,7 @@
 		},
 		
 		set_edit_teams: function() {
-			scoreboard.edit_teams[settings.$edit_teams_input[0].checked ? 'show' : 'hide']();
+			scoreboard.edit_teams[settings.$edit_teams_input[0].checked ? 'start' : 'end']();
 		}
 		
 	};
