@@ -59,7 +59,6 @@
 			riddle_count = riddles.length;
 			
 			// Then initiate stuff
-			write_colors();
 			scoreboard.init();
 			riddleboard.init();
 			settings.init();
@@ -99,11 +98,17 @@
 			
 			scoreboard.scroll_to_active_team = true;
 			
-			for (let i in teams)
-				scoreboard.add_team(i);
+			scoreboard.update_teams();
 			
 			scoreboard.$el.find('.reset-button').on('click.scoreboard', scoreboard.reset_scores);
 			
+		},
+		
+		update_teams: function() {
+			scoreboard.$teams.children().remove();
+			for (let i in teams)
+				scoreboard.add_team(i);
+			write_colors();
 		},
 		
 		add_team: function(team_id) {
@@ -147,7 +152,7 @@
 				scores = scores_data;
 			
 			for (let i in scores)
-				scoreboard.$teams.find('input[data-team="' + i + '"]').val(scores[i]);
+				scoreboard.$teams.find('.team-score input[data-team="' + i + '"]').val(scores[i]);
 		},
 		
 		change_buzzer: function(team_id) {
@@ -231,38 +236,42 @@
 				scoreboard.add_team(team_id);
 				scoreboard.edit_teams.add_edit_fields_to_team(team_id);
 				write_colors();
-				socket.emit('team_added', teams[team_id]); // TODO: sendback score and send new team to other and manage team addition everywhere and add fields edit if initialized
+				socket.emit('team_added', teams[team_id]);
+				
 			},
 			
 			delete: function(e) {
 				var team_id = parseInt(e.target.getAttribute('data-team')),
 					team_name = teams[team_id].name || $('#team_' + team_id + ' .team_edit-name input').val(); // If we didn't updated the teams object yet
+				
 				if (!window.confirm(('Supprimer l’équipe ' + team_name + ' ?').replace('  ', ' ')))
 					 return;
 				
 				teams.splice(team_id, 1);
 				$('#team_' + team_id).remove();
-				socket.emit('team_deleted', team_id); // TODO: sendback scores and send deletion to others and manage deletion everywhere (do ID update in player and buzzers as well)
 				
 				// Update IDs of next elements
 				for (let i = team_id+1, j = teams.length; i <= j; i++) {
 					let $i_team = $('#team_' + i);
-					console.log(i, $i_team);
 					$i_team
 						.attr('id', 'team_' + (i-1))
 						.removeClass('team_color_'+i).addClass('team_color_'+(i-1))
 						.find('[data-team]').attr('data-team', i-1);
 				}
 				write_colors();
+				
+				socket.emit('team_deleted', team_id);
+				
 			},
 			
 			save: function() {
-				
 				// Get and update names
 				for (let i in teams) {
 					let team_input_val = $('#team_' + i + ' .team_edit-name input').val()
-					if (team_input_val !== '')
+					if (team_input_val !== '') {
 						teams[i].name = team_input_val;
+						$('#team_' + i + ' .team-name').text(team_input_val)
+					}
 				}
 				
 				// Get and update teams colors
@@ -284,8 +293,9 @@
 				
 			},
 			
-			end: function() {
-				scoreboard.edit_teams.save();
+			end: function(abort) {
+				if (!abort)
+					scoreboard.edit_teams.save();
 				scoreboard.$el.find('.team_edit').hide();
 				scoreboard.$el.find('.team-infos, .team-actions').show();
 				scoreboard.$el.removeClass('edit_teams');
@@ -301,6 +311,13 @@
 	
 	socket.on('change_buzzer', function(data) {
 		scoreboard.change_buzzer(data);
+	});
+	
+	socket.on('update_teams', function(team_data) {
+		if (scoreboard.edit_teams.initiated)
+			scoreboard.edit_teams.end(true);
+		teams = data;
+		scoreboard.update_teams();
 	});
 	
 	/*

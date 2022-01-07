@@ -71,7 +71,6 @@
 			riddle_count = riddles.length;
 			
 			// Then initiate stuff
-			write_colors();
 			scoreboard.init();
 			buzzer.init(); // buzzer can take over on player so initiated first
 			player.init();
@@ -542,25 +541,47 @@
 			
 			scoreboard.$el = $('.scoreboard');
 			
-			// Hide for real and launch the first hide animation
-			scoreboard.$el.css('opacity', 0);
-			setTimeout(scoreboard.hide, 1);
 			
-			for (let i in teams) {
-				$('<li class="team"/>')
-					.attr('id', 'team_' + i)
-					.addClass('team_color_' + i)
-					.attr('data-position', i)
-					.html('<span class="name">' + teams[i].name + '</span><span class="score"></span>')
-					.appendTo(scoreboard.$el);
+			
+			scoreboard.update_teams();
+			
+			
+		},
+		
+		update_teams: function() {
+			
+			if (!scoreboard.$el.hasClass('show')) {
+				// Hide for real and launch the first hide animation
+				scoreboard.$el.css('opacity', 0);
+				setTimeout(scoreboard.hide, 1);
 			}
 			
-			scoreboard.$el.attr('data-teams-count', teams.length)
+			write_colors();
+			scoreboard.$el.attr('data-teams-count', teams.length);
+			
+			var $unprocessed_teams = scoreboard.$el.children();
+			
+			for (let i in teams) {
+				let $team = $('#team_' + i);
+				if ($team.length <= 0)
+					$team = $('<li class="team"/>')
+						.attr('id', 'team_' + i)
+						.addClass('team_color_' + i)
+						.attr('data-position', i)
+						.appendTo(scoreboard.$el);
+				
+				$team.html('<span class="name">' + teams[i].name + '</span><span class="score"></span>');
+				
+				$unprocessed_teams = $unprocessed_teams.not($team);
+				
+			}
+			
+			$unprocessed_teams.remove();
 			
 			// Remove opacity when last animation is finished
-			scoreboard.$el.children().first().on('animationend.only-once', function() {
+			scoreboard.$el.children().first().on('animationend.update_teams', function() {
 				setTimeout(function() {scoreboard.$el.removeAttr('style');}, 1e3);
-				$(this).off('animationend.only-once');
+				$(this).off('animationend.update_teams');
 			});
 			
 		},
@@ -622,6 +643,11 @@
 	
 	socket.on('change_score', function(data) {
 		scoreboard.change_score(data);
+	});
+	
+	socket.on('update_teams', function(team_data) {
+		teams = team_data;
+		scoreboard.update_teams();
 	});
 	
 	/*
@@ -783,6 +809,9 @@
 				case 81:
 					qr_helper.toggle();
 					break;
+				
+				// W (TEST)
+				case 87: scoreboard.update_teams(); scoreboard.update_scores(); break;
 				
 				default: // else, check for a team buzzer key
 					buzzer.key_buzz(keycode);

@@ -159,6 +159,10 @@
 		
 	});
 	
+	socket.on('update_teams', function() {
+		window.location.href = '/buzzers';
+	});
+	
 	/* That's all Folks! */
 	
 })(this, this.document);

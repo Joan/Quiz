@@ -42,14 +42,14 @@ const files = {
 	quiz:   __dirname + '/media/_data/quiz.json',
 	teams:  __dirname + '/media/_data/teams.json',
 	scores: __dirname + '/media/_data/scores.json'
-},
-riddles = JSON.parse(fs.readFileSync(files.quiz)),
-teams   = JSON.parse(fs.readFileSync(files.teams)),
-scores  = JSON.parse(fs.readFileSync(files.scores));
+};
+var riddles = JSON.parse(fs.readFileSync(files.quiz)),
+	teams   = JSON.parse(fs.readFileSync(files.teams)),
+	scores  = JSON.parse(fs.readFileSync(files.scores));
 
 // Write scores and teams
 const save_teams = function() {
-	fs.writeFileSync(files.teams, JSON.stringify(teams));
+	fs.writeFileSync(files.teams, JSON.stringify(teams, null, "\t"));
 },
 save_scores = function() {
 	fs.writeFileSync(files.scores, JSON.stringify(scores));
@@ -191,24 +191,38 @@ io.sockets.on('connection', function (socket) {
 	
 	/* Team edition */
 	
-	socket.on('team_edited', function(data) {
+	socket.on('team_added', function(team_data) {
 		
-		
+		teams.push(team_data);
+		scores.push(0);
 		check_scores_consistency();
-		
-		fs.writeFileSync(__dirname + '/media/_data/teams.json', JSON.stringify(data, null, "\t"));
+
+		save_teams();
+		socket.broadcast.emit('update_teams', teams);
+		update_scores();
 		
 	});
 	
-	socket.on('team_deleted', function(data) {
+	socket.on('team_deleted', function(team_id) {
 		
+		teams.splice(team_id, 1);
+		scores.splice(team_id, 1);
 		check_scores_consistency();
+
+		save_teams();
+		socket.broadcast.emit('update_teams', teams);
+		update_scores();
 		
 	});
 	
-	socket.on('team_added', function(data) {
+	socket.on('team_edited', function(teams_data) {
 		
+		teams = teams_data;
 		check_scores_consistency();
+		
+		save_teams();
+		socket.broadcast.emit('update_teams', teams);
+		update_scores();
 		
 	});
 	
