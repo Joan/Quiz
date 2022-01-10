@@ -71,8 +71,8 @@
 			riddle_count = riddles.length;
 			
 			// Then initiate stuff
-			scoreboard.init();
 			buzzer.init(); // buzzer can take over on player so initiated first
+			scoreboard.init();
 			player.init();
 			qr_helper.init();
 			keyboard.init();
@@ -561,11 +561,7 @@
 		init: function() {
 			
 			scoreboard.$el = $('.scoreboard');
-			
-			
-			
 			scoreboard.update_teams();
-			
 			
 		},
 		
@@ -599,6 +595,7 @@
 			}
 			
 			$unprocessed_teams.remove();
+			buzzer.empty_queue();
 			
 			// Remove opacity when last animation is finished
 			scoreboard.$el.children().first().on('animationend.update_teams', function() {

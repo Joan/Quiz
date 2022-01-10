@@ -177,21 +177,26 @@
 		edit_teams: {
 			initiated: false,
 			
-			init: function() {
-				
-				for (let i in teams)
-					scoreboard.edit_teams.add_edit_fields_to_team(i);
-				
-				let $add_clone = $($('#team_edit_add-template').html()).clone();
-				$add_clone.find('button.team_edit-add').on('click.edit_teams', scoreboard.edit_teams.add);
-				$add_clone.insertAfter(scoreboard.$teams);
+			start: function() {
 				
 				scoreboard.edit_teams.initiated = true;
 				
+				// Check if each team has fields
+				for (let i in teams) {
+					if (!$('#team_' + i).hasClass('--js-edit_ready'))
+						scoreboard.edit_teams.add_edit_fields_to_team(i);
+				}
+				
+				// Be sure to bind event on this button
+				scoreboard.$el.find('button.team_edit-add').off('click.edit_teams').on('click.edit_teams', scoreboard.edit_teams.add);
+				
+				scoreboard.edit_teams.serialized_teams = JSON.stringify(teams);
+				scoreboard.$el.addClass('--js-edit_teams');
+				settings.set_option_input('edit_teams', true);
 			},
 			
 			add_edit_fields_to_team: function(team_id) {
-				let $team = $('#team_' + team_id),
+				var $team = $('#team_' + team_id),
 					$clone = $($('#team_edit_fields-template').html()).clone(),
 					$edit_color = $clone.find('.team_edit-color'),
 					$color_button = $clone.find('.team_edit-color button');
@@ -208,8 +213,8 @@
 					.appendTo($edit_color) // Putting it at the end
 					.on('input.edit_teams', scoreboard.edit_teams.change_color);
 				$clone.find('[data-team]').attr('data-team', team_id);
-				$team.find('.team-infos, .team-actions').hide();
 				$clone.appendTo($team);
+				$team.addClass('--js-edit_ready');
 				keyboard.$inputs = $('input'); // Update all page inputs
 			},
 			
@@ -238,7 +243,6 @@
 				scoreboard.edit_teams.add_edit_fields_to_team(team_id);
 				update_css_colors();
 				socket.emit('team_added', teams[team_id]);
-				
 			},
 			
 			delete: function(e) {
@@ -262,7 +266,6 @@
 				update_css_colors();
 				
 				socket.emit('team_deleted', team_id);
-				
 			},
 			
 			save: function() {
@@ -284,22 +287,11 @@
 					socket.emit('team_edited', teams);
 			},
 			
-			start: function() {
-				if (!scoreboard.edit_teams.initiated)
-					scoreboard.edit_teams.init();
-				scoreboard.edit_teams.serialized_teams = JSON.stringify(teams);
-				scoreboard.$el.find('.team_edit').show();
-				scoreboard.$el.find('.team-infos, .team-actions').hide();
-				scoreboard.$el.addClass('edit_teams');
-				
-			},
-			
 			end: function(abort) {
 				if (!abort)
 					scoreboard.edit_teams.save();
-				scoreboard.$el.find('.team_edit').hide();
-				scoreboard.$el.find('.team-infos, .team-actions').show();
-				scoreboard.$el.removeClass('edit_teams');
+				scoreboard.$el.removeClass('--js-edit_teams');
+				settings.set_option_input('edit_teams', false);
 			}
 			
 		}
@@ -317,7 +309,7 @@
 	socket.on('update_teams', function(team_data) {
 		if (scoreboard.edit_teams.initiated)
 			scoreboard.edit_teams.end(true);
-		teams = data;
+		teams = team_data;
 		scoreboard.update_teams();
 	});
 	
@@ -417,26 +409,34 @@
 				settings[s] = settings['$'+s+'_input'][0].hasAttribute('checked'); // instead of `.checked` to prevent form conservation
 				settings['$'+s+'_input'].prop('checked', settings[s]); // Force defaut value
 				settings['$'+s+'_input']
-					.on('change.settings', settings['set_'+s])
+					.on('change.settings', settings['change_'+s])
 					.on('change.settings_blur', function() {$(this).blur()}); // prevent focus to stay on checkbox, disabling keyboard shortcuts
 			});
 		},
 		
-		set_buzzers_enabled: function() {
+		set_option_input: function(option_name, value) {
+			settings['$'+option_name+'_input'].prop('checked', value);
+		},
+		
+		// Generic functions
+		
+		change_buzzers_enabled: function() {
 			socket.emit('set_buzzers_enabled', settings.$buzzers_enabled_input[0].checked);
 		},
+		
+		change_scroll_to_active_team: function() {
+			scoreboard.scroll_to_active_team = settings.$scroll_to_active_team_input[0].checked;
+		},
+		
+		change_edit_teams: function() {
+			scoreboard.edit_teams[settings.$edit_teams_input[0].checked ? 'start' : 'end']();
+		},
+		
+		// Specific functions
 		
 		toggle_buzzers_enabled: function() {
 			settings.$buzzers_enabled_input[0].checked = !settings.$buzzers_enabled_input[0].checked;
 			settings.set_buzzers_enabled();
-		},
-		
-		set_scroll_to_active_team: function() {
-			scoreboard.scroll_to_active_team = settings.$scroll_to_active_team_input[0].checked;
-		},
-		
-		set_edit_teams: function() {
-			scoreboard.edit_teams[settings.$edit_teams_input[0].checked ? 'start' : 'end']();
 		}
 		
 	};
