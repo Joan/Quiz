@@ -164,8 +164,17 @@ body {
 
 .scores {
 	padding: 20px;
+	transition: background-color .3s;
 }
 
+	.scores.edit_teams {
+		background-color: rgba(0, 112, 255, 0.3);
+	}
+	
+	.teams {
+		
+	}
+	
 	.team {
 		padding: 8px 20px 18px;
 		border-radius: 10px;
@@ -179,66 +188,161 @@ body {
 			box-shadow: 0 0 0 6px #fff;
 		}
 
-	.team-infos {
-		display: flex;
-		width: 100%;
-		color: #fff;
-		font-size: 2.4em;
-	}
-
-	.team-name {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-	
-	.team-name {
-		flex-grow: 1;
-		padding-right: 10px;
-	}
-
-	.team-score {
-		flex: 0 0 auto;
-	}
-	
-		.team-score input {
-			border: none;
-			padding: 0;
-			background-color: transparent;
-			text-align: right;
-			width: 4em;
-			-moz-appearance: textfield;
+		.team-infos,
+		.team_edit-infos {
+			display: flex;
+			width: 100%;
+			color: #fff;
+			font-size: 2.4em;
 		}
-		input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance: none; margin: 0;}
 
-	.team-actions {
-		margin-top: 15px;
-		overflow: hidden; /* clearfix */
-	}
+		.team-name {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		
+		.team-name {
+			flex-grow: 1;
+			padding-right: 10px;
+		}
 
-		.team-actions button {
-			float: right;
-			font-size: 1.4em;
+		.team-score,
+		.team_edit-delete {
+			flex-shrink: 0;
+		}
+		
+			.team-score input,
+			.team_edit-delete {
+				width: 3em;
+			}
+			
+			.team input {
+				border-radius: 6px;
+			}
+		
+			.team-score input {
+				border: none;
+				padding: 0;
+				background-color: transparent;
+				text-align: right;
+				-moz-appearance: textfield;
+			}
+			input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance: none; margin: 0;}
+			
+			.teams input:focus {
+				outline: 2px solid;
+			}
+
+		.team-actions,
+		.team_edit-color {
+			margin-top: 15px;
+			overflow: hidden; /* clearfix */
+		}
+
+			.team-actions button,
+			.team_edit-color button,
+			.team_edit-color input {
+				padding: 0.15em 0.6em;
+				border: none;
+				border-radius: 4px;
+				background-color: #fff;
+			}
+		
+			.team-actions button {
+				float: right;
+				font-size: 1.4em;
+			}
+
+			.team-actions button[data-inc^="-"] {float: left;}
+
+			.team-actions button:not(:first-child),
+			.team_edit-color button {margin-right: 1em;}
+		
+.scores:not(.--js-edit_teams) .team_edit,
+.scores.--js-edit_teams .team-infos,
+.scores.--js-edit_teams .team-actions {display: none;}
+		
+		.team_edit-infos {
+			
+		}
+		
+			.team_edit-name {
+				
+			}
+			
+				.team_edit-name input {
+					width: calc(100% + 8px);
+					background: none;
+					border: 2px solid;
+					padding: 0 6px;
+					margin-left: -8px;
+				}
+			
+			.team_edit-delete {
+				text-align: right;
+			}
+			
+				.team_edit-delete button {
+					width: 1em;
+					height: 1em;
+					vertical-align: middle;
+					padding: 0;
+					border: 0 none;
+					background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3e%3cg transform='rotate(45 10 10)'%3e%3crect id='r' x='8' y='-2' width='4' height='24' rx='1' fill='white'/%3e%3cuse href='%23r' transform='rotate(90 10 10)'/%3e%3c/g%3e%3c/svg%3e") no-repeat center/60%;
+					
+				}
+		
+		.team_edit-color {
+			
+		}
+		
+			.team_edit-color button,
+			.team_edit-color input {
+				float: left;
+				height: calc(1.96em + 8px); /* 1.4em * 1.4 line-height + 2*padding */
+			}
+			
+			.team_edit-color button {
+				
+			}
+			
+				.team_edit-color button::after {
+					content: "";
+					display: block;
+					background-color: currentColor;
+					width: 1.4em;
+					height: 1.4em;
+					border-radius: 1em;
+				}
+			
+			.team_edit-color input {
+				width: 3.5em;
+				box-shadow: none;
+			}
+		
+		.team_edit-add {
+			font-size: 1.3em;
+			padding: 0.1em 0.6em 0.2em;
+			border-radius: 5px;
+			color: #333;
+			border: 0 none;
 			background-color: #fff;
-			padding: 4px 16px;
-			border: none;
-			border-radius: 4px;
 		}
-
-		.team-actions button[data-inc^="-"] {float: left;}
-
-		.team-actions button:not(:first-child) {margin-right: 25px;}
 
 	.scores-options {
 		display: flex;
 		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.5em 1em;
 		font-size: 1.2em;
 		margin-top: 100px;
 	}
 
 		.reset-button {
-			background: no-repeat;
+			background: none;
 			border: none;
+			padding: 0;
 		}
 
 /* 
@@ -363,10 +467,15 @@ body {
 
 @media (max-width: 800px) {
 
-	.team-infos {
+	.team-infos,
+	.team_edit-infos {
 		font-size: 1.4em;
 	}
-
+	
+	.team_edit-color {
+		font-size: 0.8em;
+	}
+	
 	.scores-options {
 		font-size: 1em;
 		margin-top: 50px;
@@ -390,7 +499,7 @@ body {
 
 @media (max-width: 700px) {
 
-	.team-actions button {
+	.team {
 		font-size: 1em;
 	}
 

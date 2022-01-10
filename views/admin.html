@@ -11,7 +11,26 @@
 </head>
 <body>
 	
-	<ul class="scores"></ul>
+	<div class="scores">
+		
+		<ul class="teams"></ul>
+		
+		<div class="team_edit"><button class="team_edit-add">Ajouter une équipe</button></div>
+		
+		<div class="scores-options">
+			<button class="reset-button">Remise à zéro…</button>
+			<label class="setting" id="option-scroll_to_active_team">
+				<input type="checkbox" id="option-scroll_to_active_team-input" checked>
+				<span class="setting-switch"></span>
+				<span class="setting-label">Défiler à l’équipe active</span>
+			</label>
+			<label class="setting" id="option-edit_teams">
+				<input type="checkbox" id="option-edit_teams-input">
+				<span class="setting-switch"></span>
+				<span class="setting-label">Modifier les équipes</span>
+			</label>
+		</div>
+	</div>
 	
 	<template id="team-template">
 		<li class="team" id="">
@@ -27,15 +46,17 @@
 		</li>
 	</template>
 	
-	<template id="options-template">
-		<li class="scores-options">
-			<button class="reset-button">Remise à zéro…</button>
-			<label class="setting" id="option-scroll_to_active_team">
-				<input type="checkbox" id="option-scroll_to_active_team-input" checked>
-				<span class="setting-switch"></span>
-				<span class="setting-label">Défiler à l’équipe active</span>
-			</label>
-		</li>
+	<template id="team_edit_fields-template">
+		<div class="team_edit">
+			<div class="team_edit-infos">
+				<div class="team_edit-name"><input data-team="" type="text" placeholder="Nom de l’équipe"></div>
+				<div class="team_edit-delete"><button data-team=""></button></div>
+			</div>
+			<div class="team_edit-color">
+				<button data-team="" data-color=""></button>
+				<input data-team="" type="color">
+			</div>
+		</div>
 	</template>
 	
 	<div class="riddles_pane">
@@ -58,7 +79,7 @@
 			<li class="helper-entry"><kbd class="--no_space">←</kbd> / <kbd>→</kbd> Quiz précédent / suivant rapidement et lecture</li>
 			<li class="helper-entry"><kbd>esc</kbd> Vider la liste des buzzers</li>
 			<li class="helper-entry" data-applies-to="image"><kbd>A</kbd> Afficher l'image réponse</li>
-			<li class="helper-entry"><kbd>S</kbd> Afficher les scores (agrandir : <kbd class="--no_space">L</kbd> )</li>
+			<li class="helper-entry"><kbd>S</kbd> Afficher les scores</li>
 			<li class="helper-entry"><kbd>Q</kbd> Afficher le QR code (buzzers tactiles)</li>
 		</ul>
 		
@@ -74,8 +95,6 @@
 		</div>
 		
 	</div>
-	
-	<style>.team_color_0{color:#62b529;}.team_color_1{color:#ed1d24;}.team_color_2{color:#e8ae00;}.team_color_3{color:#1782e1;}</style>
 	
 	<script src="/static/jquery.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>

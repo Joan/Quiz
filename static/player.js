@@ -71,9 +71,8 @@
 			riddle_count = riddles.length;
 			
 			// Then initiate stuff
-			write_colors();
-			scoreboard.init();
 			buzzer.init(); // buzzer can take over on player so initiated first
+			scoreboard.init();
 			player.init();
 			qr_helper.init();
 			keyboard.init();
@@ -85,16 +84,36 @@
 			throw error;
 		});
 		
+	};
+	
+	/* Specific CSS styles */
+	
+	const update_css_colors = function() {
+		$('#teams_colors').remove();
+		var css = '';
+		for (let i in teams)
+			css += '.team_color_' + i + '{color:' + teams[i].color + ';}';
+		$('body').append('<style id="teams_colors">' + css + '</style>');
 	},
 	
-	write_colors = function() {
+	update_css_misc = function() {
+		$('#teams_misc').remove();
+		var css = '',
+			l = teams.length;
 		
-		var html = '<style>';
-		for (let i in teams)
-			html += '.team_color_' + i + '{color:' + teams[i].color + ';}';
-		html += '</style>';
-		$body.append(html);
+		// Buzzers position
+		for (let i = 1; i <= l; i++)
+			css += `.buzzer:nth-child(${i}){left: ${i!==1 ? (i*10+5)+'vh' : '0'};}`;
+		// Scoreboard height (.5 for the bottom margin)
+		css += `.scoreboard{height: ${l*2+.5}em;}`;
+		// Scoreboard teams position
+		for (let i = 1; i <= l; i++)
+			css += `.scoreboard .team[data-position="${i}"]{top: ${(i-1)*2}em;}`;
+		// Scoreboard teams apparition
+		for (let i = 1; i <= l; i++)
+			css += `.scoreboard.show .team[data-position="${i}"],.scoreboard.hide .team[data-position="${l+1-i}"] {animation-delay: ${(i-1)*50}ms;}`;
 		
+		$('body').append('<style id="teams_misc">' + css + '</style>');
 	};
 	
 	/*
@@ -542,24 +561,46 @@
 		init: function() {
 			
 			scoreboard.$el = $('.scoreboard');
+			scoreboard.update_teams();
 			
-			// Hide for real and launch the first hide animation
-			scoreboard.$el.css('opacity', 0);
-			setTimeout(scoreboard.hide, 1);
+		},
+		
+		update_teams: function() {
 			
-			for (let i in teams) {
-				$('<li class="team"/>')
-					.attr('id', 'team_' + i)
-					.addClass('team_color_' + i)
-					.attr('data-position', i)
-					.html('<span class="name">' + teams[i].name + '</span><span class="score"></span>')
-					.appendTo(scoreboard.$el);
+			if (!scoreboard.$el.hasClass('show')) {
+				// Hide for real and launch the first hide animation
+				scoreboard.$el.css('opacity', 0);
+				setTimeout(scoreboard.hide, 1);
 			}
 			
+			update_css_colors();
+			update_css_misc();
+			scoreboard.$el.attr('data-teams-count', teams.length);
+			
+			var $unprocessed_teams = scoreboard.$el.children();
+			
+			for (let i in teams) {
+				let $team = $('#team_' + i);
+				if ($team.length <= 0)
+					$team = $('<li class="team"/>')
+						.attr('id', 'team_' + i)
+						.addClass('team_color_' + i)
+						.attr('data-position', i)
+						.appendTo(scoreboard.$el);
+				
+				$team.html('<span class="name">' + teams[i].name + '</span><span class="score"></span>');
+				
+				$unprocessed_teams = $unprocessed_teams.not($team);
+				
+			}
+			
+			$unprocessed_teams.remove();
+			buzzer.empty_queue();
+			
 			// Remove opacity when last animation is finished
-			scoreboard.$el.children().first().on('animationend.only-once', function() {
+			scoreboard.$el.children().first().on('animationend.update_teams', function() {
 				setTimeout(function() {scoreboard.$el.removeAttr('style');}, 1e3);
-				$(this).off('animationend.only-once');
+				$(this).off('animationend.update_teams');
 			});
 			
 		},
@@ -569,19 +610,11 @@
 		},
 		
 		hide: function() {
-			scoreboard.$el.addClass('hide').removeClass('show').removeClass('large');
+			scoreboard.$el.addClass('hide').removeClass('show');
 		},
 		
 		toggle: function() {
 			scoreboard[scoreboard.$el.hasClass('show') ? 'hide' : 'show']();
-		},
-		
-		toggle_large: function() {
-			var is_displayed = scoreboard.$el.hasClass('show');
-			
-			if (!is_displayed)
-				scoreboard.show();
-			scoreboard.$el.toggleClass('large');
 		},
 		
 		change_score: function(change_data) {
@@ -629,6 +662,11 @@
 	
 	socket.on('change_score', function(data) {
 		scoreboard.change_score(data);
+	});
+	
+	socket.on('update_teams', function(team_data) {
+		teams = team_data;
+		scoreboard.update_teams();
 	});
 	
 	/*
@@ -785,15 +823,14 @@
 				case 83:
 					scoreboard.toggle();
 					break;
-				// L (toggle large version)
-				case 76:
-					scoreboard.toggle_large();
-					break;
 				
 				// Q (toggle QR Code)
 				case 81:
 					qr_helper.toggle();
 					break;
+				
+				// W (TEST)
+				case 87: scoreboard.update_teams(); scoreboard.update_scores(); break;
 				
 				default: // else, check for a team buzzer key
 					buzzer.key_buzz(keycode);
