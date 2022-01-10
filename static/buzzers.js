@@ -23,9 +23,9 @@
 	const socket = io();
 	
 	var teams,
-		team,
+		team;
 	
-	init = function() {
+	const init = function() {
 		
 		// Retrieve data
 		
@@ -48,7 +48,7 @@
 			console.info('All data retrieved');
 			
 			// Then initiate stuff
-			write_colors();
+			update_css_colors();
 			
 			team = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/')[1];
 			
@@ -73,13 +73,14 @@
 		
 	},
 	
-	write_colors = function() {
+	/* Specific CSS styles */
+	
+	update_css_colors = function() {
 		$('#teams_colors').remove();
-		var html = '<style id="teams_colors">';
+		var css = '';
 		for (let i in teams)
-			html += '.team_color_' + i + '{color:' + teams[i].color + ';}';
-		html += '</style>';
-		$body.append(html);
+			css += '.team_color_' + i + '{color:' + teams[i].color + ';}';
+		$('body').append('<style id="teams_colors">' + css + '</style>');
 	};
 	
 	/*

@@ -236,28 +236,6 @@ body {
 			0%   {box-shadow: 0 0 15px 5px currentColor;}
 			100% {box-shadow: 0 0 20px 10px currentColor;}
 		}
-	
-	.buzzer:nth-child(1)  {left: 0;}
-	.buzzer:nth-child(2)  {left: 25vh;}
-	.buzzer:nth-child(3)  {left: 35vh;}
-	.buzzer:nth-child(4)  {left: 45vh;}
-	.buzzer:nth-child(5)  {left: 55vh;}
-	.buzzer:nth-child(6)  {left: 65vh;}
-	.buzzer:nth-child(7)  {left: 75vh;}
-	.buzzer:nth-child(8)  {left: 85vh;}
-	.buzzer:nth-child(9)  {left: 95vh;}
-	.buzzer:nth-child(10) {left: 105vh;}
-	.buzzer:nth-child(11) {left: 115vh;}
-	.buzzer:nth-child(12) {left: 125vh;}
-	.buzzer:nth-child(13) {left: 135vh;}
-	.buzzer:nth-child(14) {left: 145vh;}
-	.buzzer:nth-child(15) {left: 155vh;}
-	.buzzer:nth-child(16) {left: 165vh;}
-	.buzzer:nth-child(17) {left: 175vh;}
-	.buzzer:nth-child(18) {left: 185vh;}
-	.buzzer:nth-child(19) {left: 195vh;}
-	.buzzer:nth-child(20) {left: 205vh;}
-	.buzzer:nth-child(n+21) {left: 215vh; opacity: 0;}
 
 .scoreboard {
 	position: absolute;
@@ -287,62 +265,9 @@ body {
 	}
 
 		.scoreboard:not(.show):not(.hide) .team,
-		.scoreboard.show .team {opacity: 0;}
+		.scoreboard.show .team {opacity: 0; animation-delay: 200ms;}
 		.scoreboard.show .team {animation: scoreboard-show-anim .4s 1 forwards;}
 		.scoreboard.hide .team {animation: scoreboard-hide-anim .4s 1 forwards;}
-		
-		 /* .5 for the bottom margin */
-		.scoreboard[data-teams-count="1"]  {height: 2.5em;}
-		.scoreboard[data-teams-count="2"]  {height: 4.5em;}
-		.scoreboard[data-teams-count="3"]  {height: 6.5em;}
-		.scoreboard[data-teams-count="4"]  {height: 8.5em;}
-		.scoreboard[data-teams-count="5"]  {height: 10.5em;}
-		.scoreboard[data-teams-count="6"]  {height: 12.5em;}
-		.scoreboard[data-teams-count="7"]  {height: 14.5em;}
-		.scoreboard[data-teams-count="8"]  {height: 16.5em;}
-		.scoreboard[data-teams-count="9"]  {height: 18.5em;}
-		.scoreboard[data-teams-count="10"] {height: 20.5em;}
-		.scoreboard[data-teams-count="11"] {height: 22.5em;}
-		.scoreboard[data-teams-count="12"] {height: 24.5em;}
-		.scoreboard[data-teams-count="13"] {height: 26.5em;}
-		.scoreboard[data-teams-count="14"] {height: 28.5em;}
-		.scoreboard[data-teams-count="15"] {height: 30.5em;}
-		.scoreboard[data-teams-count="16"] {height: 32.5em;}
-		.scoreboard[data-teams-count="17"] {height: 34.5em;}
-		.scoreboard[data-teams-count="18"] {height: 36.5em;}
-		.scoreboard[data-teams-count="19"] {height: 38.5em;}
-		.scoreboard[data-teams-count="20"] {height: 40.5em;}
-		
-		.scoreboard .team[data-position="1"]  {top: 0em;}
-		.scoreboard .team[data-position="2"]  {top: 2em;}
-		.scoreboard .team[data-position="3"]  {top: 4em;}
-		.scoreboard .team[data-position="4"]  {top: 6em;}
-		.scoreboard .team[data-position="5"]  {top: 8em;}
-		.scoreboard .team[data-position="6"]  {top: 10em;}
-		.scoreboard .team[data-position="7"]  {top: 12em;}
-		.scoreboard .team[data-position="8"]  {top: 14em;}
-		.scoreboard .team[data-position="9"]  {top: 16em;}
-		.scoreboard .team[data-position="10"] {top: 18em;}
-		.scoreboard .team[data-position="11"] {top: 20em;}
-		.scoreboard .team[data-position="12"] {top: 22em;}
-		.scoreboard .team[data-position="13"] {top: 24em;}
-		.scoreboard .team[data-position="14"] {top: 26em;}
-		.scoreboard .team[data-position="15"] {top: 28em;}
-		.scoreboard .team[data-position="16"] {top: 30em;}
-		.scoreboard .team[data-position="17"] {top: 32em;}
-		.scoreboard .team[data-position="18"] {top: 34em;}
-		.scoreboard .team[data-position="19"] {top: 36em;}
-		.scoreboard .team[data-position="20"] {top: 38em;}
-		
-		.scoreboard.show .team {animation-delay: 200ms;}
-		.scoreboard.show .team[data-position="1"],
-		.scoreboard.hide .team[data-position="4"] {animation-delay: 0ms;}
-		.scoreboard.show .team[data-position="2"],
-		.scoreboard.hide .team[data-position="3"] {animation-delay: 50ms;}
-		.scoreboard.show .team[data-position="3"],
-		.scoreboard.hide .team[data-position="2"] {animation-delay: 100ms;}
-		.scoreboard.show .team[data-position="4"],
-		.scoreboard.hide .team[data-position="1"] {animation-delay: 150ms;}
 
 		@keyframes scoreboard-show-anim {
 			0%   {opacity: 0; transform: translate(-50%, 15px);}

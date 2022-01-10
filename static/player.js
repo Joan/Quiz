@@ -84,15 +84,36 @@
 			throw error;
 		});
 		
+	};
+	
+	/* Specific CSS styles */
+	
+	const update_css_colors = function() {
+		$('#teams_colors').remove();
+		var css = '';
+		for (let i in teams)
+			css += '.team_color_' + i + '{color:' + teams[i].color + ';}';
+		$('body').append('<style id="teams_colors">' + css + '</style>');
 	},
 	
-	write_colors = function() {
-		$('#teams_colors').remove();
-		var html = '<style id="teams_colors">';
-		for (let i in teams)
-			html += '.team_color_' + i + '{color:' + teams[i].color + ';}';
-		html += '</style>';
-		$body.append(html);
+	update_css_misc = function() {
+		$('#teams_misc').remove();
+		var css = '',
+			l = teams.length;
+		
+		// Buzzers position
+		for (let i = 1; i <= l; i++)
+			css += `.buzzer:nth-child(${i}){left: ${i!==1 ? (i*10+5)+'vh' : '0'};}`;
+		// Scoreboard height (.5 for the bottom margin)
+		css += `.scoreboard{height: ${l*2+.5}em;}`;
+		// Scoreboard teams position
+		for (let i = 1; i <= l; i++)
+			css += `.scoreboard .team[data-position="${i}"]{top: ${(i-1)*2}em;}`;
+		// Scoreboard teams apparition
+		for (let i = 1; i <= l; i++)
+			css += `.scoreboard.show .team[data-position="${i}"],.scoreboard.hide .team[data-position="${l+1-i}"] {animation-delay: ${(i-1)*50}ms;}`;
+		
+		$('body').append('<style id="teams_misc">' + css + '</style>');
 	};
 	
 	/*
@@ -556,7 +577,8 @@
 				setTimeout(scoreboard.hide, 1);
 			}
 			
-			write_colors();
+			update_css_colors();
+			update_css_misc();
 			scoreboard.$el.attr('data-teams-count', teams.length);
 			
 			var $unprocessed_teams = scoreboard.$el.children();

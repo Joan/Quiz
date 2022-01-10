@@ -31,9 +31,9 @@
 		current_riddle_num = 0,
 		riddle_count = 0,
 		
-		teams_default_colors = ['#62b529', '#ed1d24', '#e8ae00', '#1782e1'],
+		teams_default_colors = ['#62b529', '#ed1d24', '#e8ae00', '#1782e1'];
 	
-	init = function() {
+	const init = function() {
 		
 		// Retrieve data
 		
@@ -73,13 +73,14 @@
 		
 	},
 	
-	write_colors = function() {
+	/* Specific CSS styles */
+	
+	update_css_colors = function() {
 		$('#teams_colors').remove();
-		var html = '<style id="teams_colors">';
+		var css = '';
 		for (let i in teams)
-			html += '.team_color_' + i + '{color:' + teams[i].color + ';}';
-		html += '</style>';
-		$('body').append(html);
+			css += '.team_color_' + i + '{color:' + teams[i].color + ';}';
+		$('body').append('<style id="teams_colors">' + css + '</style>');
 	};
 	
 	/*
@@ -108,7 +109,7 @@
 			scoreboard.$teams.children().remove();
 			for (let i in teams)
 				scoreboard.add_team(i);
-			write_colors();
+			update_css_colors();
 		},
 		
 		add_team: function(team_id) {
@@ -235,7 +236,7 @@
 				
 				scoreboard.add_team(team_id);
 				scoreboard.edit_teams.add_edit_fields_to_team(team_id);
-				write_colors();
+				update_css_colors();
 				socket.emit('team_added', teams[team_id]);
 				
 			},
@@ -258,7 +259,7 @@
 						.removeClass('team_color_'+i).addClass('team_color_'+(i-1))
 						.find('[data-team]').attr('data-team', i-1);
 				}
-				write_colors();
+				update_css_colors();
 				
 				socket.emit('team_deleted', team_id);
 				
@@ -276,7 +277,7 @@
 				
 				// Get and update teams colors
 				scoreboard.$teams.find('.team[style]').removeAttr('style');
-				write_colors();
+				update_css_colors();
 				
 				// Send everything
 				if (scoreboard.edit_teams.serialized_teams !== JSON.stringify(teams)) // Send only if has changes
