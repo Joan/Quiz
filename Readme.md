@@ -24,11 +24,11 @@ Team selection, on-screen buzzers – for use instead of proper buzzer devices
 
 ## Installation
 
-**Requirements**:
+### Requirements
 
-* Node.js
-* The main computer LAN accessible if different devices needed
-* Modern browser
+* [Node.js](https://nodejs.org/fr/download/)
+* The main computer (player) has to be LAN accessible if different devices are needed
+* A modern browser
 
 ### Node project
 
@@ -45,7 +45,7 @@ npm install
 Ideally, export videos as *MP4*, audio files as *MP3* and images as ~*MP2*~ *JPEG* (depending on the browser you'll use, but these filetypes are supported by all major browser at this time).
 
 * The riddles data is in **`media/_data/quiz.json`**.  
-Edit it directly or use a spreadsheet JSON export like [this one](https://docs.google.com/spreadsheets/d/1YWFbp7LhCN80PGrgEitF8buVr_Qry4TLkCbMWhnybxA/edit).
+Edit it directly or use [this spreadsheet](https://docs.google.com/spreadsheets/d/1gINMhwLp5sicssOqDFx4RDUT5UNfG8hwdR5GXiGQ-Q4/copy) to export as JSON.
   * `type`: `video` / `audio` / `image`
   * `filename`: riddle file (without the path, just the filename)
   * `filename_answer`: for images only, the same image with the answer – like a movie poster with and without the name (optional)
@@ -57,7 +57,8 @@ Nb: Rename the `media-sample` folder to `media`, or duplicate it to create a new
 
 #### Teams
 
-* Edit teams `name`, displayed `color` (hexa: `#000000`) and `keycode` ([keycode.info](https://keycode.info/) might be useful here) in **`media/_data/teams.json`**. `keycode_name` can be used as a comment to remember the assigned key (not displayed anywhere).
+* Teams can be edited directly in the Admin screen.
+* You can also edit teams `name`, displayed `color` (hexa: `#000000`) and `keycode` ([keycode.info](https://keycode.info/) might be useful here) directly in **`media/_data/teams.json`**. `keycode_name` can be used as a comment to remember the assigned key (not used elsewhere).
 * The last file **`media/_data/scores.json`** doesn’t need to be edited (scores are manageable in the admin panel).
 
 ### Buzzers
