@@ -379,6 +379,8 @@
 			
 			player.$el.stop(true);
 			
+			var step_function = player.is_playable ? player.set_volume : null;
+			
 			player.$el.animate({opacity: 0}, {
 				duration: immediate ? 0 : 200,
 				step: step_function,
