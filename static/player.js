@@ -286,6 +286,10 @@
 			
 		},
 		
+		set_volume: function(vol) {
+			player.playable_el.volume = roundFloat(vol, 2);
+		},
+		
 		launch: function(immediate) {
 			
 			immediate = immediate || false;
@@ -303,9 +307,7 @@
 			
 			console.info('Launching riddle #' + current_riddle_num + (immediate ? ' immediatly' : ' normaly'));
 			
-			var step_function = player.is_playable ? function(now, tween) {
-				player.playable_el.volume = roundFloat(now, 2);
-			} : null;
+			var step_function = player.is_playable ? player.set_volume : null;
 			
 			var complete_function = function() {
 				if (player.is_playable)
@@ -377,32 +379,36 @@
 			
 			player.$el.stop(true);
 			
-			player.$el.animate({opacity: 0}, immediate ? 0 : 200, function() {
-				
-				player.pause();
-				
-				if (riddle_num === 0) {
-					player.unload();
-					current_riddle_num = riddle_num;
-					current_riddle = null;
-					player.send_riddle_change(riddle_num);
-					return;
+			player.$el.animate({opacity: 0}, {
+				duration: immediate ? 0 : 200,
+				step: step_function,
+				complete: function() {
+					
+					player.pause();
+					
+					if (riddle_num === 0) {
+						player.unload();
+						current_riddle_num = riddle_num;
+						current_riddle = null;
+						player.send_riddle_change(riddle_num);
+						return;
+					}
+					
+					// Load next one if there's any
+					
+					player.load(riddle_num, function(riddle_num) {
+						
+						current_riddle_num = riddle_num;
+						current_riddle = riddles[current_riddle_num - 1];
+						player.send_riddle_change(riddle_num);
+						
+						// Display directly if needed
+						if (immediate)
+							player.launch(true);
+						
+					});
+					
 				}
-				
-				// Load next one if there's any
-				
-				player.load(riddle_num, function(riddle_num) {
-					
-					current_riddle_num = riddle_num;
-					current_riddle = riddles[current_riddle_num - 1];
-					player.send_riddle_change(riddle_num);
-					
-					// Display directly if needed
-					if (immediate)
-						player.launch(true);
-					
-				});
-				
 			});
 			
 		},
