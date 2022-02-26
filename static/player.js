@@ -435,7 +435,7 @@
 	};
 	
 	socket.on('get_current_riddle', function() {
-		player.send_riddle_change();
+		player.send_riddle_change(current_riddle_num);
 	});
 	
 	socket.on('riddle_request_change', function(riddle_num) {
