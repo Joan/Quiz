@@ -436,7 +436,7 @@
 		
 		toggle_buzzers_enabled: function() {
 			settings.$buzzers_enabled_input[0].checked = !settings.$buzzers_enabled_input[0].checked;
-			settings.set_buzzers_enabled();
+			settings.change_buzzers_enabled();
 		}
 		
 	};
