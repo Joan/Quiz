@@ -436,6 +436,7 @@
 	
 	socket.on('get_current_riddle', function() {
 		player.send_riddle_change(current_riddle_num);
+		socket.emit('player_interact_state', keyboard.has_interacted);
 	});
 	
 	socket.on('riddle_request_change', function(riddle_num) {
@@ -765,8 +766,10 @@
 			
 			// Handle the warning in admin to prevent DOMException for play event
 			socket.emit('player_interact_state', false);
+			keyboard.has_interacted = false;
 			$body.on('click.only-once keydown.only-once', function() {
 				socket.emit('player_interact_state', true);
+				keyboard.has_interacted = true;
 				$(this).off('click.only-once keydown.only-once');
 			});
 			
