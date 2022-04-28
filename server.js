@@ -1,12 +1,15 @@
 const express = require('express'),
-	app = express(),
-	server = require('http').createServer(app),
-	io = require('socket.io').listen(server),
-	fs = require('fs'),
-	ip = require('ip'),
+      http = require('http'),
+      fs = require('fs'),
+      ip = require('ip');
 
-	port = 8080,
-	views_dir = '/views';
+const app = express(),
+      server = http.createServer(app),
+      {Server} = require('socket.io'),
+      io = new Server(server);
+
+const port = 8080,
+      views_dir = '/views';
 
 app.use('/static', express.static(__dirname + '/static'));
 app.use('/media', express.static(__dirname + '/media'));
@@ -43,6 +46,7 @@ const files = {
 	teams:  __dirname + '/media/_data/teams.json',
 	scores: __dirname + '/media/_data/scores.json'
 };
+
 var riddles = JSON.parse(fs.readFileSync(files.quiz)),
 	teams   = JSON.parse(fs.readFileSync(files.teams)),
 	scores  = JSON.parse(fs.readFileSync(files.scores));
@@ -69,7 +73,7 @@ check_scores_consistency();
 
 var buzzers_enabled = true;
 
-io.sockets.on('connection', function (socket) {
+io.on('connection', function(socket) {
 	
 	/* Connections */
 	
@@ -196,7 +200,7 @@ io.sockets.on('connection', function (socket) {
 		teams.push(team_data);
 		scores.push(0);
 		check_scores_consistency();
-
+		
 		save_teams();
 		socket.broadcast.emit('update_teams', teams);
 		update_scores();
@@ -208,7 +212,7 @@ io.sockets.on('connection', function (socket) {
 		teams.splice(team_id, 1);
 		scores.splice(team_id, 1);
 		check_scores_consistency();
-
+		
 		save_teams();
 		socket.broadcast.emit('update_teams', teams);
 		update_scores();
