@@ -88,7 +88,8 @@ It displays URLs of all the different screens
 Displayed in front of the players, and receives keyboard events so need to be focused on.
 
 * **Admin** – `/admin`  
-Displayed on a separate device – triggers player shortcuts & teams keycode to `/player`.
+Displayed on a separate device – triggers player shortcuts & teams keycode to `/player`.  
+You can change this route by passing the path you want at startup: `npm start -- admin_route=admin123`
 
 * **Buzzers signal reception** – `/receiver`  
 Receives buzzers signal on a different device – triggers buzzers keycode to `/player`.

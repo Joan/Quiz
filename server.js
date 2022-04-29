@@ -8,8 +8,16 @@ const app = express(),
       {Server} = require('socket.io'),
       io = new Server(server);
 
+// Process script arguments
+var argvs = {};
+process.argv.slice(2).forEach(arg => {
+	let spl = arg.split(/:|=/)
+	argvs[spl[0]] = spl[1];
+});
+
 const port = 8080,
-      views_dir = '/views';
+      views_dir = '/views',
+      admin_route = argvs.admin_route ? argvs.admin_route : 'admin';
 
 app.use('/data', express.static(__dirname + '/_data'));
 app.use('/media', express.static(__dirname + '/_media'));
@@ -30,7 +38,7 @@ app.get('/player', function (req, res) {
 	res.sendFile(__dirname + views_dir + '/player.html');
 });
 
-app.get('/admin', function (req, res) {
+app.get('/' + admin_route, function (req, res) {
 	res.sendFile(__dirname + views_dir + '/admin.html');
 });
 
@@ -236,4 +244,8 @@ io.on('connection', function(socket) {
 server.listen(port);
 
 var url = 'http://' + ip.address() + ':' + port;
-console.info('Quiz server ready.\nPlayer: '+url+'/player \nAdmin: '+url+'/admin \nMobile buzzers: '+url+' (/buzzers) \nBuzzer receiver: '+url+'/receiver');
+console.info(`Quiz server ready.
+Player: ${url}/player
+Admin: ${url}/${admin_route}
+Mobile buzzers: ${url} (/buzzers)
+Buzzer receiver: ${url}/receiver`);
