@@ -26,8 +26,8 @@
 	};
 	
 	const json_pathes = [
-		'/media/_data/quiz.json',
-		'/media/_data/teams.json'
+		'/data/quiz.json',
+		'/data/teams.json'
 	];
 	
 	const videos_path = '/media/videos/',

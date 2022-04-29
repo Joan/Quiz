@@ -1,8 +1,6 @@
 # Quiz
 
-A web based movies music and images riddle system with buzzers
-
-`v2.6.0`
+A LAN web based video, music and images riddle app with buzzers
 
 ## Screenshots
 
@@ -27,8 +25,7 @@ Team selection, on-screen buzzers – for use instead of proper buzzer devices
 ### Requirements
 
 * [Node.js](https://nodejs.org/fr/download/)
-* The main computer (player) has to be LAN accessible if different devices are needed
-* A modern browser
+* The device used as player has to be LAN accessible for multiple devices usage
 
 ### Node project
 
@@ -37,35 +34,43 @@ cd /path/to/project/
 npm install
 ```
 
-### Setup
+## Setup
 
-#### Quiz data
+### Quiz data
 
-* The riddles files go in **`media/videos`** / **`media/audios`** / **`media/images`**.  
-Ideally, export videos as *MP4*, audio files as *MP3* and images as ~*MP2*~ *JPEG* (depending on the browser you'll use, but these filetypes are supported by all major browser at this time).
+All the data of one game session is in the **`_data`** folder: riddles, teams and scores.  
+You can store your game sessions by renaming it `_data-<whatever>` afterwards.  
+Nb: the `_data-sample` folder is automatically copied to `_data` upon installation, and you can use it later to create a fresh `_data` for a new game.
 
-* The riddles data is in **`media/_data/quiz.json`**.  
+* **Riddles** are in `_data/quiz.json`.  
 Edit it directly or use [this spreadsheet](https://docs.google.com/spreadsheets/d/1gINMhwLp5sicssOqDFx4RDUT5UNfG8hwdR5GXiGQ-Q4/copy) to export as JSON.
   * `type`: `video` / `audio` / `image`
   * `filename`: riddle file (without the path, just the filename)
   * `filename_answer`: for images only, the same image with the answer – like a movie poster with and without the name (optional)
   * `answer` and `answer_subtitle`: displayed in the admin panel
 
-* A poster image can be displayed before the first riddle, by adding a PNG image at **`media/intro-poster.png`**. <kbd>Enter</kbd> to hide it and load the first riddle.
+* **Teams** can be edited directly in the Admin screen.
+You can also edit them directly in `_data/teams.json`.
+  * `name`: displayed team name
+  * `color`: team color (hexa: `#000000`)
+  * `keycode`: triggered keyboard key for this team. Each team has to have its own keycode, and it must not be an app shortcut. ([Keycode.info](https://keycode.info/) might be useful here.)
+  * `keycode_name` is here as a comment to remember the assigned key (not used elsewhere)
 
-Nb: Rename the `media-sample` folder to `media`, or duplicate it to create a new clean copy for a new quiz game session.
+* **Scores** are in `_data/scores.json` and it doesn’t need to be edited (scores are managed in the admin panel).
 
-#### Teams
+### Media files
 
-* Teams can be edited directly in the Admin screen.
-* You can also edit teams `name`, displayed `color` (hexa: `#000000`) and `keycode` ([keycode.info](https://keycode.info/) might be useful here) directly in **`media/_data/teams.json`**. `keycode_name` can be used as a comment to remember the assigned key (not used elsewhere).
-* The last file **`media/_data/scores.json`** doesn’t need to be edited (scores are manageable in the admin panel).
+All you media files go in **`_media/`**: `_media/videos`, `_media/audios` and `_media/images`.  
+Use MP4 videos, MP3 audio files and ~MP2~ JPEG images to ensure your browser can read them (these filetypes are supported by all major browser at this time).
+
+A **poster image** can be displayed before the first riddle, by adding a PNG image at `_media/intro-poster.png`.  
+<kbd>Enter</kbd> to hide it and load the first riddle.
 
 ### Buzzers
 
 If you want to use external buzzers, you may map these to the teams keycodes.
 
-For the Xbox Big Buttons, under Linux (as a VM with `/receiver` for example):
+For the Xbox Big Buttons, under Linux (using the `/receiver` URL, and as a VM if needed):
 * Install https://github.com/micolous/xbox360bb to enable receiver, and activate it with `sudo modprobe -v xbox360bb`
 * Install https://github.com/AntiMicro/antimicro and set it up to map these controllers to your teams keys
 
@@ -75,30 +80,30 @@ For the Xbox Big Buttons, under Linux (as a VM with `/receiver` for example):
 
 Launch the project with
 ```
-node server.js
+npm start
 ```
-It displays your local IP and URLs for the different screens (replace *localhost* below with your local IP if needed)
+It displays URLs of all the different screens
 
-* **Player** – http://localhost:8080/player  
+* **Player** – `/player`  
 Displayed in front of the players, and receives keyboard events so need to be focused on.
 
-* **Admin** – http://localhost:8080/admin  
+* **Admin** – `/admin`  
 Displayed on a separate device – triggers player shortcuts & teams keycode to `/player`.
 
-* **Buzzers signal reception** – http://localhost:8080/receiver  
+* **Buzzers signal reception** – `/receiver`  
 Receives buzzers signal on a different device – triggers buzzers keycode to `/player`.
 
-* **Digital buzzer buttons** – http://localhost:8080/buzzers (redirected to from `/`)  
+* **Digital buzzer buttons** – `/buzzers` (`/` redirect there)  
 To be used on any device as replacement of hardware buzzers.  
-Leads to `/buzzers/[team_id]` (`[team_id]` is the team object position in teams.json)
+Leads to `/buzzers/<team_id>` (`<team_id>` is the team object position in teams.json)
 
 ### Player controls
 
 * <kbd>Space</kbd> : play / pause / remove current buzzer from queue
-* <kbd>Enter</kbd> : go to next riddle
+* <kbd>Enter</kbd> : go to next riddle with normal transition
 * <kbd>←</kbd> / <kbd>→</kbd> : go to previous / next riddle immediatly and play
 * <kbd>Esc</kbd> : remove all buzzers from queue
 * <kbd>A</kbd> : reveal answer image (if available)
 * <kbd>S</kbd> : toggle scoreboard (scoreboard is displayed immediatly when you change scores from the admin panel)
-* <kbd>Q</kbd> : toggle QR Code for digital buzzer access
-* <kbd>B</kbd> : toggle buzzers
+* <kbd>Q</kbd> : toggle display of a QR Code on the player to access digital buzzers URL
+* <kbd>B</kbd> : toggle buzzers activation

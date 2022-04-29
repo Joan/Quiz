@@ -1,7 +1,7 @@
 {
 	"name": "Quiz",
 	"version": "2.4.3",
-	"description": "Web based movies music and images riddles with buzzers",
+	"description": "Web based video, music and images riddle app with buzzers",
 	"homepage": "https://github.com/Joan/Quiz",
 	"author": "Joan (https://github.com/Joan/)",
 	"repository": "https://github.com/Joan/Quiz",
@@ -9,9 +9,15 @@
 	"dependencies": {
 		"express": "^4.18.0",
 		"ip": "^1.1.5",
+		"run-script-os": "^1.1.6",
 		"socket.io": "^4.5.0"
 	},
-	"main": "server.js",
+	"scripts": {
+		"postinstall" : "run-script-os",
+		"postinstall:win32": "Xcopy /E _data-sample _data/",
+		"postinstall:darwin:linux": "cp -R _data-sample _data/",
+		"start": "node server.js"
+	},
 	"nodemonConfig": {
 		"watch": [
 			"server.js"

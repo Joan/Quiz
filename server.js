@@ -11,8 +11,9 @@ const app = express(),
 const port = 8080,
       views_dir = '/views';
 
+app.use('/data', express.static(__dirname + '/_data'));
+app.use('/media', express.static(__dirname + '/_media'));
 app.use('/static', express.static(__dirname + '/static'));
-app.use('/media', express.static(__dirname + '/media'));
 
 // No favicon to serve
 app.use(function(req, res, next) {
@@ -42,9 +43,9 @@ app.get('/buzzers(/[0-9]+)?', function (req, res) {
 });
 
 const files = {
-	quiz:   __dirname + '/media/_data/quiz.json',
-	teams:  __dirname + '/media/_data/teams.json',
-	scores: __dirname + '/media/_data/scores.json'
+	quiz:   __dirname + '/_data/quiz.json',
+	teams:  __dirname + '/_data/teams.json',
+	scores: __dirname + '/_data/scores.json'
 };
 
 var riddles = JSON.parse(fs.readFileSync(files.quiz)),
