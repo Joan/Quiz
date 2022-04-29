@@ -22,10 +22,12 @@ process.argv.slice(2).forEach(arg => {
 
 const port = 8080,
       views_dir = '/views',
-      admin_route = argvs.admin_route ? argvs.admin_route : 'admin';
+      data_dir  = '/' + (argvs.data_dir ? argvs.data_dir : '_data'),
+      media_dir = '/' + (argvs.media_dir ? argvs.media_dir : '_media'),
+      admin_route = '/' + (argvs.admin_route ? argvs.admin_route : 'admin');
 
-app.use('/data', express.static(__dirname + '/_data'));
-app.use('/media', express.static(__dirname + '/_media'));
+app.use('/data', express.static(__dirname + data_dir));
+app.use('/media', express.static(__dirname + media_dir));
 app.use('/static', express.static(__dirname + '/static'));
 
 /*
@@ -41,7 +43,7 @@ app.get('/player', function (req, res) {
 	res.sendFile(__dirname + views_dir + '/player.html');
 });
 
-app.get('/' + admin_route, function (req, res) {
+app.get(admin_route, function (req, res) {
 	res.sendFile(__dirname + views_dir + '/admin.html');
 });
 
@@ -66,10 +68,10 @@ app.use(function(req, res, next) {
  */
 
 const files = {
-	quiz:   __dirname + '/_data/quiz.json',
-	teams:  __dirname + '/_data/teams.json',
-	scores: __dirname + '/_data/scores.json',
-	intro_poster: __dirname + '/_media/intro-poster.png'
+	quiz:   __dirname + data_dir + '/quiz.json',
+	teams:  __dirname + data_dir + '/teams.json',
+	scores: __dirname + data_dir + '/scores.json',
+	intro_poster: __dirname + media_dir + '/intro-poster.png'
 };
 
 var riddles = JSON.parse(fs.readFileSync(files.quiz)),
@@ -314,6 +316,6 @@ server.listen(port);
 var url = 'http://' + ip.address() + ':' + port;
 console.info(`Quiz server ready.
 Player: ${url}/player
-Admin: ${url}/${admin_route}
+Admin: ${url}${admin_route}
 Mobile buzzers: ${url} (/buzzers)
 Buzzer receiver: ${url}/receiver`);

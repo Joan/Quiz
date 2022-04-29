@@ -58,6 +58,8 @@ You can also edit them directly in `_data/teams.json`.
 
 * **Scores** are in `_data/scores.json` and it doesn’t need to be edited (scores are managed in the admin panel).
 
+You can change the data directory path by passing the name you want at startup: `npm start -- data_dir=_data-game_session_836`
+
 ### Media files
 
 All you media files go in **`_media/`**: `_media/videos`, `_media/audios` and `_media/images`.  
@@ -65,6 +67,8 @@ Use MP4 videos, MP3 audio files and ~MP2~ JPEG images to ensure your browser can
 
 A **poster image** can be displayed before the first riddle, by adding a PNG image at `_media/intro-poster.png`.  
 <kbd>Enter</kbd> to hide it and load the first riddle.
+
+You can change the media directory path by passing the name you want at startup: `npm start -- data_dir=_data-game_session_836 media_dir=_media-game_session_836`
 
 ### Buzzers
 
