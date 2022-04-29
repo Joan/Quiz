@@ -14,6 +14,10 @@ body {
 	overflow: hidden;
 }
 
+	body:not(.--cursor_moving) {
+		cursor: url("data:image/svg+xml;charset=utf8,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3e%3c/svg%3e") 5 5, none; /* instead of `none` to prevent the default cursor to flicker */
+	}
+
 .player {
 	position: relative;
 	width: 100vw;

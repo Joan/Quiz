@@ -137,6 +137,10 @@
 			else
 				player.next();
 			
+			player.cursor_display_timeout = null;
+			player.cursor_idle = true;
+			$body.on('mousemove.cursor_display', player.handle_cursor_display);
+			
 			console.info('Player ready');
 			
 		},
@@ -407,6 +411,18 @@
 		
 		send_riddle_change: function(riddle_num) {
 			socket.emit('riddle_change', riddle_num);
+		},
+		
+		handle_cursor_display: function() {
+			if (player.cursor_idle)
+				$body.addClass('--cursor_moving');
+			var later = function() {
+				$body.removeClass('--cursor_moving');
+				player.cursor_idle = true;
+			};
+			player.cursor_idle = false;
+			clearTimeout(player.cursor_display_timeout);
+			player.cursor_display_timeout = setTimeout(later, 50);
 		}
 		
 	};
