@@ -25,66 +25,45 @@
 		windowHeight = window.innerHeight;
 	};
 	
-	const json_pathes = [
-		'/data/quiz.json',
-		'/data/teams.json'
-	];
-	
 	const videos_path = '/media/videos/',
-		audios_path = '/media/audios/',
-		images_path = '/media/images/',
-		poster_path = '/media/intro-poster.png';
+	      audios_path = '/media/audios/',
+	      images_path = '/media/images/',
+	      poster_path = '/media/intro-poster.png';
 	
 	const socket = io();
 	
 	var riddles,
-		teams,
-		scores,
-		
-		current_riddle = null,
-		current_riddle_num = 0,
-		riddle_count = 0,
+	    teams,
+	    scores,
+	    init_data = null;
 	
-	init = function() {
+	var current_riddle = null,
+	    current_riddle_num = 0,
+	    riddle_count = 0;
+	
+	const init = function(data) {
 		
-		// Retrieve data
+		riddles = data.riddles;
+		teams = data.teams;
+		scores = data.scores;
+		player.has_poster = data.has_intro_poster;
 		
-		Promise.all(json_pathes.map(url =>
-			fetch(url)
-				.then(response => {
-					if (!response.ok)
-						throw Error(response.statusText + ' (' + response.url + ')');
-					return response;
-				})
-				.then(response => response.json())
-				.catch(error => {
-					throw error;
-				})
-		))
-		.then(data => {
+		riddle_count = riddles.length;
 		
-			riddles = data[0];
-			teams = data[1];
-			
-			console.info('All data retrieved');
-			
-			riddle_count = riddles.length;
-			
-			// Then initiate stuff
-			buzzer.init(); // buzzer can take over on player so initiated first
-			scoreboard.init();
-			player.init();
-			qr_helper.init();
-			keyboard.init();
-			
-			socket.emit('connection_player');
+		// Then initiate stuff
+		buzzer.init(); // buzzer can take over on player so initiated first
+		scoreboard.init();
+		player.init();
+		qr_helper.init();
+		keyboard.init();
 		
-		})
-		.catch(error => {
-			throw error;
-		});
+		buzzer.set_buzzers_enabled(data.buzzers_enabled);
 		
 	};
+	
+	socket.on('init_data', function(data) {
+		init(data);
+	});
 	
 	/* Specific CSS styles */
 	
@@ -121,7 +100,7 @@
 	 *
 	 */
 	
-	var player = {
+	const player = {
 		
 		init: function() {
 			
@@ -153,19 +132,17 @@
 				player.pause();
 			});
 			
-			console.info('Player ready');
+			if (player.has_poster) // Set at main init
+				player.init_poster();
+			else
+				player.next();
 			
-			// Try to load poster image
-			player.poster = new Image();
-			player.poster.onload = player.init_poster;
-			player.poster.onerror = player.next; // load the first riddle if no poster
-			player.poster.src = poster_path;
+			console.info('Player ready');
 			
 		},
 		
 		init_poster: function() {
-			player.$poster = $('<div class="poster"/>').insertAfter(player.$el).css('opacity', 0);
-			player.$poster.append(player.poster);
+			player.$poster = $(`<div class="poster"><img src="${poster_path}"></div>`).insertAfter(player.$el).css('opacity', 0);
 			player.$poster.animate({opacity: 1}, 500);
 			player.poster_displayed = true;
 		},
@@ -448,7 +425,7 @@
 	 *
 	 */
 	
-	var buzzer = {
+	const buzzer = {
 		
 		init: function() {
 			
@@ -565,12 +542,13 @@
 	 *
 	 */
 	
-	var scoreboard = {
+	const scoreboard = {
 		
 		init: function() {
 			
 			scoreboard.$el = $('.scoreboard');
 			scoreboard.update_teams();
+			scoreboard.update_scores();
 			
 		},
 		
@@ -594,7 +572,7 @@
 					$team = $('<li class="team"/>')
 						.attr('id', 'team_' + i)
 						.addClass('team_color_' + i)
-						.attr('data-position', i)
+						.attr('data-position', +i+1)
 						.appendTo(scoreboard.$el);
 				
 				$team.html('<span class="name">' + teams[i].name + '</span><span class="score"></span>');
@@ -683,7 +661,7 @@
 	 *
 	 */
 	
-	var qr_helper = {
+	const qr_helper = {
 		
 		init: function() {
 			
@@ -760,7 +738,7 @@
 	 *
 	 */
 	
-	var keyboard = {
+	const keyboard = {
 		
 		init: function() {
 			
@@ -866,7 +844,7 @@
 		window_updateSizes();
 		$window.on('resize.window_updateSizes', window_updateSizes);
 		
-		init();
+		socket.emit('connection_player');
 		
 	});
 	

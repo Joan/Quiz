@@ -16,11 +16,6 @@
 	const $window = $(window),
 		$body = $('body');
 	
-	const json_pathes = [
-		'/data/quiz.json',
-		'/data/teams.json'
-	];
-	
 	const socket = io();
 	
 	var riddles,
@@ -33,49 +28,31 @@
 		
 		teams_default_colors = ['#62b529', '#ed1d24', '#e8ae00', '#1782e1'];
 	
-	const init = function() {
+	const init = function(data) {
 		
-		// Retrieve data
+		riddles = data.riddles;
+		teams = data.teams;
+		scores = data.scores;
 		
-		Promise.all(json_pathes.map(url =>
-			fetch(url)
-				.then(response => {
-					if (!response.ok)
-						throw Error(response.statusText + ' (' + response.url + ')');
-					return response;
-				})
-				.then(response => response.json())
-				.catch(error => {
-					throw error;
-				})
-		))
-		.then(data => {
+		riddle_count = riddles.length;
 		
-			riddles = data[0];
-			teams = data[1];
-			
-			console.info('All data retrieved');
-			
-			riddle_count = riddles.length;
-			
-			// Then initiate stuff
-			scoreboard.init();
-			riddleboard.init();
-			settings.init();
-			keyboard.init();
-			
-			socket.emit('connection_admin');
+		// Then initiate stuff
+		scoreboard.init();
+		riddleboard.init();
+		settings.init();
+		keyboard.init();
 		
-		})
-		.catch(error => {
-			throw error;
-		});
+		settings.$buzzers_enabled_input.prop('checked', data.buzzers_enabled);
 		
-	},
+	};
+	
+	socket.on('init_data', function(data) {
+		init(data);
+	});
 	
 	/* Specific CSS styles */
 	
-	update_css_colors = function() {
+	const update_css_colors = function() {
 		$('#teams_colors').remove();
 		var css = '';
 		for (let i in teams)
@@ -88,7 +65,7 @@
 	 *
 	 */
 	
-	var scoreboard = {
+	const scoreboard = {
 		
 		init: function() {
 			
@@ -100,6 +77,7 @@
 			scoreboard.scroll_to_active_team = true;
 			
 			scoreboard.update_teams();
+			scoreboard.update_scores();
 			
 			scoreboard.$el.find('.reset-button').on('click.scoreboard', scoreboard.reset_scores);
 			
@@ -318,7 +296,7 @@
 	 *
 	 */
 	
-	var riddleboard = {
+	const riddleboard = {
 		
 		init: function() {
 			
@@ -450,7 +428,7 @@
 	 *
 	 */
 	
-	var keyboard = {
+	const keyboard = {
 		
 		init: function() {
 			
@@ -513,7 +491,7 @@
 	
 	$(function() {
 		
-		init();
+		socket.emit('connection_admin');
 		
 	});
 	

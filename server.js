@@ -1,3 +1,8 @@
+/*
+ * Server setup
+ *
+ */
+
 const express = require('express'),
       http = require('http'),
       fs = require('fs'),
@@ -23,12 +28,10 @@ app.use('/data', express.static(__dirname + '/_data'));
 app.use('/media', express.static(__dirname + '/_media'));
 app.use('/static', express.static(__dirname + '/static'));
 
-// No favicon to serve
-app.use(function(req, res, next) {
-	if (req.originalUrl && req.originalUrl.split('/').pop().includes('favicon'))
-		return res.sendStatus(204);
-	return next();
-});
+/*
+ * Routes
+ *
+ */
 
 app.get('/', function (req, res) {
 	res.redirect('/buzzers');
@@ -50,26 +53,47 @@ app.get('/buzzers(/[0-9]+)?', function (req, res) {
 	res.sendFile(__dirname + views_dir + '/buzzers.html');
 });
 
+// No favicon to serve (send 204 No-content status)
+app.use(function(req, res, next) {
+	if (req.originalUrl && req.originalUrl.split('/').pop().includes('favicon'))
+		return res.sendStatus(204);
+	return next();
+});
+
+/*
+ * Data retrieval
+ *
+ */
+
 const files = {
 	quiz:   __dirname + '/_data/quiz.json',
 	teams:  __dirname + '/_data/teams.json',
-	scores: __dirname + '/_data/scores.json'
+	scores: __dirname + '/_data/scores.json',
+	intro_poster: __dirname + '/_media/intro-poster.png'
 };
 
 var riddles = JSON.parse(fs.readFileSync(files.quiz)),
-	teams   = JSON.parse(fs.readFileSync(files.teams)),
-	scores  = JSON.parse(fs.readFileSync(files.scores));
+    teams   = JSON.parse(fs.readFileSync(files.teams)),
+    scores  = JSON.parse(fs.readFileSync(files.scores));
+
+/*
+ * Scores management
+ *
+ */
 
 // Write scores and teams
+
 const save_teams = function() {
 	fs.writeFileSync(files.teams, JSON.stringify(teams, null, "\t"));
 },
+
 save_scores = function() {
 	fs.writeFileSync(files.scores, JSON.stringify(scores));
-}
+};
 
 // Check if scores match teams number (and fix)
-check_scores_consistency = function() {
+
+const check_scores_consistency = function() {
 	if (teams.length !== scores.length) {
 		var less_scores = teams.length > scores.length;
 		while (teams.length !== scores.length)
@@ -80,22 +104,54 @@ check_scores_consistency = function() {
 
 check_scores_consistency();
 
+/*
+ * Misc
+ *
+ */
+
+// Check for intro_poster
+try {
+	fs.accessSync(files.intro_poster);
+	var has_intro_poster = true;
+} catch (err) {
+	var has_intro_poster = false;
+}
+
+// Default buzzer activation
 var buzzers_enabled = true;
+
+/*
+ * Socket events
+ *
+ */
 
 io.on('connection', function(socket) {
 	
 	/* Connections */
 	
 	socket.on('connection_player', function() {
+		
+		socket.emit('init_data', {
+			riddles: riddles,
+			teams: teams,
+			scores: scores,
+			buzzers_enabled: buzzers_enabled,
+			has_intro_poster: has_intro_poster
+		});
+		
 		console.info('Player connected');
-		socket.emit('update_scores', scores);
-		socket.emit('set_buzzers_enabled', buzzers_enabled);
 	});
 	
 	socket.on('connection_admin', function() {
+		
+		socket.emit('init_data', {
+			riddles: riddles,
+			teams: teams,
+			scores: scores,
+			buzzers_enabled: buzzers_enabled
+		});
+		
 		console.info('Admin connected');
-		socket.emit('update_scores', scores);
-		socket.emit('set_buzzers_enabled', buzzers_enabled);
 	});
 	
 	socket.on('connection_receiver', function() {
@@ -103,10 +159,17 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('connection_buzzer', function(team_id) {
+		
+		socket.emit('init_data', {
+			teams: teams
+		});
+		
 		if (teams[team_id] !== undefined)
-			console.info('Buzzer #' + team_id + ' (' + teams[team_id].name + ') connected');
+			console.info(`Buzzer #${team_id} (${teams[team_id].name}) connected`);
+		else if (team_id === null)
+			console.info('Buzzer list displayed');
 		else
-			console.info('Buzzer of undefined team tried to connect: #' + team_id);
+			console.error('Buzzer of undefined team tried to connect: #' + team_id);
 	});
 	
 	/* Single score change (inc) and update */
@@ -240,6 +303,11 @@ io.on('connection', function(socket) {
 	});
 	
 });
+
+/*
+ * Server init
+ *
+ */
 
 server.listen(port);
 

@@ -16,66 +16,38 @@
 	const $window = $(window),
 		$body = $('body');
 	
-	const json_pathes = [
-		'/data/teams.json'
-	];
-	
 	const socket = io();
 	
 	var teams,
-		team;
+	    team = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/')[1];
 	
-	const init = function() {
+	const init = function(data) {
 		
-		// Retrieve data
+		teams = data.teams;
 		
-		Promise.all(json_pathes.map(url =>
-			fetch(url)
-				.then(response => {
-					if (!response.ok)
-						throw Error(response.statusText + ' (' + response.url + ')');
-					return response;
-				})
-				.then(response => response.json())
-				.catch(error => {
-					throw error;
-				})
-		))
-		.then(data => {
-			
-			teams = data[0];
-			
-			console.info('All data retrieved');
-			
-			// Then initiate stuff
-			update_css_colors();
-			
-			team = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/')[1];
-			
-			// Specific buzzer requested
-			if (team !== undefined) {
-				
-				socket.emit('connection_buzzer', team);
-				
-				if (teams[team] !== undefined)
-					buzzer.init();
-				
-			}
-			
-			// Buzzer list requested
+		// Then initiate stuff
+		update_css_colors();
+		
+		// Specific buzzer requested
+		if (team !== undefined) {
+			if (teams[team] !== undefined)
+				buzzer.init();
 			else
-				selector.init();
-			
-		})
-		.catch(error => {
-			throw error;
-		});
+				window.location = window.location.origin + '/' + window.location.pathname.split('/')[1];
+		}
+		// Buzzer list requested
+		else
+			selector.init();
 		
-	},
+	};
+	
+	socket.on('init_data', function(data) {
+		init(data);
+	});
 	
 	/* Specific CSS styles */
 	
-	update_css_colors = function() {
+	const update_css_colors = function() {
 		$('#teams_colors').remove();
 		var css = '';
 		for (let i in teams)
@@ -88,7 +60,7 @@
 	 *
 	 */
 	
-	var selector = {
+	const selector = {
 		
 		init: function() {
 			
@@ -117,7 +89,7 @@
 	 *
 	 */
 	
-	var buzzer = {
+	const buzzer = {
 		
 		init: function() {
 			
@@ -156,7 +128,7 @@
 	
 	$(function() {
 		
-		init();
+		socket.emit('connection_buzzer', team);
 		
 	});
 	
