@@ -41,8 +41,10 @@
 		riddleboard.init();
 		settings.init();
 		keyboard.init();
+		socket.emit('get_player_state');
 		
 		settings.$buzzers_enabled_input.prop('checked', data.buzzers_enabled);
+		settings.$single_buzz_input.prop('checked', data.single_buzz);
 		
 	};
 	
@@ -75,6 +77,7 @@
 			scoreboard.$team_template = $($('#team-template').html());
 			
 			scoreboard.scroll_to_active_team = true;
+			scoreboard.current_buzzer_team_id = -1;
 			
 			scoreboard.update_teams();
 			scoreboard.update_scores();
@@ -141,21 +144,48 @@
 				scoreboard.$teams.find('.team-score input[data-team="' + i + '"]').val(scores[i]);
 		},
 		
-		change_buzzer: function(team_id) {
+		update_buzzer: function(team_id, player_state, buzzer_queue) {
 			
-			scoreboard.$teams.children('.current_buzzer').removeClass('current_buzzer');
+			scoreboard.$teams.children().removeClass('current_buzzer').removeClass('queued_buzzer');
 			
 			if (team_id >= 0) {
 				
 				var $target = $('#team_' + team_id);
 				$('#team_' + team_id).addClass('current_buzzer');
 				
-				if (scoreboard.scroll_to_active_team) {
+				if (scoreboard.scroll_to_active_team && scoreboard.current_buzzer_team_id !== team_id) {
 					var scroll_target = team_id === 0 ? 0 : $target.position().top + scoreboard.$el[0].scrollTop - scoreboard.$el.offset().top - 20;
 					scoreboard.$el.stop(true).animate({scrollTop: scroll_target}, 500);
 				}
-				
 			}
+			
+			if (player_state == 'not_buzzable') {
+				scoreboard.$teams.addClass('temp_disabled_buzzer');
+			} else {
+				scoreboard.$teams.removeClass('temp_disabled_buzzer');
+				
+				if (player_state == 'buzzable' && settings.$single_buzz_input[0].checked) {
+					
+					for (let i = 0, l = scoreboard.buzz_counts.length; i < l; i++) {
+						let $team = $('#team_' + i);
+						if (scoreboard.buzz_counts[i] > 0 && !$team.hasClass('current_buzzer'))
+							$team.addClass('disabled_buzzer');
+						else
+							$team.removeClass('disabled_buzzer');
+					}
+					
+				} else {
+					scoreboard.$teams.children('.disabled_buzzer').removeClass('disabled_buzzer');
+				}
+			}
+			
+			var buzzer_queue_length = buzzer_queue.length;
+			if (buzzer_queue_length > 0) {
+				for (let i = 0; i < buzzer_queue_length; i++)
+					$('#team_' + buzzer_queue[i]).removeClass('disabled_buzzer').addClass('queued_buzzer');
+			}
+			
+			scoreboard.current_buzzer_team_id = team_id;
 			
 		},
 		
@@ -289,8 +319,9 @@
 		scoreboard.update_scores(data);
 	});
 	
-	socket.on('change_buzzer', function(data) {
-		scoreboard.change_buzzer(data);
+	socket.on('update_buzzer', function(data) {
+		scoreboard.buzz_counts = data.buzz_counts;
+		scoreboard.update_buzzer(data.current, data.state, data.queue);
 	});
 	
 	socket.on('update_teams', function(team_data) {
@@ -315,7 +346,6 @@
 			riddleboard.$riddle_template = $($('#riddle-template').html());
 			
 			riddleboard.create_riddles();
-			riddleboard.get_current();
 			
 			riddleboard.$el.on('click', '.riddle', function(e) {
 				riddleboard.request_change($(this).attr('data-riddle'));
@@ -338,10 +368,6 @@
 				$clone.appendTo(riddleboard.$el);
 			}
 			
-		},
-		
-		get_current: function() {
-			socket.emit('get_current_riddle');
 		},
 		
 		change_current: function(riddle_num) {
@@ -389,6 +415,7 @@
 			[
 				['buzzers_enabled'],
 				['scroll_to_active_team'],
+				['single_buzz']
 			].forEach(s => {
 				settings['$'+s+'_label'] = $('#option-'+s);
 				settings['$'+s+'_input'] = $('#option-'+s+'-input');
@@ -414,6 +441,10 @@
 			scoreboard.scroll_to_active_team = settings.$scroll_to_active_team_input[0].checked;
 		},
 		
+		change_single_buzz: function() {
+			socket.emit('set_single_buzz', settings.$single_buzz_input[0].checked);
+		},
+		
 		// Specific functions
 		
 		toggle_buzzers_enabled: function() {
@@ -425,6 +456,10 @@
 	
 	socket.on('set_buzzers_enabled', function(enabled) {
 		settings.$buzzers_enabled_input.prop('checked', enabled || false);
+	});
+	
+	socket.on('set_single_buzz', function(enabled) {
+		settings.$single_buzz_input.prop('checked', enabled || false);
 	});
 	
 	/*

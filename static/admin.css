@@ -204,13 +204,26 @@ body {
 		font-size: 1.2em;
 		background-color: currentColor;
 		margin-bottom: 20px;
-		transition: box-shadow 250ms ease;
+		outline: 0 solid #666;
+		transition: outline 250ms ease;
 	}
-
+	
 		.team.current_buzzer {
-			box-shadow: 0 0 0 6px #fff;
+			outline: 6px solid #fff;
 		}
-
+		
+		.team.queued_buzzer {
+			outline: 4px solid #666;
+		}
+		
+		.team.disabled_buzzer {
+			outline: 4px dashed #666;
+		}
+		
+		.teams.temp_disabled_buzzer .team {
+			outline: 2px dashed #666;
+		}
+		
 		.team-infos,
 		.team_edit-infos {
 			display: flex;
@@ -218,7 +231,7 @@ body {
 			color: #fff;
 			font-size: 2.4em;
 		}
-
+		
 		.team-name {
 			white-space: nowrap;
 			overflow: hidden;
@@ -229,7 +242,7 @@ body {
 			flex-grow: 1;
 			padding-right: 10px;
 		}
-
+		
 		.team-score,
 		.team_edit-delete {
 			flex-shrink: 0;

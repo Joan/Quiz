@@ -119,8 +119,9 @@ try {
 	var has_intro_poster = false;
 }
 
-// Default buzzer activation
-var buzzers_enabled = true;
+// Default buzzer vars
+var buzzers_enabled = true,
+    single_buzz = false;
 
 /*
  * Socket events
@@ -138,6 +139,7 @@ io.on('connection', function(socket) {
 			teams: teams,
 			scores: scores,
 			buzzers_enabled: buzzers_enabled,
+			single_buzz: single_buzz,
 			has_intro_poster: has_intro_poster
 		});
 		
@@ -150,7 +152,8 @@ io.on('connection', function(socket) {
 			riddles: riddles,
 			teams: teams,
 			scores: scores,
-			buzzers_enabled: buzzers_enabled
+			buzzers_enabled: buzzers_enabled,
+			single_buzz: single_buzz
 		});
 		
 		console.info('Admin connected');
@@ -222,8 +225,8 @@ io.on('connection', function(socket) {
 	
 	/* Riddle change */
 	
-	socket.on('get_current_riddle', function() {
-		socket.broadcast.emit('get_current_riddle');
+	socket.on('get_player_state', function() {
+		socket.broadcast.emit('get_player_state');
 	});
 	
 	socket.on('riddle_change', function(riddle_num) {
@@ -236,8 +239,8 @@ io.on('connection', function(socket) {
 	
 	/* Buzzers */
 	
-	socket.on('change_buzzer', function(team_id) {
-		socket.broadcast.emit('change_buzzer', team_id);
+	socket.on('update_buzzer', function(buzzer_data) {
+		socket.broadcast.emit('update_buzzer', buzzer_data);
 	});
 	
 	socket.on('buzzer_press', function(team_keycode) {
@@ -249,6 +252,11 @@ io.on('connection', function(socket) {
 	socket.on('set_buzzers_enabled', function(enabled) {
 		buzzers_enabled = enabled;
 		socket.broadcast.emit('set_buzzers_enabled', buzzers_enabled);
+	});
+	
+	socket.on('set_single_buzz', function(enabled) {
+		single_buzz = enabled;
+		socket.broadcast.emit('set_single_buzz', single_buzz);
 	});
 	
 	/* Shortcut triggers in admin */

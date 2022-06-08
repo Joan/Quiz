@@ -58,6 +58,7 @@
 		keyboard.init();
 		
 		buzzer.set_buzzers_enabled(data.buzzers_enabled);
+		buzzer.set_single_buzz(data.single_buzz);
 		
 	};
 	
@@ -258,8 +259,8 @@
 			
 			console.info('Loaded riddle #' + riddle_num + ' (' + riddle.type + ')');
 			
-			if (riddle_num > 1)
-				buzzer.buzzable = false; // Allow testing before starting the quiz
+			if (riddle_num > 1) // Allow testing buzzers before starting the quiz
+				buzzer.buzzable = false;
 			
 			player.loaded = true;
 			
@@ -285,6 +286,7 @@
 			
 			player.launched = true;
 			buzzer.buzzable = true;
+			buzzer.reset_buzz_counts();
 			
 			console.info('Launching riddle #' + current_riddle_num + (immediate ? ' immediatly' : ' normaly'));
 			
@@ -369,11 +371,12 @@
 					
 					player.pause();
 					
-					if (riddle_num === 0) {
+					if (riddle_num === 0) { // Fired when looped back (not at first init)
 						player.unload();
 						current_riddle_num = riddle_num;
 						current_riddle = null;
 						player.send_riddle_change(riddle_num);
+						buzzer.reset_buzz_counts();
 						return;
 					}
 					
@@ -384,6 +387,7 @@
 						current_riddle_num = riddle_num;
 						current_riddle = riddles[current_riddle_num - 1];
 						player.send_riddle_change(riddle_num);
+						buzzer.reset_buzz_counts();
 						
 						// Display directly if needed
 						if (immediate)
@@ -427,9 +431,10 @@
 		
 	};
 	
-	socket.on('get_current_riddle', function() {
+	socket.on('get_player_state', function() {
 		player.send_riddle_change(current_riddle_num);
 		socket.emit('player_interact_state', keyboard.has_interacted);
+		buzzer.send_buzz_change();
 	});
 	
 	socket.on('riddle_request_change', function(riddle_num) {
@@ -449,7 +454,11 @@
 			buzzer.buzzable = true;
 			buzzer.has_queue = false;
 			buzzer.enabled = null;
+			buzzer.single_buzz = null;
+			buzzer.buzz_counts = [];
+			buzzer.current = -1;
 			
+			buzzer.reset_buzz_counts();
 			buzzer.empty_queue();
 			
 		},
@@ -461,7 +470,8 @@
 			if (buzzer.buzzable && buzzer.enabled) {
 				for (let i in teams) {
 					if (keycode === teams[i].keycode) {
-						buzzer.add_to_queue(i);
+						if (!(buzzer.single_buzz && buzzer.buzz_counts[i] > 0) || !player.launched)
+							buzzer.add_to_queue(i);
 						return;
 						break;
 					}
@@ -489,6 +499,8 @@
 			
 			if (was_first)
 				buzzer.update_current();
+			else
+				buzzer.send_buzz_change();
 			
 		},
 		
@@ -513,8 +525,14 @@
 		},
 		
 		update_current: function() {
-			var $target = buzzer.$el.children(':first');
-			socket.emit('change_buzzer', $target.length <= 0 ? -1 : toInt($target.attr('data-id')));
+			var $target = buzzer.$el.children(':first'),
+			    team_id = $target.length > 0 ? toInt($target.attr('data-id')) : -1;
+			
+			if ($target.length > 0)
+				buzzer.buzz_counts[team_id]++;
+			
+			buzzer.current = team_id;
+			buzzer.send_buzz_change();
 		},
 		
 		empty_queue: function(then_play) {
@@ -530,7 +548,39 @@
 				player.play();
 			
 			buzzer.update_current();
+		},
+		
+		reset_buzz_counts: function() {
+			buzzer.buzz_counts = [];
+			for (let i = 0, c = teams.length; i < c; i++)
+				buzzer.buzz_counts[i] = 0;
 			
+			buzzer.send_buzz_change();
+		},
+		
+		send_buzz_change: function() {
+			
+			if (player.loaded === undefined) // prevent firing this too many times at init
+				return;
+			
+			if (current_riddle_num > 1)
+				var state = buzzer.buzzable ? 'buzzable' : 'not_buzzable';
+			 else
+				var state = (buzzer.buzzable && !player.launched) ? 'test_buzzable' : 'buzzable';
+			
+			var queue = [];
+			if (buzzer.has_queue) {
+				for (let i = 0, c = teams.length; i < c; i++)
+					if (i !== buzzer.current && teams[i].queued)
+						queue.push(i);
+			}
+			
+			socket.emit('update_buzzer', {
+				current: buzzer.current,
+				queue: queue,
+				state: state,
+				buzz_counts: buzzer.buzz_counts
+			});
 		},
 		
 		set_buzzers_enabled: function(enabled) {
@@ -541,6 +591,10 @@
 		toggle_enabled: function() {
 			buzzer.set_buzzers_enabled(!buzzer.enabled);
 			socket.emit('set_buzzers_enabled', buzzer.enabled);
+		},
+		
+		set_single_buzz: function(enabled) {
+			buzzer.single_buzz = enabled;
 		}
 		
 	};
@@ -551,6 +605,11 @@
 	
 	socket.on('set_buzzers_enabled', function(enabled) {
 		buzzer.set_buzzers_enabled(enabled);
+	});
+	
+	socket.on('set_single_buzz', function(enabled) {
+		buzzer.set_single_buzz(enabled);
+		buzzer.send_buzz_change();
 	});
 	
 	/*
