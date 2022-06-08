@@ -1,5 +1,5 @@
 /* 
- * LAYOUT
+ * @group LAYOUT
  */
 
 html, body {
@@ -56,13 +56,15 @@ body {
 
 }
 
+/* @end LAYOUT */
+
 /*
- * COMMON
+ * @group COMMON
  */
 
 .setting {
 	position: relative;
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 }
 
@@ -138,7 +140,7 @@ body {
 			border: 1px solid #828282;
 			border-radius: 0.4em;
 			background-color: #353535;
-			transition-property: border-color, background-color;
+			transition-property: border-color, background-color, box-shadow;
 			transition-duration: 300ms;
 			pointer-events: none;
 		}
@@ -153,13 +155,26 @@ body {
 			border-color: #6996d0;
 			background-color: #34404f;
 		}
+		
+		.setting.--button input:not(:checked) ~ .setting-label::after {
+			box-shadow: 0 0 6px 1px rgb(255, 0, 0);
+		}
+
+.button {
+	background: #444;
+	border: none;
+	padding: 0.15em 0.5em 0.2em;
+	border-radius: 0.4em;
+}
 
 .helper-warning {
 	cursor: help;
 }
 
+/* @end COMMON */
+
 /* 
- * SCORES PANE
+ * @group SCORES PANE
  */
 
 .scores {
@@ -330,23 +345,68 @@ body {
 			background-color: #fff;
 		}
 
-	.scores-options {
+	.scores-settings {
 		display: flex;
-		justify-content: space-between;
-		flex-wrap: wrap;
-		gap: 0.5em 1em;
+		gap: 1em;
 		font-size: 1.2em;
 		margin-top: 100px;
 	}
 
-		.reset-button {
-			background: none;
-			border: none;
-			padding: 0;
+		.scores-settings-col {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.6em;
+			flex-grow: 1;
 		}
 
+@media (min-width: 801px) {
+	
+	.scores-settings-col {
+		width: 50%;
+	}
+	
+	.scores-settings-col:last-child {
+		align-items: flex-end;
+	}
+	
+	.scores-settings-col .setting {
+		margin: 0.15em 0 0.2em;
+	}
+	
+}
+
+@media (max-width: 800px) {
+	
+	.team-infos,
+	.team_edit-infos {
+		font-size: 1.4em;
+	}
+	
+	.team_edit-color {
+		font-size: 0.8em;
+	}
+	
+	.scores-settings {
+		font-size: 1em;
+		margin-top: 50px;
+		flex-direction: column;
+	}
+	
+}
+
+@media (max-width: 700px) {
+	
+	.team {
+		font-size: 1em;
+	}
+	
+}
+
+/* @end SCORES PANE */
+
 /* 
- * RIDDLES LIST AND HELPER
+ * @group RIDDLES LIST AND HELPER
  */
  
  .riddles_pane {
@@ -466,20 +526,6 @@ body {
 	.buzzers_controler .setting-state {width: 6.5em;}
 
 @media (max-width: 800px) {
-
-	.team-infos,
-	.team_edit-infos {
-		font-size: 1.4em;
-	}
-	
-	.team_edit-color {
-		font-size: 0.8em;
-	}
-	
-	.scores-options {
-		font-size: 1em;
-		margin-top: 50px;
-	}
 	
 	.riddles,
 	.helper-list {
@@ -494,15 +540,7 @@ body {
 		.helper-entry {
 			font-size: 0.8em;
 		}
-
-}
-
-@media (max-width: 700px) {
-
-	.team {
-		font-size: 1em;
-	}
-
+	
 }
 
 @media (max-width: 440px), (min-width: 600px) and (max-width: 1020px) {
@@ -510,3 +548,5 @@ body {
 		padding-bottom: 90px; /* for the buzzers button */
 	}
 }
+
+/* @end RIDDLES LIST AND HELPER */

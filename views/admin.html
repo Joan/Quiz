@@ -17,18 +17,22 @@
 		
 		<div class="team_edit"><button class="team_edit-add">Ajouter une équipe</button></div>
 		
-		<div class="scores-options">
-			<button class="reset-button">Remise à zéro…</button>
-			<label class="setting" id="option-scroll_to_active_team">
-				<input type="checkbox" id="option-scroll_to_active_team-input" checked>
-				<span class="setting-switch"></span>
-				<span class="setting-label">Défiler à l’équipe active</span>
-			</label>
-			<label class="setting" id="option-edit_teams">
-				<input type="checkbox" id="option-edit_teams-input">
-				<span class="setting-switch"></span>
-				<span class="setting-label">Modifier les équipes</span>
-			</label>
+		<div class="scores-settings">
+			<div class="scores-settings-col">
+				<label class="setting" id="option-scroll_to_active_team">
+					<input type="checkbox" id="option-scroll_to_active_team-input" checked>
+					<span class="setting-switch"></span>
+					<span class="setting-label">Défiler à l’équipe active</span>
+				</label>
+			</div>
+			<div class="scores-settings-col">
+				<button class="button" id="button-reset">Mettre les scores à zéro…</button>
+				<label class="setting" id="option-edit_teams">
+					<input type="checkbox" id="option-edit_teams-input">
+					<span class="setting-switch"></span>
+					<span class="setting-label">Modifier les équipes</span>
+				</label>
+			</div>
 		</div>
 	</div>
 	
@@ -75,8 +79,8 @@
 		
 		<ul class="helper-list" data-current-riddle-type="">
 			<li class="helper-entry"><kbd>espace</kbd> Lecture / Pause / Buzzer suivant <span class="helper-warning" title="Cliquez dans la fenêtre du player ou appuyez sur une touche pour activer la vidéo">⚠️</span></li>
-			<li class="helper-entry"><kbd>↩</kbd> Quiz suivant (transition)</li>
-			<li class="helper-entry"><kbd class="--no_space">←</kbd> / <kbd>→</kbd> Quiz précédent / suivant rapidement et lecture</li>
+			<li class="helper-entry"><kbd>↩</kbd> Question suivante (transition)</li>
+			<li class="helper-entry"><kbd class="--no_space">←</kbd> / <kbd>→</kbd> Question précédente / suivante rapidement et lecture</li>
 			<li class="helper-entry"><kbd>esc</kbd> Vider la liste des buzzers</li>
 			<li class="helper-entry" data-applies-to="image"><kbd>A</kbd> Afficher l'image réponse</li>
 			<li class="helper-entry"><kbd>S</kbd> Afficher les scores</li>

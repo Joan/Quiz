@@ -79,7 +79,7 @@
 			scoreboard.update_teams();
 			scoreboard.update_scores();
 			
-			scoreboard.$el.find('.reset-button').on('click.scoreboard', scoreboard.reset_scores);
+			scoreboard.$el.find('#button-reset').on('click.scoreboard', scoreboard.reset_scores);
 			
 		},
 		
