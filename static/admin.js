@@ -79,7 +79,14 @@
 			scoreboard.update_teams();
 			scoreboard.update_scores();
 			
-			scoreboard.$el.find('#button-reset').on('click.scoreboard', scoreboard.reset_scores);
+			scoreboard.$reset_scores_button = $('#button-reset');
+			scoreboard.$edit_teams_button = $('#button-edit_teams');
+			scoreboard.$edit_teams_end_button = $('#button-edit_teams_end');
+			scoreboard.$edit_teams_add = $('#button-add_team');
+			
+			scoreboard.$reset_scores_button.on('click.scoreboard', scoreboard.reset_scores);
+			scoreboard.$edit_teams_button.on('click.scoreboard', scoreboard.edit_teams.start);
+			scoreboard.$edit_teams_end_button.on('click.scoreboard', scoreboard.edit_teams.end);
 			
 		},
 		
@@ -166,11 +173,12 @@
 				}
 				
 				// Be sure to bind event on this button
-				scoreboard.$el.find('button.team_edit-add').off('click.edit_teams').on('click.edit_teams', scoreboard.edit_teams.add);
+				scoreboard.$edit_teams_add.off('click.edit_teams').on('click.edit_teams', scoreboard.edit_teams.add);
 				
 				scoreboard.edit_teams.serialized_teams = JSON.stringify(teams);
 				scoreboard.$el.addClass('--js-edit_teams');
-				settings.set_option_input('edit_teams', true);
+				scoreboard.$edit_teams_button.hide();
+				
 			},
 			
 			add_edit_fields_to_team: function(team_id) {
@@ -266,10 +274,11 @@
 			},
 			
 			end: function(abort) {
-				if (!abort)
+				if (abort !== true)
 					scoreboard.edit_teams.save();
+				scoreboard.$edit_teams_add.off('click.edit_teams')
+				scoreboard.$edit_teams_button.show();
 				scoreboard.$el.removeClass('--js-edit_teams');
-				settings.set_option_input('edit_teams', false);
 			}
 			
 		}
@@ -380,7 +389,6 @@
 			[
 				['buzzers_enabled'],
 				['scroll_to_active_team'],
-				['edit_teams'],
 			].forEach(s => {
 				settings['$'+s+'_label'] = $('#option-'+s);
 				settings['$'+s+'_input'] = $('#option-'+s+'-input');
@@ -404,10 +412,6 @@
 		
 		change_scroll_to_active_team: function() {
 			scoreboard.scroll_to_active_team = settings.$scroll_to_active_team_input[0].checked;
-		},
-		
-		change_edit_teams: function() {
-			scoreboard.edit_teams[settings.$edit_teams_input[0].checked ? 'start' : 'end']();
 		},
 		
 		// Specific functions

@@ -106,7 +106,10 @@ body {
 		}
 	
 	.setting-label {
-		
+		-webkit-user-select: none;
+		   -moz-user-select: none;
+		    -ms-user-select: none;
+		        user-select: none;
 	}
 	
 		.setting-label > span {
@@ -163,9 +166,14 @@ body {
 .button {
 	background: #444;
 	border: none;
-	padding: 0.15em 0.5em 0.2em;
-	border-radius: 0.4em;
+	padding: 0.15em 0.6em 0.2em;
+	border-radius: 0.3em;
 }
+
+	.button.--highlight {
+		color: #333;
+		background-color: #fff;
+	}
 
 .helper-warning {
 	cursor: help;
@@ -336,13 +344,10 @@ body {
 				box-shadow: none;
 			}
 		
-		.team_edit-add {
-			font-size: 1.3em;
-			padding: 0.1em 0.6em 0.2em;
-			border-radius: 5px;
-			color: #333;
-			border: 0 none;
-			background-color: #fff;
+		.scores-team_edit-actions {
+			height: 0; /* trying to use existing space and prevent underneath elements to move */
+			margin-top: -20px; /* negative .team margin-bottom  */
+			font-size: 1.2rem;
 		}
 
 	.scores-settings {
@@ -361,6 +366,8 @@ body {
 		}
 
 @media (min-width: 801px) {
+	
+	.scores-team_edit-actions .button {margin-top: 20px;}
 	
 	.scores-settings-col {
 		width: 50%;
@@ -385,6 +392,11 @@ body {
 	
 	.team_edit-color {
 		font-size: 0.8em;
+	}
+	
+	.scores-team_edit-actions {
+		font-size: 1rem;
+		margin-top: -5px;
 	}
 	
 	.scores-settings {
