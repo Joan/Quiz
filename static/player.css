@@ -85,8 +85,8 @@ body {
 			left: 50%;
 			transform: translate(-50%, -50%);
 			font-size: 1rem;
-			width: 300px;
-			height: 120px;
+			width: 240px;
+			height: 200px;
 			align-items: center;
 			justify-content: space-between;
 			/* background-color: #111; */
@@ -95,31 +95,32 @@ body {
 		.audio-bars i {
 			display: flex;
 			position: relative;
-			width: 25px;
+			width: 12px;
 			height: 100%;
 			align-items: center;
 			/* background-color: #222; */
 		}
 
-		.audio-bars i:nth-child(1), .audio-bars i:nth-last-child(1)   {height: 24%;}
-		.audio-bars i:nth-child(2), .audio-bars i:nth-last-child(2)   {height: 32%;}
-		.audio-bars i:nth-child(3), .audio-bars i:nth-last-child(3)   {height: 44%;}
-		.audio-bars i:nth-child(4), .audio-bars i:nth-last-child(4)   {height: 70%;}
-		.audio-bars i:nth-child(5), .audio-bars i:nth-last-child(5)   {height: 90%;}
+		.audio-bars i:nth-child(1), .audio-bars i:nth-last-child(1)   {height: 22%;}
+		.audio-bars i:nth-child(2), .audio-bars i:nth-last-child(2)   {height: 35%;}
+		.audio-bars i:nth-child(3), .audio-bars i:nth-last-child(3)   {height: 55%;}
+		.audio-bars i:nth-child(4), .audio-bars i:nth-last-child(4)   {height: 100%;}
 
 		.audio-bars i::before {
 			content: "";
 			display: block;
 			width: 100%;
-			border-radius: 10px;
+			border-radius: 3px;
 			background-color: #fff;
+			animation-duration: 0.6s;
+			animation-timing-function: ease;
+			animation-iteration-count: infinite;
 		}
 
-		.audio-bars i:nth-child(1)::before, .audio-bars i:nth-last-child(3)::before   {animation: bars-anim-01 0.5s ease infinite;}
-		.audio-bars i:nth-child(2)::before, .audio-bars i:nth-last-child(2)::before   {animation: bars-anim-02 0.4s ease infinite;}
-		.audio-bars i:nth-child(3)::before, .audio-bars i:nth-last-child(5)::before   {animation: bars-anim-03 0.6s ease infinite;}
-		.audio-bars i:nth-child(4)::before, .audio-bars i:nth-last-child(1)::before   {animation: bars-anim-01 0.5s ease infinite;}
-		.audio-bars i:nth-child(5)::before, .audio-bars i:nth-last-child(4)::before   {animation: bars-anim-04 0.4s ease infinite;}
+		.audio-bars i:nth-child(4)::before, .audio-bars i:nth-child(7)::before   {animation-name: bars-anim-01;}
+		.audio-bars i:nth-child(1)::before, .audio-bars i:nth-child(5)::before   {animation-name: bars-anim-02;}
+		.audio-bars i:nth-child(3)::before, .audio-bars i:nth-child(8)::before   {animation-name: bars-anim-03;}
+		.audio-bars i:nth-child(2)::before, .audio-bars i:nth-child(6)::before   {animation-name: bars-anim-04;}
 
 		.player:not(.playing) .audio-bars i::before {
 			height: 6px;
@@ -127,31 +128,31 @@ body {
 		}
 
 		@keyframes bars-anim-01 {
-			0%, 100% {height: 70%;}
-			30% {height: 90%;}
-			60% {height: 60%;}
-			90% {height: 100%;}
+			0%, 100% {height: 50%;}      /*     */
+			25% {height: 80%;}           /*        */
+			50% {height: 60%;}           /*      */
+			75% {height: 100%;}          /*          */
 		}
 
 		@keyframes bars-anim-02 {
-			0%, 100% {height: 80%;}
-			30% {height: 70%;}
-			60% {height: 100%;}
-			90% {height: 75%;}
+			0%, 100% {height: 80%;}      /*        */
+			25% {height: 100%;}          /*          */
+			50% {height: 60%;}           /*      */
+			75% {height: 50%;}           /*     */
 		}
 
 		@keyframes bars-anim-03 {
-			0%, 100% {height: 60%;}
-			30% {height: 80%;}
-			60% {height: 50%;}
-			90% {height: 80%;}
+			0%, 100% {height: 50%;}      /*     */
+			25% {height: 80%;}           /*        */
+			50% {height: 60%;}           /*      */
+			75% {height: 100%;}          /*          */
 		}
 
 		@keyframes bars-anim-04 {
-			0%, 100% {height: 90%;}
-			30% {height: 65%;}
-			60% {height: 80%;}
-			90% {height: 100%;}
+			0%, 100% {height: 50%;}      /*     */
+			25% {height: 60%;}           /*      */
+			50% {height: 100%;}          /*          */
+			75% {height: 80%;}           /*        */
 		}
 
 		@keyframes bars-anim-pause {
