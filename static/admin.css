@@ -295,9 +295,9 @@ body {
 			.team-actions button:not(:first-child),
 			.team_edit-color button {margin-right: 1em;}
 		
-.scores:not(.--js-edit_teams) .team_edit,
-.scores.--js-edit_teams .team-infos,
-.scores.--js-edit_teams .team-actions {display: none;}
+		.scores:not(.--js-edit_teams) .team_edit,
+		.scores.--js-edit_teams .team-infos,
+		.scores.--js-edit_teams .team-actions {display: none;}
 		
 		.team_edit-infos {
 			
@@ -417,6 +417,13 @@ body {
 		margin-top: 50px;
 		flex-direction: column;
 	}
+	
+	.team-actions button {
+		font-size: 1.2em;
+	}
+	
+	.team-actions button:not(:first-child),
+	.team_edit-color button {margin-right: 0.5em;}
 	
 }
 
