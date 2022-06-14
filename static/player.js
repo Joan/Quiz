@@ -28,7 +28,7 @@
 	const videos_path = '/media/videos/',
 	      audios_path = '/media/audios/',
 	      images_path = '/media/images/',
-	      poster_path = '/media/intro-poster.png';
+	      poster_path = '/media/';
 	
 	const socket = io();
 	
@@ -46,7 +46,7 @@
 		riddles = data.riddles;
 		teams = data.teams;
 		scores = data.scores;
-		player.has_poster = data.has_intro_poster;
+		player.intro_poster = data.intro_poster;
 		
 		riddle_count = riddles.length;
 		
@@ -133,7 +133,7 @@
 				player.pause();
 			});
 			
-			if (player.has_poster) // Set at main init
+			if (player.intro_poster !== false) // Set at main init
 				player.init_poster();
 			else
 				player.next();
@@ -147,7 +147,8 @@
 		},
 		
 		init_poster: function() {
-			player.$poster = $(`<div class="poster"><img src="${poster_path}"></div>`).insertAfter(player.$el).css('opacity', 0);
+			console.log(player.intro_poster);
+			player.$poster = $(`<div class="poster"><img src="${poster_path + player.intro_poster}"></div>`).insertAfter(player.$el).css('opacity', 0);
 			player.$poster.animate({opacity: 1}, 500);
 			player.poster_displayed = true;
 		},

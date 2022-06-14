@@ -71,7 +71,7 @@ const files = {
 	quiz:   __dirname + data_dir + '/quiz.json',
 	teams:  __dirname + data_dir + '/teams.json',
 	scores: __dirname + data_dir + '/scores.json',
-	intro_poster: __dirname + media_dir + '/intro-poster.png'
+	intro_poster: __dirname + data_dir + '/intro-poster'
 };
 
 var riddles = JSON.parse(fs.readFileSync(files.quiz)),
@@ -112,12 +112,14 @@ check_scores_consistency();
  */
 
 // Check for intro_poster
-try {
-	fs.accessSync(files.intro_poster);
-	var has_intro_poster = true;
-} catch (err) {
-	var has_intro_poster = false;
-}
+var intro_poster = false;
+if (fs.existsSync(files.intro_poster + '.png'))
+	intro_poster = 'intro-poster.png';
+else if (fs.existsSync(files.intro_poster + '.jpg'))
+	intro_poster = 'intro-poster.jpg';
+
+if (intro_poster)
+	app.use('/media/' + intro_poster, express.static(__dirname + '/_data/' + intro_poster));
 
 // Default buzzer vars
 var buzzers_enabled = true,
@@ -140,7 +142,7 @@ io.on('connection', function(socket) {
 			scores: scores,
 			buzzers_enabled: buzzers_enabled,
 			single_buzz: single_buzz,
-			has_intro_poster: has_intro_poster
+			intro_poster: intro_poster
 		});
 		
 		console.info('Player connected');
