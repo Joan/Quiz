@@ -365,7 +365,6 @@ body {
 
 	.scores-settings {
 		display: flex;
-		gap: 1em;
 		font-size: 1.2em;
 		margin-top: 100px;
 	}
@@ -374,24 +373,27 @@ body {
 			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
-			gap: 0.6em;
-			flex-grow: 1;
+		}
+		
+		.scores-settings-col .setting,
+		.scores-settings-col .button {
+			margin-bottom: 0.6em;
 		}
 
 @media (min-width: 801px) {
 	
 	.scores-team_edit-actions .button {margin-top: 20px;}
 	
+	.scores-settings {
+		justify-content: space-between;
+	}
+	
 	.scores-settings-col {
-		width: 50%;
+		width: calc(50% - 0.3em);
 	}
 	
 	.scores-settings-col:last-child {
 		align-items: flex-end;
-	}
-	
-	.scores-settings-col .setting {
-		margin: 0.15em 0 0.2em;
 	}
 	
 }
