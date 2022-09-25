@@ -112,3 +112,11 @@ Leads to `/buzzers/<team_id>` (`<team_id>` is the team object position in teams.
 * <kbd>S</kbd> : toggle scoreboard (scoreboard is displayed immediatly when you change scores from the admin panel)
 * <kbd>Q</kbd> : toggle display of a QR Code on the player to access digital buzzers URL
 * <kbd>B</kbd> : toggle buzzers activation
+
+## Todo
+
+- [ ] Touch screen friendly admin
+- [ ] A better sound visualizer
+- [ ] Scoreboard only mode
+- [ ] Simple i18n
+- [ ] Connection (online / offline) state indicator (for player, admin, buzzers)
