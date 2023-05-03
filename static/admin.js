@@ -474,6 +474,8 @@
 			keyboard.$inputs = $('input');
 			$window.on('keydown', keyboard.keydown);
 			
+			$('.helper-list').on('click', 'button[data-key]', keyboard.button_helper_click);
+			
 		},
 		
 		keydown: function(e) {
@@ -497,7 +499,7 @@
 			
 			// Manage buzzer activation shortcut directly
 			if (keycode === 66) // B
-				settings.toggle_buzzers_enabled();
+				settings.toggle_buzzers_enabled(); // TODO improve this by passing it through player to validate actual state
 			
 			// Player shortcuts
 			switch(keycode) {
@@ -514,6 +516,17 @@
 					socket.emit('shortcut_press', e.originalEvent.keyCode);
 					break;
 			}
+			
+		},
+		
+		button_helper_click: function(e) {
+			e.preventDefault();
+			
+			var key = $(this).attr('data-key'),
+			    keys = {'space': 32, 'enter': 13, 'esc': 27, 'a': 65, 's': 83, 'q': 81};
+			
+			if (keys.hasOwnProperty(key))
+				socket.emit('shortcut_press', keys[key]);
 			
 		}
 		

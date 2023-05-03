@@ -7,13 +7,13 @@
 	"repository": "https://github.com/Joan/Quiz",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
-		"express": "^4.18.0",
-		"ip": "^1.1.5",
+		"express": "^4.18.1",
+		"ip": "^1.1.8",
 		"run-script-os": "^1.1.6",
-		"socket.io": "^4.5.0"
+		"socket.io": "^4.5.2"
 	},
 	"scripts": {
-		"postinstall" : "run-script-os",
+		"postinstall": "run-script-os",
 		"postinstall:win32": "Xcopy /E _data-sample _data/",
 		"postinstall:darwin:linux": "cp -R _data-sample _data/",
 		"start": "node server.js"

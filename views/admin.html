@@ -38,6 +38,39 @@
 		</div>
 	</div>
 	
+	<div class="riddles_col">
+		
+		<div class="riddles_pane">
+			<ul class="riddles"></ul>
+		</div>
+		
+		<div class="helper">
+		
+			<ul class="helper-list" data-current-riddle-type="">
+				<li class="helper-entry"><button data-key="space"><kbd>espace</kbd> Lecture / Pause / Buzzer suivant <span class="helper-warning" title="Cliquez dans la fenêtre du player ou appuyez sur une touche pour activer la vidéo">⚠️</span></button></li>
+				<li class="helper-entry"><button data-key="enter"><kbd>↩</kbd> Question suivante (transition)</button></li>
+				<li class="helper-entry"><kbd class="--no_space">←</kbd> / <kbd>→</kbd> Question précédente / suivante rapidement et lecture</li>
+				<li class="helper-entry"><button data-key="esc"><kbd>esc</kbd> Vider la liste des buzzers</button></li>
+				<li class="helper-entry" data-applies-to="image"><button data-key="a"><kbd>A</kbd> Afficher l'image réponse</button></li>
+				<li class="helper-entry"><button data-key="s"><kbd>S</kbd> Afficher les scores</button></li>
+				<li class="helper-entry"><button data-key="q"><kbd>Q</kbd> Afficher le QR code (buzzers tactiles)</button></li>
+			</ul>
+			
+			<div class="buzzers_controler">
+				<label class="setting --button" id="option-buzzers_enabled">
+					<input type="checkbox" id="option-buzzers_enabled-input" checked>
+					<span class="setting-switch"></span>
+					<span class="setting-label">
+						<span>Buzzers</span>
+						<span class="setting-state"><span>Activés</span><span>Désactivés</span></span>
+					</span>
+				</label>
+			</div>
+			
+		</div>
+		
+	</div>
+	
 	<template id="team-template">
 		<li class="team" id="">
 			<div class="team-infos">
@@ -66,10 +99,6 @@
 		</div>
 	</template>
 	
-	<div class="riddles_pane">
-		<ul class="riddles"></ul>
-	</div>
-	
 	<template id="riddle-template">
 		<li class="riddle" id="" data-riddle="">
 			<span class="riddle-type"></span><span class="riddle-count"></span>
@@ -77,31 +106,6 @@
 			<span class="riddle-answer_subtitle"></span>
 		</li>
 	</template>
-	
-	<div class="helper">
-		
-		<ul class="helper-list" data-current-riddle-type="">
-			<li class="helper-entry"><kbd>espace</kbd> Lecture / Pause / Buzzer suivant <span class="helper-warning" title="Cliquez dans la fenêtre du player ou appuyez sur une touche pour activer la vidéo">⚠️</span></li>
-			<li class="helper-entry"><kbd>↩</kbd> Question suivante (transition)</li>
-			<li class="helper-entry"><kbd class="--no_space">←</kbd> / <kbd>→</kbd> Question précédente / suivante rapidement et lecture</li>
-			<li class="helper-entry"><kbd>esc</kbd> Vider la liste des buzzers</li>
-			<li class="helper-entry" data-applies-to="image"><kbd>A</kbd> Afficher l'image réponse</li>
-			<li class="helper-entry"><kbd>S</kbd> Afficher les scores</li>
-			<li class="helper-entry"><kbd>Q</kbd> Afficher le QR code (buzzers tactiles)</li>
-		</ul>
-		
-		<div class="buzzers_controler">
-			<label class="setting --button" id="option-buzzers_enabled">
-				<input type="checkbox" id="option-buzzers_enabled-input" checked>
-				<span class="setting-switch"></span>
-				<span class="setting-label">
-					<span>Buzzers</span>
-					<span class="setting-state"><span>Activés</span><span>Désactivés</span></span>
-				</span>
-			</label>
-		</div>
-		
-	</div>
 	
 	<script src="/static/jquery.min.js"></script>
 	<script src="/socket.io/socket.io.min.js"></script>
