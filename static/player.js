@@ -35,7 +35,7 @@
 	var riddles,
 	    teams,
 	    scores,
-	    init_data = null;
+	    shortcuts;
 	
 	var current_riddle = null,
 	    current_riddle_num = 0,
@@ -47,23 +47,31 @@
 		teams = data.teams;
 		scores = data.scores;
 		player.intro_poster = data.intro_poster;
+		shortcuts = data.shortcuts;
 		
 		riddle_count = riddles.length;
 		
 		// Then initiate stuff
-		buzzer.init(); // buzzer can take over on player so initiated first
+		user_activation.init();
+		buzzer.init(); // buzzer is initiated first because it can take over on player
 		scoreboard.init();
 		player.init();
 		qr_helper.init();
-		keyboard.init();
+		controls.init();
 		
-		buzzer.set_buzzers_enabled(data.buzzers_enabled);
-		buzzer.set_single_buzz(data.single_buzz);
+		buzzer.set_buzzers_enabled(data.settings.buzzers_enabled);
+		buzzer.set_single_buzz(data.settings.single_buzz);
 		
 	};
 	
 	socket.on('init_data', function(data) {
 		init(data);
+	});
+	
+	socket.on('get_player_state', function() {
+		player.send_riddle_change(current_riddle_num);
+		socket.emit('update_player_activation_state', user_activation.has_been_active);
+		buzzer.send_buzz_change();
 	});
 	
 	/* Specific CSS styles */
@@ -94,6 +102,28 @@
 			css += `.scoreboard.show .team[data-position="${i}"],.scoreboard.hide .team[data-position="${l+1-i}"] {animation-delay: ${(i-1)*50}ms;}`;
 		
 		$('body').append('<style id="teams_misc">' + css + '</style>');
+	};
+	
+	/* userActivation polyfill */
+	// Handles the warning in admin to prevent DOMException for play events
+	
+	const user_activation = {
+		
+		has_been_active: false,
+		
+		init: function() {
+			socket.emit('update_player_activation_state', false);
+			$window.on('click.user_activation mouseup.user_activation pointerup.user_activation keyup.user_activation', user_activation.click_handler);
+		},
+		
+		click_handler: function(e) {
+			if (e.originalEvent.isTrusted) {
+				user_activation.has_been_active = true;
+				$window.off('.user_activation');
+				socket.emit('update_player_activation_state', true);
+			}
+		}
+		
 	};
 	
 	/*
@@ -147,7 +177,6 @@
 		},
 		
 		init_poster: function() {
-			console.log(player.intro_poster);
 			player.$poster = $(`<div class="poster"><img src="${poster_path + player.intro_poster}"></div>`).insertAfter(player.$el).css('opacity', 0);
 			player.$poster.animate({opacity: 1}, 500);
 			player.poster_displayed = true;
@@ -411,11 +440,13 @@
 			player.$image_player.attr('src', images_path + current_riddle.filename_answer);
 			player.$image.show();
 			player.play();
+			socket.emit('update_control_alt', 'toggle_answer', true);
 			
 		},
 		
 		send_riddle_change: function(riddle_num) {
 			socket.emit('riddle_change', riddle_num);
+			socket.emit('update_control_alt', 'toggle_answer', false);
 		},
 		
 		handle_cursor_display: function() {
@@ -427,16 +458,10 @@
 			};
 			player.cursor_idle = false;
 			clearTimeout(player.cursor_display_timeout);
-			player.cursor_display_timeout = setTimeout(later, 50);
+			player.cursor_display_timeout = setTimeout(later, 150);
 		}
 		
 	};
-	
-	socket.on('get_player_state', function() {
-		player.send_riddle_change(current_riddle_num);
-		socket.emit('player_interact_state', keyboard.has_interacted);
-		buzzer.send_buzz_change();
-	});
 	
 	socket.on('riddle_request_change', function(riddle_num) {
 		player.change_to(toInt(riddle_num));
@@ -591,7 +616,7 @@
 		
 		toggle_enabled: function() {
 			buzzer.set_buzzers_enabled(!buzzer.enabled);
-			socket.emit('set_buzzers_enabled', buzzer.enabled);
+			socket.emit('set_setting', 'buzzers_enabled', buzzer.enabled);
 		},
 		
 		set_single_buzz: function(enabled) {
@@ -604,13 +629,16 @@
 		buzzer.key_buzz(team_keycode);
 	});
 	
-	socket.on('set_buzzers_enabled', function(enabled) {
-		buzzer.set_buzzers_enabled(enabled);
-	});
-	
-	socket.on('set_single_buzz', function(enabled) {
-		buzzer.set_single_buzz(enabled);
-		buzzer.send_buzz_change();
+	socket.on('set_setting', (setting, val) => {
+		switch (setting) {
+			case 'buzzers_enabled':
+				buzzer.set_buzzers_enabled(val);
+				break;
+			case 'single_buzz':
+				buzzer.set_single_buzz(val);
+				buzzer.send_buzz_change();
+				break;
+		}
 	});
 	
 	/*
@@ -670,10 +698,12 @@
 		
 		show: function() {
 			scoreboard.$el.addClass('show').removeClass('hide');
+			socket.emit('update_control_alt', 'toggle_scores', true);
 		},
 		
 		hide: function() {
 			scoreboard.$el.addClass('hide').removeClass('show');
+			socket.emit('update_control_alt', 'toggle_scores', false);
 		},
 		
 		toggle: function() {
@@ -793,6 +823,7 @@
 				qr_helper.$el.addClass('show').removeClass('hide');
 				qr_helper.hidden = false;
 				player.pause();
+				socket.emit('update_control_alt', 'toggle_qr', true);
 			}
 		},
 		
@@ -800,6 +831,7 @@
 			if (qr_helper.$el) {
 				qr_helper.$el.addClass('hide').removeClass('show');
 				qr_helper.hidden = true;
+				socket.emit('update_control_alt', 'toggle_qr', false);
 			}
 		},
 		
@@ -810,104 +842,112 @@
 	};
 	
 	/*
-	 * GLOBAL KEYBOARD MANAGEMENT
+	 * CONTROLS / GLOBAL KEYBOARD MANAGEMENT
 	 *
 	 */
 	
-	const keyboard = {
+	const controls = {
 		
 		init: function() {
 			
-			// Handle the warning in admin to prevent DOMException for play event
-			socket.emit('player_interact_state', false);
-			keyboard.has_interacted = false;
-			$body.on('click.only-once keydown.only-once', function() {
-				socket.emit('player_interact_state', true);
-				keyboard.has_interacted = true;
-				$(this).off('click.only-once keydown.only-once');
-			});
+			$window.on('keydown', controls.keydown_handler);
 			
-			$window.on('keydown', keyboard.keydown);
+			controls.teams_keycodes = [];
+			for (let i in teams)
+				controls.teams_keycodes.push(teams[i].keycode);
+			
+			controls.all_commands = Object.values(shortcuts);
+			controls.commands_shortcuts = Object.fromEntries(Object.entries(shortcuts).map(([k, v]) => [v, toInt(k)]));
 			
 		},
 		
-		keydown: function(e) {
+		keydown_handler: function(e) {
+			
+			var keycode = e.originalEvent.keyCode;
 			
 			// Abort if meta
-			if (e.originalEvent.keyCode === undefined || e.originalEvent.metaKey || e.originalEvent.ctrlKey || e.originalEvent.altKey)
+			if (keycode === undefined || e.originalEvent.metaKey || e.originalEvent.ctrlKey || e.originalEvent.altKey || e.originalEvent.shiftKey)
 				return;
 			
-			e.preventDefault();
+			// Teams keycodes
+			if (controls.teams_keycodes.includes(keycode)) {
+				e.preventDefault();
+				buzzer.key_buzz(keycode);
+				return;
+			}
 			
-			keyboard.shortcut(e.originalEvent.keyCode);
+			// Shortcuts
+			if (shortcuts.hasOwnProperty(keycode)) {
+				e.preventDefault();
+				controls.exec(shortcuts[keycode]);
+			}
 			
 		},
 		
-		shortcut: function(keycode) {
+		exec: function(command) {
 			
-			switch(keycode) {
+			if (!controls.all_commands.includes(command)) {
+				console.error(`Unknown control command “${command}”`);
+				return;
+			}
+			
+			switch(command) {
 				
-				// Enter (normal next riddle)
-				case 13:
+				// Normal next riddle
+				case 'next':
 					player.next();
 					break;
 				
-				// Left / right (change riddle and play immediatly)
-				case 37:
+				// Change riddle and play immediatly
+				case 'backward':
 					player.prev(true);
 					break;
-				case 39:
+				case 'forward':
 					player.next(true);
 					break;
 				
-				// Space (play/pause media or next buzzer)
-				case 32:
+				// Play/pause media or next buzzer
+				case 'play_pause':
 					if (buzzer.has_queue)
 						buzzer.remove_first_from_queue();
 					else
 						player.toggle();
 					break;
 				
-				// Esc (empty buzzers queue)
-				case 27:
+				// Empty buzzers queue
+				case 'clear':
 					if (buzzer.has_queue)
 						buzzer.empty_queue(true);
 					break;
 				
-				// A (display image answer)
-				case 65:
+				// Display image answer
+				case 'toggle_answer':
 					player.reveal();
 					break;
 				
-				// B (toggle buzzer activation)
-				case 66:
+				// Toggle buzzer activation
+				case 'toggle_buzzers':
 					buzzer.toggle_enabled();
 					break;
 				
-				// S (toggle scoreboard)
-				case 83:
+				// Toggle scoreboard
+				case 'toggle_scores':
 					scoreboard.toggle();
 					break;
 				
-				// Q (toggle QR Code)
-				case 81:
+				// Toggle QR Code
+				case 'toggle_qr':
 					qr_helper.toggle();
 					break;
 				
-				// W (TEST)
-				case 87: scoreboard.update_teams(); scoreboard.update_scores(); break;
-				
-				default: // else, check for a team buzzer key
-					buzzer.key_buzz(keycode);
-					break;
 			}
 			
 		}
 		
 	};
 	
-	socket.on('shortcut_press', function(keycode) {
-		keyboard.shortcut(keycode);
+	socket.on('control', function(command) {
+		controls.exec(command);
 	});
 	
 	/*

@@ -2,23 +2,18 @@
  * @group LAYOUT
  */
 
-html, body {
-	width: 100%;
-	height: 100%;
-}
-
 html {
+	height: 100%;
 	color: #fff;
 	font: 1em/1.4 Solway, Ubuntu, sans-serif;
 }
 
-body {
-	background-color: #222;
+html, body {
+	width: 100%;
 }
 
-.riddles {
-	overflow-y: auto;
-	-webkit-overflow-scrolling: touch;
+body {
+	background-color: #222;
 }
 
 @media (min-width: 600px) {
@@ -26,30 +21,26 @@ body {
 	body {
 		display: flex;
 		overflow: hidden;
+		height: 100%;
 	}
 
-	.scores,
-	.riddles_col {
-		width: 50%;
+	.teams_pane {
+		width: 42%;
 	}
 	
-	.riddles_col {
+	.panes_col {
 		display: flex;
 		flex-direction: column;
+		width: 58%;
 	}
 	
 	.riddles_pane {
 		flex: 1 0;
-		height: 12rem; /* Replace with min-height:0 if removing height to avoid taking children height */
+		min-height: 12rem;
 	}
 	
-	.helper {
-		height: 30rem;
-		overflow: scroll;
-	}
-	
-	.scores,
-	.helper-list {
+	.teams_pane,
+	.controls_pane {
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
 	}
@@ -57,7 +48,7 @@ body {
 }
 
 @media (max-width: 599px) {
-
+	
 	.riddles_pane {
 		height: 40vh;
 	}
@@ -70,166 +61,74 @@ body {
  * @group COMMON
  */
 
-.setting {
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-}
-
-	.setting input {
-		position: absolute;
-		opacity: 0;
-		z-index: -1;
-	}
-
-	.setting-switch {
-		position: relative;
-		margin-right: 0.5em;
-		width: 1.5em;
-		height: 1em;
-		border-radius: 1em;
-		background-color: #666;
-		transition: background-color 300ms;
-	}
-	
-		.setting input:checked ~ .setting-switch {
-			background-color: #ddd;
-		}
-	
-		.setting-switch::before {
-			content: "";
-			display: block;
-			width: 0.6em;
-			height: 0.6em;
-			margin: 0.2em;
-			background-color: #ccc;
-			border-radius: 50%;
-			transition-property: transform, background-color;
-			transition-duration: 300ms;
-		}
-		
-		.setting input:checked ~ .setting-switch::before {
-			background-color: #0070ff;
-			transform: translateX(0.45em);
-		}
-	
-	.setting-label {
-		-webkit-user-select: none;
-		   -moz-user-select: none;
-		    -ms-user-select: none;
-		        user-select: none;
-	}
-	
-		.setting-label > span {
-			display: block;
-		}
-	
-		.setting-state {
-			font-size: 0.6em;
-			text-transform: uppercase;
-			letter-spacing: 0.04em;
-		}
-		
-		.setting input:not(:checked) ~ .setting-label .setting-state > :first-child,
-		.setting input:checked ~ .setting-label .setting-state > :last-child {display: none;}
-	
-	.setting.--button {
-		border-radius: 0.4em;
-		padding: 0.2em 0.8em 0.3em 0.5em;
-		-webkit-user-select: none;
-		   -moz-user-select: none;
-			-ms-user-select: none;
-				user-select: none;
-	}
-	
-		.setting.--button .setting-label::after {
-			content: "";
-			display: block;
-			position: absolute;
-			left: 0; right: 0;
-			top: 0; bottom: 0;
-			border: 1px solid #828282;
-			border-radius: 0.4em;
-			background-color: #353535;
-			transition-property: border-color, background-color, box-shadow;
-			transition-duration: 300ms;
-			pointer-events: none;
-		}
-		
-		.setting.--button .setting-label > span,
-		.setting.--button .setting-switch {
-			position: relative;
-			z-index: 1;
-		}
-		
-		.setting.--button input:checked ~ .setting-label::after {
-			border-color: #6996d0;
-			background-color: #34404f;
-		}
-		
-		.setting.--button input:not(:checked) ~ .setting-label::after {
-			box-shadow: 0 0 6px 1px rgb(255, 0, 0);
-		}
-
 .button {
-	background: #444;
-	border: none;
-	padding: 0.15em 0.6em 0.2em;
+	text-align: left;
+	background-color: #585858;
+	border: 1px solid #686868;
+	padding: 0.3em 0.6em 0.4em;
 	border-radius: 0.3em;
+	transition: opacity 150ms;
 }
 
-	.button.--highlight {
-		color: #333;
-		background-color: #fff;
+	.button.--primary {
+		color: #444;
+		background-color: #f4f4f4;
 	}
-
-.helper-warning {
-	cursor: help;
-}
+	
+	.button:disabled {
+		opacity: 0.3;
+	}
+	
+	.button svg {
+		pointer-events: none;
+	}
 
 /* @end COMMON */
 
 /* 
- * @group SCORES PANE
+ * @group TEAMS PANE
  */
 
-.scores {
+.teams_pane {
 	padding: 20px;
-	transition: background-color .3s;
+	transition: background-color .5s;
 }
 
-	.scores.edit_teams {
-		background-color: rgba(0, 112, 255, 0.3);
+	.teams_pane.--edit_teams {
+		background-color: #042651;
 	}
+
+.teams {
 	
-	.teams {
-		
-	}
+}
 	
 	.team {
-		padding: 8px 20px 18px;
+		padding: 0.4rem 1rem 0.9rem;
 		border-radius: 10px;
-		font-size: 1.2em;
 		background-color: currentColor;
 		margin-bottom: 20px;
 		outline: 0 solid #666;
-		transition: outline 250ms ease;
+		transition: box-shadow 250ms ease;
 	}
 	
-		.team.current_buzzer {
-			outline: 6px solid #fff;
-		}
-		
-		.team.queued_buzzer {
-			outline: 4px solid #666;
+		.teams.temp_disabled_buzzer .team {
+			box-shadow: 0 0 0 2px #666;
 		}
 		
 		.team.disabled_buzzer {
-			outline: 4px dashed #666;
+			box-shadow: 0 0 0 6px #666;
 		}
 		
-		.teams.temp_disabled_buzzer .team {
-			outline: 2px dashed #666;
+		.teams.all_disabled_buzzer .team {
+			box-shadow: 0 0 4px 2px #f00;
+		}
+		
+		.team.queued_buzzer {
+			box-shadow: 0 0 0 2px #fff;
+		}
+		
+		.team.current_buzzer {
+			box-shadow: 0 0 0 6px #fff;
 		}
 		
 		.team-infos,
@@ -237,18 +136,19 @@ body {
 			display: flex;
 			width: 100%;
 			color: #fff;
-			font-size: 2.4em;
+			font-size: 2em;
 		}
 		
 		.team-name {
+			padding-right: 10px;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
 		
-		.team-name {
+		.team-name,
+		.team_edit-name {
 			flex-grow: 1;
-			padding-right: 10px;
 		}
 		
 		.team-score,
@@ -260,10 +160,6 @@ body {
 			.team_edit-delete {
 				width: 3em;
 			}
-			
-			.team input {
-				border-radius: 6px;
-			}
 		
 			.team-score input {
 				border: none;
@@ -274,38 +170,58 @@ body {
 			}
 			input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance: none; margin: 0;}
 			
-			.teams input:focus {
-				outline: 2px solid;
+			.team_edit-name input:focus {
+				box-shadow: 0 0 0 2px currentColor;
 			}
-
+		
 		.team-actions,
 		.team_edit-color {
+			display: flex;
+			gap: 15px;
 			margin-top: 15px;
-			overflow: hidden; /* clearfix */
 		}
 
-			.team-actions button,
-			.team_edit-color button,
+			@supports (-webkit-touch-callout: none) and (not (translate: none)) { /* Targetting iOS 14.4, falsely supporting flexbox gap - https://ppuzio.medium.com/flexbox-gap-workaround-for-safari-on-ios-14-13-and-lower-ffcae589eb69 */
+				.team-actions .team-incs:not(:last-child):not(.--spacer) {
+					gap: 0;
+					margin-right: 15px;
+				}
+			}
+			
+			.team-incs,
+			.team_edit-color .button,
 			.team_edit-color input {
-				padding: 0.15em 0.6em;
-				border: none;
-				border-radius: 4px;
+				height: 1.7em;
+				font-size: 1.5em;
 				background-color: #fff;
+				padding: 0.15em 0.2em;
 			}
-		
-			.team-actions button {
-				float: right;
-				font-size: 1.4em;
+			
+			.team-incs {
+				width: 2.6em;
+			}
+			
+			.team .button {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.team .button,
+			.team .team_edit-color input {
+				border: 0 none;
+			}
+			
+			.team .button,
+			.team input {
+				border-radius: 0.2em;
 			}
 
-			.team-actions button[data-inc^="-"] {float: left;}
-
-			.team-actions button:not(:first-child),
-			.team_edit-color button {margin-right: 1em;}
+			.team-incs.--spacer {margin-right: auto;}
 		
-		.scores:not(.--js-edit_teams) .team_edit,
-		.scores.--js-edit_teams .team-infos,
-		.scores.--js-edit_teams .team-actions {display: none;}
+		.teams_pane:not(.--edit_teams) .team_edit,
+		.teams_pane.--edit_teams .team-infos,
+		.teams_pane.--edit_teams .team-actions {display: none;}
 		
 		.team_edit-infos {
 			
@@ -324,128 +240,214 @@ body {
 				}
 			
 			.team_edit-delete {
-				text-align: right;
+				align-items: center;
 			}
 			
-				.team_edit-delete button {
-					width: 1em;
-					height: 1em;
-					vertical-align: middle;
+				.team_edit-delete .button {
+					margin-left: auto;
+					width: 1.2em;
+					height: 1.2em;
+					margin-top: 0.1em;
 					padding: 0;
-					border: 0 none;
-					background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3e%3cg transform='rotate(45 10 10)'%3e%3crect id='r' x='8' y='-2' width='4' height='24' rx='1' fill='white'/%3e%3cuse href='%23r' transform='rotate(90 10 10)'/%3e%3c/g%3e%3c/svg%3e") no-repeat center/60%;
-					
+					background-color: rgba(255, 255, 255, 0.7);
+				}
+				
+				.team_edit-delete .button svg {
+					fill: #a63a3a;
 				}
 		
 		.team_edit-color {
 			
 		}
 		
-			.team_edit-color button,
+			.team_edit-color .button,
 			.team_edit-color input {
-				float: left;
-				height: calc(1.96em + 8px); /* 1.4em * 1.4 line-height + 2*padding */
+				width: 1.7em;
 			}
 			
-			.team_edit-color button {
+			.team_edit-color .button {
 				
 			}
 			
-				.team_edit-color button::after {
+				.team_edit-color .button::after {
 					content: "";
 					display: block;
 					background-color: currentColor;
-					width: 1.4em;
-					height: 1.4em;
+					width: 1em;
+					height: 1em;
 					border-radius: 1em;
 				}
 			
 			.team_edit-color input {
-				width: 3.5em;
 				box-shadow: none;
 			}
 		
-		.scores-team_edit-actions {
-			height: 0; /* trying to use existing space and prevent underneath elements to move */
-			margin-top: -20px; /* negative .team margin-bottom  */
-			font-size: 1.2rem;
-		}
-
-	.scores-settings {
-		display: flex;
-		font-size: 1.2em;
-		margin-top: 100px;
-	}
-
-		.scores-settings-col {
-			display: flex;
-			flex-direction: column;
-			align-items: flex-start;
+		.settings-meta_row {
+			height: 0; /* use existing space and prevent underneath elements to move */
+			position: relative;
 		}
 		
-		.scores-settings-col .setting,
-		.scores-settings-col .button {
-			margin-bottom: 0.6em;
+			.settings-meta_row .button {
+				position: absolute;
+			}
+	
+	@media (max-width: 899px) {
+		
+		.team-infos,
+		.team_edit-infos {
+			font-size: 1.8em;
 		}
-
-@media (min-width: 801px) {
-	
-	.scores-team_edit-actions .button {margin-top: 20px;}
-	
-	.scores-settings {
-		justify-content: space-between;
+		
+		.team-incs,
+		.team_edit-color .button,
+		.team_edit-color input {
+			font-size: 1.3em;
+		}
+		
 	}
 	
-	.scores-settings-col {
-		width: calc(50% - 0.3em);
+	@media (min-width: 900px) {
+		.settings-meta_row {
+			font-size: 1.1em;
+		}
 	}
 	
-	.scores-settings-col:last-child {
-		align-items: flex-end;
+	@media (max-width: 799px) {
+		
+		.team {
+			padding: 0.5rem 1rem 1rem;
+		}
+		
+		.team-infos,
+		.team_edit-infos {
+			font-size: 1.4em;
+		}
+		
+		.team-incs,
+		.team_edit-color .button,
+		.team_edit-color input {
+			font-size: 1.1em;
+		}
+		
 	}
 	
+	@media (max-width: 599px) {
+		
+		.team-incs,
+		.team_edit-color .button,
+		.team_edit-color input {
+			font-size: 1.2em;
+		}
+		
+	}
+	
+.settings {
+	margin-top: 80px;
 }
 
-@media (max-width: 800px) {
-	
-	.team-infos,
-	.team_edit-infos {
-		font-size: 1.4em;
+	.settings-row:not(:last-child) {
+		margin-bottom: 5px;
 	}
-	
-	.team_edit-color {
-		font-size: 0.8em;
-	}
-	
-	.scores-team_edit-actions {
-		font-size: 1rem;
-		margin-top: -5px;
-	}
-	
-	.scores-settings {
-		font-size: 1em;
-		margin-top: 50px;
-		flex-direction: column;
-	}
-	
-	.team-actions button {
-		font-size: 1.2em;
-	}
-	
-	.team-actions button:not(:first-child),
-	.team_edit-color button {margin-right: 0.5em;}
-	
-}
 
-@media (max-width: 700px) {
-	
-	.team {
-		font-size: 1em;
+	.setting {
+		display: inline-flex;
+		position: relative;
+		align-items: center;
 	}
 	
-}
+		.setting,
+		.control {
+			-webkit-user-select: none;
+			   -moz-user-select: none;
+				-ms-user-select: none;
+					user-select: none;
+		}
+		
+		.setting-control {
+			position: absolute;
+			opacity: 0;
+			z-index: -1;
+		}
+		
+		.setting-switch {
+			display: flex;
+			flex-shrink: 0;
+			align-items: center;
+			width: 1.3em;
+			height: 0.8em;
+			padding-left: 0.08em;
+			border-radius: 1em;
+			background-color: transparent;
+			border: 0.1em solid #bcbcbc;
+			transition-property: background-color, border-color;
+		}
+		
+			.setting-switch,
+			.setting-switch::before {
+				transition-duration: 300ms;
+			}
+			
+			.setting-switch::before {
+				content: "";
+				display: block;
+				width: 0.45em;
+				height: 0.45em;
+				background-color: #bcbcbc;
+				border-radius: 50%;
+				transition-property: transform, background-color;
+			}
+			
+			.setting-control:checked ~ .setting-switch,
+			.setting-control:checked ~ * .setting-switch {
+				background-color: #f5f5f5;
+				border-color: #f5f5f5;
+			}
+			
+				.setting-control:checked ~ .setting-switch::before,
+				.setting-control:checked ~ * .setting-switch::before {
+					background-color: #246fce;
+					transform: translateX(0.5em) scale(1.1);
+				}
+			
+			.setting .setting-switch {
+				margin-right: 0.5em;
+				font-size: 1.12em;
+			}
+			
+			.setting-control:checked ~ .--setting-enabled-hide,
+			.setting-control:checked ~ * .--setting-enabled-hide,
+			.setting-control:not(:checked) ~ .--setting-enabled-show,
+			.setting-control:not(:checked) ~ * .--setting-enabled-show {
+				display: none;
+			}
+		
+		.setting-label {
+			padding: 4px 0;
+		}
+		
+		.settings-row .button {
+			margin-top: 6px;
+		}
+		
+		.settings-row:not(:last-child) .button {
+			margin-bottom: 2px;
+		}
+	
+	@media (min-width: 900px) {
+		.settings {
+			font-size: 1.1em;
+		}
+	}
+	
+	@media (max-width: 799px) {
+		
+		.settings {
+			margin-top: 70px;
+		}
+		
+	}
 
-/* @end SCORES PANE */
+/* @end TEAMS PANE */
 
 /* 
  * @group RIDDLES LIST
@@ -470,6 +472,8 @@ body {
 	height: 100%;
 	padding: 20px 30px;
 	background-color: #333;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 	.riddle {
@@ -536,116 +540,240 @@ body {
 /* @end RIDDLES LIST */
 
 /* 
- * @group HELPER
+ * @group CONTROLS
  */
 
-.helper {
-	position: relative;
+.controls_pane {
+	padding: 15px;
 	background-color: #444;
 }
 
-	.helper-list {
-		height: 100%;
-		padding: 20px 30px;
-		font-size: 0.9rem;
+.player_activation_notice {
+	font-size: 0.85rem;
+	text-align: center;
+	overflow: hidden;
+	max-height: 0;
+	transition-property: margin, max-height;
+	transition-duration: 250ms;
+}
+
+	.player_activation_notice.--enabled {
+		margin-bottom: 1rem;
+		max-height: calc(1.4em * 2);
 	}
 
-	.helper-entry {
-		transition: opacity 0.2s;
-	}
+.controls {
+	display: flex;
+	flex-direction: column;
+}
 
-		.helper-entry:not(:last-child) {
-			margin-bottom: 0.4em;
+	.controls,
+	.controls-group {
+		gap: 15px;
+	}
+	
+	.controls-group {
+		display: flex;
+	}
+	
+		.controls-group.--labelled {
+			flex-direction: column;
+			gap: 0;
+		}
+		
+		@supports (-webkit-touch-callout: none) and (not (translate: none)) { /* Targetting iOS 14.4, falsely supporting flexbox gap - https://ppuzio.medium.com/flexbox-gap-workaround-for-safari-on-ios-14-13-and-lower-ffcae589eb69 */
+			.controls, .controls-group {gap: 0;}
+			
+			@media (min-width: 500px) {
+				.controls > .controls-group:not(:last-child) {
+					margin-bottom: 15px;
+				}
+				
+				.controls-group > .button:not(:last-child),
+				.controls-group.--labelled:not(:last-child) {
+					margin-right: 15px;
+				}
+			}
+			
+			@media (max-width: 499px) {
+				.controls > .controls-group > .button,
+				.controls-group.--labelled {
+					margin-bottom: 15px;
+				}
+				.controls > .controls-group:last-child .button:not(:nth-child(2)) {
+					margin-bottom: 0;
+				}
+				
+				.controls-group > .button:first-child {
+					margin-right: 15px;
+				}
+			}
+			
+		}
+		
+		.controls-group-label {
+			font-size: 0.8em;
+			color: #aaa;
+			padding: 0 4px;
+			margin-bottom: 6px;
 		}
 	
-		.helper kbd {
-			display: inline-block;
-			padding: 3px 5px;
-			font: 1em monospace;
+	.controls-group,
+	.control {
+		flex: 0 1 100%;
+	}
+	
+	.control {
+		display: flex;
+		position: relative;
+		flex-direction: column;
+		justify-content: center;
+		transition-property: box-shadow, border-color, opacity;
+		transition-duration: 150ms;
+	}
+
+		.control-label {
+			display: flex;
+			align-items: center;
+		}
+		
+			.control-label-icon {
+				width: 1em;
+				height: 1em;
+				flex-shrink: 0;
+				margin-right: 0.3em;
+				fill: currentColor;
+			}
+			
+			.control-label-text {
+				
+			}
+		
+		.control-switch {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			flex-grow: 1;
+			padding-top: 0.2em;
+			min-width: 0; /* Force flex to shrink when text can overflow */
+		}
+		
+			.control-switch-label {
+				display: inline-block;
+				font-size: 0.55em;
+				text-transform: uppercase;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				padding-left: 0.5em;
+			}
+			
+				.control-switch-label.--blue {color: #bcd8ff;}
+				.control-switch-label.--red {color: #ffb9b9;}
+			
+			.control-switch .setting-switch {
+				margin-left: 0.2em;
+			}
+		
+		.control-desc {
+			display: block;
+			flex: 1 0; /* Aligns label to the top if there's a desccription */
+			font-size: 0.75em;
+			line-height: 1.2;
+			margin-top: 0.2em;
+		}
+		
+		.control-short {
+			display: block;
+			position: absolute;
+			right: 5px;
+			bottom: 5px;
+			margin-left: 0.3em;
+			padding: 0.1em 0.4em 0.3em;
+			font: 0.8em monospace;
 			line-height: 1;
-			color: #444;
-			vertical-align: 0.06em;
-			background-color: #fafbfc;
 			border: 1px solid #d1d5da;
-			border-radius: 3px;
+			border-radius: 0.25em;
 			box-shadow: inset 0 -1px 0 #d1d5da;
 		}
-
-			.helper kbd:not(.--no_space) {margin-right: 8px;}
-
-		.helper-list:not([data-current-riddle-type="image"]) .helper-entry[data-applies-to="image"] {
-			opacity: 0.2;
+		
+		.control.--highlighted {
+			border-color: #d6d6d6;
+			box-shadow: 0 0 0 0.3em #d6d6d6;
 		}
-
-	.buzzers_controler {
-		position: absolute;
-		bottom: 10px;
-		right: 10px;
-		font-size: 1.4rem;
-	}
-	
-	.buzzers_controler .setting-state {width: 6.5em;}
-
-	.helper-entry button {
-		width: 100%;
-		text-align: left;
-		background-color: transparent;
-	}
-
-@media (pointer: coarse) {
-	
-	.helper-list {
-		display: grid;
-		grid-template-columns: 48% 48%;
-		column-gap: 4%;
-		row-gap: 8%;
-	}
-	
-	.helper-entry button {
-		border: 1px solid;
-		border-radius: 4px;
-		padding: 1.5em 1.2em;
-	}
-	
-	.helper-entry button:active {
-		background-color: #222;
-	}
-	
-	.helper-entry:nth-child(1) {
-		grid-column-start: 2;
-	}
-	
-	.helper-entry:nth-child(2) {
-		grid-column-start: 1;
-		grid-row-start: 1;
-	}
-	
-}
-
-@media (pointer: fine) {
-	
-	.helper-entry button {
-		border: 0 none;
-	}
-	
-}
-
-@media (max-width: 800px) {
-	
-	.helper-list {
-		padding: 20px;
-	}
-	
-		.helper-entry {
-			font-size: 0.8em;
+		
+		.control.--primary {
+			border-color: #f4f4f4;
 		}
+		
+		.control:not([data-display-alt="true"]) .--display_alt-show,
+		.control[data-display-alt="true"] .--display_alt-hide {display: none;}
 	
-}
-
-@media (max-width: 440px), (min-width: 600px) and (max-width: 1020px) {
-	.helper-list {
-		padding-bottom: 90px; /* for the buzzers button */
+	@media (min-width: 600px) and (max-width: 899px) {
+		
+		.control-label-icon {
+			display: none;
+		}
+		
 	}
-}
+	
+	@media (min-width: 600px) {
+		
+		.controls > .controls-group {
+			min-height: 4.8em;
+		}
+		
+		.control.--primary,
+		.control.--wide {
+			flex: 0 0 38%;
+			width: 38%;
+		}
+		
+	}
+	
+	@media (min-width: 500px) {
+		
+		.control-label {
+			font-size: 1.1em;
+		}
+		
+	}
+	
+	@media (max-width: 899px) {
+		.controls-group-label {
+			font-size: 0.7em;
+		}
+	}
+	
+	@media (max-width: 499px) {
+		
+		.controls-group {
+			flex-wrap: wrap;
+		}
+		
+		.controls-group > .controls-group {
+			flex-grow: 1;
+			flex-wrap: nowrap;
+			flex-direction: row;
+		}
+		
+		.controls > .controls-group > .control:not(.--primary):not(.--wide) {
+			flex-basis: calc(50% - 15px / 2);
+		}
+		
+		.control.--primary,
+		.control.--wide {
+			order: -1;
+		}
+		
+		.controls-group-label {
+			max-width: 10em;
+			padding-right: 0.5em;
+		}
+		
+		.control-short {
+			display: none;
+		}
+		
+	}
 
-/* @end HELPER */
+/* @end CONTROLS */

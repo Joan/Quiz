@@ -78,6 +78,18 @@ var riddles = JSON.parse(fs.readFileSync(files.quiz)),
     teams   = JSON.parse(fs.readFileSync(files.teams)),
     scores  = JSON.parse(fs.readFileSync(files.scores));
 
+const shortcuts = {
+	13: 'next',           // Enter ↩
+	37: 'backward',       // Left ←
+	39: 'forward',        // Right →
+	32: 'play_pause',     // Space
+	27: 'clear',          // Esc
+	65: 'toggle_answer',  // A
+	66: 'toggle_buzzers', // B
+	81: 'toggle_qr',      // Q
+	83: 'toggle_scores'   // S
+};
+
 /*
  * Scores management
  *
@@ -121,9 +133,11 @@ else if (fs.existsSync(files.intro_poster + '.jpg'))
 if (intro_poster)
 	app.use('/media/' + intro_poster, express.static(__dirname + '/_data/' + intro_poster));
 
-// Default buzzer vars
-var buzzers_enabled = true,
-    single_buzz = false;
+// Default settings
+var settings = {
+	buzzers_enabled: true,
+	single_buzz: false
+};
 
 /*
  * Socket events
@@ -131,6 +145,12 @@ var buzzers_enabled = true,
  */
 
 io.on('connection', function(socket) {
+	
+	/*
+	socket.emit() → to the sender only
+	socket.broadcast.emit() → to all clients except the sender
+	io.emit() → to all clients
+	*/
 	
 	/* Connections */
 	
@@ -140,9 +160,9 @@ io.on('connection', function(socket) {
 			riddles: riddles,
 			teams: teams,
 			scores: scores,
-			buzzers_enabled: buzzers_enabled,
-			single_buzz: single_buzz,
-			intro_poster: intro_poster
+			intro_poster: intro_poster,
+			shortcuts: shortcuts,
+			settings: settings
 		});
 		
 		console.info('Player connected');
@@ -154,14 +174,19 @@ io.on('connection', function(socket) {
 			riddles: riddles,
 			teams: teams,
 			scores: scores,
-			buzzers_enabled: buzzers_enabled,
-			single_buzz: single_buzz
+			shortcuts: shortcuts,
+			settings: settings
 		});
 		
 		console.info('Admin connected');
 	});
 	
 	socket.on('connection_receiver', function() {
+		
+		socket.emit('init_data', {
+			teams: teams
+		});
+		
 		console.info('Receiver connected');
 	});
 	
@@ -249,26 +274,23 @@ io.on('connection', function(socket) {
 		socket.broadcast.emit('buzzer_press', team_keycode);
 	});
 	
-	// Buzzer activation
+	/* Settings and controls */
 	
-	socket.on('set_buzzers_enabled', function(enabled) {
-		buzzers_enabled = enabled;
-		socket.broadcast.emit('set_buzzers_enabled', buzzers_enabled);
+	socket.on('set_setting', (setting, val) => {
+		settings[setting] = val;
+		socket.broadcast.emit('set_setting', setting, val);
 	});
 	
-	socket.on('set_single_buzz', function(enabled) {
-		single_buzz = enabled;
-		socket.broadcast.emit('set_single_buzz', single_buzz);
+	socket.on('control', function(command) {
+		socket.broadcast.emit('control', command);
 	});
 	
-	/* Shortcut triggers in admin */
-	
-	socket.on('shortcut_press', function(keycode) {
-		socket.broadcast.emit('shortcut_press', keycode);
+	socket.on('update_control_alt', function(command, alt) {
+		socket.broadcast.emit('update_control_alt', command, alt);
 	});
 	
-	socket.on('player_interact_state', function(interacted) {
-		socket.broadcast.emit('player_interact_state', interacted);
+	socket.on('update_player_activation_state', function(has_been_active) {
+		socket.broadcast.emit('update_player_activation_state', has_been_active);
 	});
 	
 	/* QR Code Helper get IP */

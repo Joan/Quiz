@@ -19,8 +19,9 @@
 	const socket = io();
 	
 	var riddles,
-		teams,
-		scores,
+	    teams,
+	    scores,
+	    shortcuts,
 		
 		current_riddle = null,
 		current_riddle_num = 0,
@@ -33,23 +34,25 @@
 		riddles = data.riddles;
 		teams = data.teams;
 		scores = data.scores;
+		shortcuts = data.shortcuts;
 		
 		riddle_count = riddles.length;
 		
 		// Then initiate stuff
 		scoreboard.init();
 		riddleboard.init();
-		settings.init();
-		keyboard.init();
+		settings.init(data.settings);
+		controls.init();
 		socket.emit('get_player_state');
-		
-		settings.$buzzers_enabled_input.prop('checked', data.buzzers_enabled);
-		settings.$single_buzz_input.prop('checked', data.single_buzz);
 		
 	};
 	
 	socket.on('init_data', function(data) {
 		init(data);
+	});
+	
+	socket.on('update_player_activation_state', function(has_been_active) {
+		$('.player_activation_notice')[has_been_active ? 'removeClass' : 'addClass']('--enabled');
 	});
 	
 	/* Specific CSS styles */
@@ -71,7 +74,7 @@
 		
 		init: function() {
 			
-			scoreboard.$el = $('.scores');
+			scoreboard.$el = $('.teams_pane');
 			scoreboard.$teams = $('.teams');
 			
 			scoreboard.$team_template = $($('#team-template').html());
@@ -86,6 +89,7 @@
 			scoreboard.$edit_teams_button = $('#button-edit_teams');
 			scoreboard.$edit_teams_end_button = $('#button-edit_teams_end');
 			scoreboard.$edit_teams_add = $('#button-add_team');
+			// TODO: switch to `data-action` instead of `id`
 			
 			scoreboard.$reset_scores_button.on('click.scoreboard', scoreboard.reset_scores);
 			scoreboard.$edit_teams_button.on('click.scoreboard', scoreboard.edit_teams.start);
@@ -146,7 +150,7 @@
 		
 		update_buzzer: function(team_id, player_state, buzzer_queue) {
 			
-			scoreboard.$teams.children().removeClass('current_buzzer').removeClass('queued_buzzer');
+			scoreboard.$teams.children().removeClass('current_buzzer queued_buzzer disabled_buzzer');
 			
 			if (team_id >= 0) {
 				
@@ -164,25 +168,21 @@
 			} else {
 				scoreboard.$teams.removeClass('temp_disabled_buzzer');
 				
-				if (player_state == 'buzzable' && settings.$single_buzz_input[0].checked) {
+				if (player_state == 'buzzable' && settings.single_buzz.val) {
 					
 					for (let i = 0, l = scoreboard.buzz_counts.length; i < l; i++) {
 						let $team = $('#team_' + i);
 						if (scoreboard.buzz_counts[i] > 0 && !$team.hasClass('current_buzzer'))
 							$team.addClass('disabled_buzzer');
-						else
-							$team.removeClass('disabled_buzzer');
 					}
 					
-				} else {
-					scoreboard.$teams.children('.disabled_buzzer').removeClass('disabled_buzzer');
 				}
 			}
 			
 			var buzzer_queue_length = buzzer_queue.length;
 			if (buzzer_queue_length > 0) {
 				for (let i = 0; i < buzzer_queue_length; i++)
-					$('#team_' + buzzer_queue[i]).removeClass('disabled_buzzer').addClass('queued_buzzer');
+					$('#team_' + buzzer_queue[i]).addClass('queued_buzzer');
 			}
 			
 			scoreboard.current_buzzer_team_id = team_id;
@@ -198,7 +198,7 @@
 				
 				// Check if each team has fields
 				for (let i in teams) {
-					if (!$('#team_' + i).hasClass('--js-edit_ready'))
+					if (!$('#team_' + i).hasClass('--edit_ready'))
 						scoreboard.edit_teams.add_edit_fields_to_team(i);
 				}
 				
@@ -206,7 +206,7 @@
 				scoreboard.$edit_teams_add.off('click.edit_teams').on('click.edit_teams', scoreboard.edit_teams.add);
 				
 				scoreboard.edit_teams.serialized_teams = JSON.stringify(teams);
-				scoreboard.$el.addClass('--js-edit_teams');
+				scoreboard.$el.addClass('--edit_teams');
 				scoreboard.$edit_teams_button.hide();
 				
 			},
@@ -230,8 +230,8 @@
 					.on('input.edit_teams', scoreboard.edit_teams.change_color);
 				$clone.find('[data-team]').attr('data-team', team_id);
 				$clone.appendTo($team);
-				$team.addClass('--js-edit_ready');
-				keyboard.$inputs = $('input'); // Update all page inputs
+				$team.addClass('--edit_ready');
+				controls.$inputs = $('input'); // Update all page inputs
 			},
 			
 			change_color: function(e) {
@@ -308,7 +308,7 @@
 					scoreboard.edit_teams.save();
 				scoreboard.$edit_teams_add.off('click.edit_teams')
 				scoreboard.$edit_teams_button.show();
-				scoreboard.$el.removeClass('--js-edit_teams');
+				scoreboard.$el.removeClass('--edit_teams');
 			}
 			
 		}
@@ -377,18 +377,21 @@
 			
 			if (riddle_num < 1) {
 				var scroll_target = 0,
-					current_riddle_type = '';
+				    has_filename_answer = false;
 			}
 			
 			else {
+				
 				var $target = $('#riddle_' + riddle_num),
-					scroll_target = $target.position().top + riddleboard.$el[0].scrollTop - riddleboard.$el.offset().top - 20,
-					current_riddle_type = riddles[riddle_num - 1].type;
+				    scroll_target = $target.position().top + riddleboard.$el[0].scrollTop - riddleboard.$el.offset().top - 20,
+				    has_filename_answer = riddles[riddle_num - 1].hasOwnProperty('filename_answer');
+				
 				$target.addClass('current');
 			}
 			
 			riddleboard.$el.stop(true).animate({scrollTop: scroll_target}, 500);
-			riddleboard.$helper.attr('data-current-riddle-type', current_riddle_type);
+			
+			$('[data-command="toggle_answer"]').attr('disabled', !has_filename_answer);
 			
 		},
 		
@@ -400,8 +403,8 @@
 		
 	};
 	
-	socket.on('riddle_change', function(data) {
-		riddleboard.change_current(data);
+	socket.on('riddle_change', function(riddle_num) {
+		riddleboard.change_current(riddle_num);
 	});
 	
 	/*
@@ -411,129 +414,157 @@
 	
 	const settings = {
 		
-		init: function() {
-			[
-				['buzzers_enabled'],
-				['scroll_to_active_team'],
-				['single_buzz']
-			].forEach(s => {
-				settings['$'+s+'_label'] = $('#option-'+s);
-				settings['$'+s+'_input'] = $('#option-'+s+'-input');
-				settings[s] = settings['$'+s+'_input'][0].hasAttribute('checked'); // instead of `.checked` to prevent form conservation
-				settings['$'+s+'_input'].prop('checked', settings[s]); // Force defaut value
-				settings['$'+s+'_input']
-					.on('change.settings', settings['change_'+s])
-					.on('change.settings_blur', function() {$(this).blur()}); // prevent focus to stay on checkbox, disabling keyboard shortcuts
-			});
+		init: function(server_settings) {
+			
+			var local_setting = {
+				scroll_to_active_team: true
+			};
+			
+			var all_settings = {
+				...local_setting,
+				...server_settings
+			};
+			
+			// Init all settings
+			for (let setting in all_settings) {
+				
+				settings[setting] = {
+					val: all_settings[setting],
+					$el: $(`[data-setting="${setting}"]`),
+					$input: $(`[data-setting="${setting}"] input[type="checkbox"]`)
+				};
+				
+				settings[setting].$input.prop('checked', settings[setting].val); // Update inputs
+				settings.process(setting);
+				
+				let is_server_setting = !local_setting.hasOwnProperty(setting);
+				
+				settings[setting].$input
+					.on('change.settings', function() {
+						
+						settings[setting].val = this.checked;
+						
+						if (is_server_setting)
+							socket.emit('set_setting', setting, this.checked);
+						
+						settings.process(setting);
+						
+					})
+					.on('change.settings_blur', function() {$(this).blur()}); // prevent focus to stay on checkbox, disabling controls shortcuts
+				
+			}
+			
 		},
 		
-		set_option_input: function(option_name, value) {
-			settings['$'+option_name+'_input'].prop('checked', value);
+		// Settings change processers
+		
+		process: function(setting) {
+			if (settings.hasOwnProperty(`process_${setting}`))
+				settings[`process_${setting}`](this.checked);
 		},
 		
-		// Generic functions
-		
-		change_buzzers_enabled: function() {
-			socket.emit('set_buzzers_enabled', settings.$buzzers_enabled_input[0].checked);
+		process_scroll_to_active_team: function() {
+			scoreboard.scroll_to_active_team = settings.scroll_to_active_team.val;
 		},
 		
-		change_scroll_to_active_team: function() {
-			scoreboard.scroll_to_active_team = settings.$scroll_to_active_team_input[0].checked;
+		process_buzzers_enabled: function() {
+			scoreboard.$teams[settings.buzzers_enabled.val ? 'removeClass' : 'addClass']('all_disabled_buzzer');
 		},
 		
-		change_single_buzz: function() {
-			socket.emit('set_single_buzz', settings.$single_buzz_input[0].checked);
-		},
-		
-		// Specific functions
-		
-		toggle_buzzers_enabled: function() {
-			settings.$buzzers_enabled_input[0].checked = !settings.$buzzers_enabled_input[0].checked;
-			settings.change_buzzers_enabled();
+		toggle_buzzers_enabled: function() { // For keyboard shortcut
+			settings.buzzers_enabled.$input.prop('checked', !settings.buzzers_enabled.$input[0].checked).trigger('change');
 		}
 		
 	};
 	
-	socket.on('set_buzzers_enabled', function(enabled) {
-		settings.$buzzers_enabled_input.prop('checked', enabled || false);
-	});
-	
-	socket.on('set_single_buzz', function(enabled) {
-		settings.$single_buzz_input.prop('checked', enabled || false);
+	socket.on('set_setting', (setting, val) => {
+
+		settings[setting].val = val;
+		settings[setting].$input.prop('checked', !!val);
+		
+		settings.process(setting);
+		
 	});
 	
 	/*
-	 * DELEGATED KEYBOARD MANAGEMENT
+	 * CONTROLS AND KEYBOARD SHORTCUTS
 	 *
 	 */
 	
-	const keyboard = {
+	const controls = {
 		
 		init: function() {
 			
-			keyboard.$inputs = $('input');
-			$window.on('keydown', keyboard.keydown);
+			controls.$inputs = $('input');
 			
-			$('.helper-list').on('click', 'button[data-key]', keyboard.button_helper_click);
+			$window.on('keydown', controls.keydown_handler);
+			
+			$('[data-action="control"]').on('click', controls.click_handler);
+			
+			controls.teams_keycodes = [];
+			for (let i in teams)
+				controls.teams_keycodes.push(teams[i].keycode);
+			
+			controls.all_commands = Object.values(shortcuts);
+			controls.commands_shortcuts = Object.fromEntries(Object.entries(shortcuts).map(([k, v]) => [v, toInt(k)]));
 			
 		},
 		
-		keydown: function(e) {
+		keydown_handler: function(e) {
 			
 			var keycode = e.originalEvent.keyCode,
-				input_focused = keyboard.$inputs.is(':focus'); // If one of inputs has focus
+				input_focused = controls.$inputs.is(':focus');
 			
-			// Abort if meta
+			// Abort if meta or if one of inputs has focus
 			if (keycode === undefined || input_focused || e.originalEvent.metaKey || e.originalEvent.ctrlKey || e.originalEvent.altKey || e.originalEvent.shiftKey)
 				return;
 			
-			// Team keycodes
-			for (let i in teams) {
-				if (keycode === teams[i].keycode) {
-					e.preventDefault();
-					socket.emit('buzzer_press', keycode);
-					return;
-					break;
-				}
+			// Teams keycodes
+			if (controls.teams_keycodes.includes(keycode)) {
+				e.preventDefault();
+				socket.emit('buzzer_press', keycode);
+				return;
 			}
 			
 			// Manage buzzer activation shortcut directly
-			if (keycode === 66) // B
-				settings.toggle_buzzers_enabled(); // TODO improve this by passing it through player to validate actual state
+			if (keycode === controls.commands_shortcuts.toggle_buzzers) {
+				e.preventDefault();
+				settings.toggle_buzzers_enabled();
+				return;
+			}
 			
-			// Player shortcuts
-			switch(keycode) {
-				case 13: // Enter
-				case 37: // Left
-				case 39: // Right
-				case 32: // Space
-				case 27: // Esc
-				case 65: // A
-				case 83: // S
-				case 81: // Q
-					// Send to player
-					e.preventDefault();
-					socket.emit('shortcut_press', e.originalEvent.keyCode);
-					break;
+			// Shortcuts
+			if (shortcuts.hasOwnProperty(keycode)) {
+				e.preventDefault();
+				socket.emit('control', shortcuts[keycode]);
+				return;
 			}
 			
 		},
 		
-		button_helper_click: function(e) {
+		click_handler: function(e) {
 			e.preventDefault();
 			
-			var key = $(this).attr('data-key'),
-			    keys = {'space': 32, 'enter': 13, 'esc': 27, 'a': 65, 's': 83, 'q': 81};
+			var command = $(this).attr('data-command');
 			
-			if (keys.hasOwnProperty(key))
-				socket.emit('shortcut_press', keys[key]);
+			if (controls.all_commands.includes(command))
+				socket.emit('control', command);
 			
+		},
+		
+		update_control_alt(command, is_alt) {
+			var $target = $(`[data-command="${command}"][data-display-alt]`);
+			
+			if ($target.length >= 0) {
+				$target.attr('data-display-alt', !!is_alt);
+				$target[!!is_alt ? 'addClass' : 'removeClass']('--highlighted');
+			}
 		}
 		
 	};
 	
-	socket.on('player_interact_state', function(interacted) {
-		$('.helper-warning')[interacted ? 'hide' : 'show']();
+	socket.on('update_control_alt', (command, alt) => {
+		controls.update_control_alt(command, alt);
 	});
 	
 	/*

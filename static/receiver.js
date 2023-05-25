@@ -9,23 +9,39 @@
 	'use strict';
 	
 	const socket = io();
-	socket.emit('connection_receiver');
 	
-	const is_meta_keydown = function(e) {
-		return e.originalEvent.keyCode === undefined || e.originalEvent.metaKey || e.originalEvent.ctrlKey || e.originalEvent.altKey;
+	const teams_keycodes = [];
+	
+	const init = function(data) {
+		
+		for (let i in data.teams)
+			teams_keycodes.push(data.teams[i].keycode);
+		
+		$(window).on('keydown', keydown_handler);
+		
 	};
 	
-	const buzzer_keydown = function(e) {
+	socket.on('init_data', function(data) {
+		init(data);
+	});
+	
+	const keydown_handler = function(e) {
 		
-		if (is_meta_keydown(e) || e.originalEvent.keyCode == 27 || e.originalEvent.keyCode == 32) // Esc / Space
+		var keycode = e.originalEvent.keyCode;
+		
+		if (keycode === undefined || e.originalEvent.metaKey || e.originalEvent.ctrlKey || e.originalEvent.altKey || e.originalEvent.shiftKey)
 			return;
 		
-		e.preventDefault();
-		
-		socket.emit('buzzer_press', e.originalEvent.keyCode);
+		if (teams_keycodes.includes(keycode)) {
+			e.preventDefault();
+			socket.emit('buzzer_press', keycode);
+			return;
+		}
 		
 	};
 	
-	$(window).on('keydown', buzzer_keydown);
+	$(function() {
+		socket.emit('connection_receiver');
+	});
 	
 })(this, this.document);

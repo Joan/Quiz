@@ -115,8 +115,9 @@ Leads to `/buzzers/<team_id>` (`<team_id>` is the team object position in teams.
 
 ## Todo
 
-- [ ] Touch screen friendly admin
 - [ ] A better sound visualizer
-- [ ] Scoreboard only mode
+- [ ] Scoreboard only mode (if quiz.json is empty)
+- [ ] Enable answer reveal for all medias and toggle (instead of one-way switch)
+- [ ] Mobile admin: horizontal slide for teams and riddles?
 - [ ] Simple i18n
 - [ ] Connection (online / offline) state indicator (for player, admin, buzzers)
