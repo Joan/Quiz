@@ -215,6 +215,7 @@
 			}
 			
 			player.paused = false;
+			socket.emit('update_control_alt', 'play_pause', true);
 			
 			scoreboard.hide();
 			qr_helper.hide();
@@ -225,6 +226,7 @@
 				player[current_riddle.type].pause();
 			player.$el.removeClass('playing');
 			player.paused = true;
+			socket.emit('update_control_alt', 'play_pause', false);
 		},
 		
 		toggle: function() {

@@ -553,11 +553,15 @@
 		},
 		
 		update_control_alt(command, is_alt) {
+			
 			var $target = $(`[data-command="${command}"][data-display-alt]`);
 			
 			if ($target.length >= 0) {
+				
 				$target.attr('data-display-alt', !!is_alt);
-				$target[!!is_alt ? 'addClass' : 'removeClass']('--highlighted');
+				
+				if (['toggle_scores', 'toggle_answer', 'toggle_qr'].includes(command))
+					$target[!!is_alt ? 'addClass' : 'removeClass']('--highlighted');
 			}
 		}
 		
