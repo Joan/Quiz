@@ -112,16 +112,30 @@
 		has_been_active: false,
 		
 		init: function() {
+			user_activation.queue = [];
 			socket.emit('update_player_activation_state', false);
-			$window.on('click.user_activation mouseup.user_activation pointerup.user_activation keyup.user_activation', user_activation.click_handler);
+			$window.on('click.user_activation mouseup.user_activation pointerup.user_activation', user_activation.click_handler);
 		},
 		
 		click_handler: function(e) {
 			if (e.originalEvent.isTrusted) {
 				user_activation.has_been_active = true;
+				user_activation.trigger_queue();
 				$window.off('.user_activation');
 				socket.emit('update_player_activation_state', true);
 			}
+		},
+		
+		add_to_queue: function(s) {
+			if (user_activation.has_been_active)
+				s();
+			else
+				user_activation.queue.push(s);
+		},
+		
+		trigger_queue: function() {
+			for (const s of user_activation.queue)
+				s();
 		}
 		
 	};
@@ -155,6 +169,8 @@
 			player.launched = false;
 			player.paused = false;
 			player.poster_displayed = false;
+			
+			audio_bars.init();
 			
 			player.send_riddle_change(0);
 			
@@ -459,6 +475,136 @@
 			player.cursor_idle = false;
 			clearTimeout(player.cursor_display_timeout);
 			player.cursor_display_timeout = setTimeout(later, 150);
+		}
+		
+	};
+	
+	/* Audio bars */
+	
+	const audio_bars = {
+		
+		init: function() {
+			
+			if (!user_activation.has_been_active) {
+				user_activation.add_to_queue(audio_bars.init);
+				return;
+			}
+			
+			const fftSize = 64,
+			      rect_width = 5,
+			      rect_gap = 5;
+			
+			audio_bars.rect_min_height = 4;
+			audio_bars.rect_max_height = 400;
+			audio_bars.visualizer_middle = audio_bars.rect_max_height / 2;
+			
+			audio_bars.$visualizer = $('.audio-bars svg')[0];
+			
+			audio_bars.bars_count = fftSize - Math.round((fftSize) * 0.3); // We remove the last bars that are almost always flat (~ 30% of frequency bin)
+			audio_bars.bars = [];
+			audio_bars.bars_max = [];
+			
+			audio_bars.audio_context = new (AudioContext || webkitAudioContext)();
+			audio_bars.source = audio_bars.audio_context.createMediaElementSource(player.audio);
+			audio_bars.analyser = audio_bars.audio_context.createAnalyser();
+			
+			audio_bars.analyser.fftSize = fftSize * 2;
+			
+			audio_bars.source.connect(audio_bars.analyser);
+			audio_bars.analyser.connect(audio_bars.audio_context.destination);
+			audio_bars.data = new Uint8Array(audio_bars.analyser.frequencyBinCount);
+			
+			// Adapt SVG
+			
+			var visualizer_width = Math.floor(rect_width * audio_bars.bars_count + rect_gap * (audio_bars.bars_count - 1));
+			audio_bars.$visualizer.setAttribute('width', visualizer_width);
+			audio_bars.$visualizer.setAttribute('height', audio_bars.rect_max_height);
+			audio_bars.$visualizer.setAttribute('viewBox', `0 0 ${visualizer_width} ${audio_bars.rect_max_height}`);
+			
+			// Create rects
+			
+			for (let i = 0; i < audio_bars.bars_count; i++) {
+				let el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+				el.setAttribute('x', (rect_width + rect_gap) * i);
+				el.setAttribute('y', (audio_bars.visualizer_middle) - (audio_bars.rect_min_height / 2));
+				el.setAttribute('width', rect_width);
+				el.setAttribute('height', audio_bars.rect_min_height);
+				el.setAttribute('rx', 1.7);
+				audio_bars.$visualizer.append(el);
+				audio_bars.bars[i] = el;
+			}
+			
+			// Calcs max heights
+			
+			// t,b,c,d: iteration, first val, last val, iterations count
+			var easeOutQuad = function(t,b,c,d) {return -c * (t /= d) * (t - 2) + b},
+			    easeOutCirc = function(t,b,c,d) {return c * Math.sqrt(1 - (t = t / d - 1) * t) + b};
+	
+			var firsts = [], lasts = [],
+			    min_val = audio_bars.rect_min_height * 2,
+			    max_val = audio_bars.rect_max_height - (audio_bars.rect_min_height * 2),
+			    firsts_count = Math.round(3/6 * audio_bars.bars_count),
+			    lasts_count = Math.round(1/6 * audio_bars.bars_count),
+			    rests_count = audio_bars.bars_count - firsts_count - lasts_count;
+	
+			// Easing values for first bars
+			for (let i = 0; i < firsts_count; i++)
+				firsts[i] = roundFloat(easeOutQuad(i, min_val, max_val, firsts_count), 1);
+			// Easing values for last bars
+			for (let i = 0; i < lasts_count; i++)
+				lasts[i] = roundFloat(easeOutCirc(i, min_val, max_val, lasts_count), 1);
+			lasts = lasts.reverse();
+			// Merge these and fill
+			audio_bars.bars_max = [...firsts, ...Array(rests_count).fill(audio_bars.rect_max_height), ...lasts];
+			
+			// Init update events
+			
+			player.audio.addEventListener('play', function() {
+				audio_bars.request_loop();
+			});
+			
+			player.audio.addEventListener('pause', function() {
+				audio_bars.draw(false);
+			});
+			
+		},
+		
+		request_loop: function() {
+			setTimeout(() => requestAnimationFrame(audio_bars.loop), 20); // Throttle requestAnimationFrame to limit RAM usage
+		},
+		
+		loop: function() {
+			
+			if (player.paused)
+				return;
+			
+			audio_bars.request_loop();
+			audio_bars.analyser.getByteFrequencyData(audio_bars.data);
+			audio_bars.draw(audio_bars.data);
+			
+		},
+		
+		draw: function(data) {
+			
+			if (data === false) // Pause values
+				var bars_heigh = Array(audio_bars.bars_count).fill(audio_bars.rect_min_height);
+			
+			else { // Playing values
+				
+				data = [...data]; // Uint8Array → Array
+				
+				var bars_heigh = [];
+				
+				for (let i = 0; i < audio_bars.bars_count; i++)
+					bars_heigh[i] = roundFloat(data[i] * audio_bars.bars_max[i] * 2 / 255, 1); // Adapt to this bar max - 255 is the maximum frenquency value
+				
+			}
+			
+			for (let i = 0; i < audio_bars.bars_count; i++) {
+				audio_bars.bars[i].setAttribute('height', Math.max(bars_heigh[i] / 2, audio_bars.rect_min_height));
+				audio_bars.bars[i].setAttribute('y', (audio_bars.visualizer_middle) - (Math.max(bars_heigh[i] / 2, audio_bars.rect_min_height) / 2));
+			}
+			
 		}
 		
 	};
