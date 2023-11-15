@@ -66,8 +66,9 @@ body {
 
 	.player:not(.playing) .video,
 	.player:not(.playing) .image {
-		opacity: 0.8;
-		filter: brightness(1.5) blur(40px);
+		opacity: 0.25;
+		filter: blur(50px);
+		transform: rotate(180deg);
 	}
 
 	.audio-bars {
