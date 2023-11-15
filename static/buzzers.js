@@ -101,7 +101,13 @@
 			buzzer.$el.addClass('team_color_' + team);
 			buzzer.$el.find('.name').text(teams[team].name);
 			buzzer.$el.prependTo($body);
-
+			
+			buzzer.noSleep = new NoSleep();
+			document.addEventListener('touchstart', function enableNoSleep() {
+				document.removeEventListener('touchstart', enableNoSleep, false);
+				buzzer.noSleep.enable();
+			}, false);
+			
 			buzzer.$el.on('mousedown touchstart', function(e) {
 				e.preventDefault();
 				buzzer.buzz();
@@ -111,7 +117,7 @@
 			buzzer.$el.on('mouseup touchend', function(e) {
 				e.preventDefault();
 				$(this).removeClass('active');
-			}); 
+			});
 			
 		},
 		
