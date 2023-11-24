@@ -939,19 +939,18 @@
 		
 		create_and_show_img: function() {
 			
-			socket.emit('get_local_ip', function(local_ip, local_port) {
+			socket.emit('get_domain', function(local_domain) {
 				
-				var url_short = local_ip + ':' + local_port,
-					url_long = window.location.protocol + '//' + url_short;
+				var full_url = window.location.protocol + '//' + local_domain;
 				
 				qr_helper.$el = $('<div class="qr_helper"/>').insertAfter($body.children(':not(script):not(style)').last()).append('<div class="qr_helper-image"/>');
 				
-				$('<div class="qr_helper-url"/>').text(url_short).appendTo(qr_helper.$el);
+				$('<div class="qr_helper-url"/>').text(local_domain).appendTo(qr_helper.$el);
 				
 				var $helper_image = qr_helper.$el.find('.qr_helper-image');
 				
 				new QRCode($helper_image[0], {
-					text: url_long,
+					text: full_url,
 					width: 1000,
 					height: 1000,
 					colorDark : "#fff",

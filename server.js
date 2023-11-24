@@ -20,7 +20,7 @@ process.argv.slice(2).forEach(arg => {
 	argvs[spl[0]] = spl[1];
 });
 
-const port = 8080,
+const port = argvs.port ? argvs.port : 8080,
       views_dir = '/views',
       data_dir  = '/' + (argvs.data_dir ? argvs.data_dir : '_data'),
       media_dir = '/' + (argvs.media_dir ? argvs.media_dir : '_media'),
@@ -295,8 +295,8 @@ io.on('connection', function(socket) {
 	
 	/* QR Code Helper get IP */
 	
-	socket.on('get_local_ip', function(callback) {
-		callback(ip.address(), port);
+	socket.on('get_domain', function(callback) {
+		callback(argvs.buzzer_domain ? argvs.buzzer_domain : `${ip.address()}:${port}`);
 	});
 	
 	/* Team edition */
