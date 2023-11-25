@@ -7,10 +7,10 @@
 	"repository": "https://github.com/Joan/Quiz",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
-		"express": "^4.18.1",
+		"express": "^4.18.2",
 		"ip": "^1.1.8",
 		"run-script-os": "^1.1.6",
-		"socket.io": "^4.6.1"
+		"socket.io": "^4.7.2"
 	},
 	"scripts": {
 		"postinstall": "run-script-os",
