@@ -140,19 +140,45 @@ body {
 		}
 		
 		.team-name {
+			display: flex;
+			flex-grow: 1;
+			min-width: 0;
 			padding-right: 10px;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+			align-items: center;
 		}
 		
-		.team-name,
 		.team_edit-name {
 			flex-grow: 1;
 		}
 		
+			.team-name-text {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			
+			.team-buzzer_status {
+				display: inline-block;
+				width: 0.6em;
+				height: 0.6em;
+				fill: currentColor;
+				margin-left: 0.4em;
+				margin-top: 0.2em;
+				opacity: 0;
+				transform: scale(0);
+				transition-property: transform, opacity;
+				transition-duration: 0.5s;
+				transition-timing-function: cubic-bezier(.3,2.5,0.5,1);
+			}
+			
+				.team-buzzer_status.--show {
+					opacity: 1;
+					transform: scale(1);
+				}
+		
 		.team-score,
-		.team_edit-delete {
+		.team_edit-delete,
+		.team-buzzer_status {
 			flex-shrink: 0;
 		}
 		
@@ -548,18 +574,28 @@ body {
 	background-color: #444;
 }
 
-.player_activation_notice {
+.admin_warnings {
 	font-size: 0.85rem;
 	text-align: center;
-	overflow: hidden;
-	max-height: 0;
-	transition-property: margin, max-height;
-	transition-duration: 250ms;
 }
 
-	.player_activation_notice.--enabled {
-		margin-bottom: 1rem;
-		max-height: calc(1.4em * 2);
+	.admin_warnings,
+	.admin_warnings-message {
+		overflow: hidden;
+		transition-property: margin, height, opacity;
+		transition-duration: 250ms;
+	}
+
+	.admin_warnings.--has_messages {
+		margin-bottom: 20px;
+	}
+	
+	.admin_warnings .admin_warnings-message {
+		height: 0;
+	}
+	
+	.admin_warnings .admin_warnings-message.--active ~ .admin_warnings-message.--active {
+		margin-top: 0.5rem;
 	}
 
 .controls {

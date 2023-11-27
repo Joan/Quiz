@@ -116,6 +116,19 @@ check_scores_consistency();
  *
  */
 
+// Clients registry
+var clients = {
+	players: [],
+	admins: [],
+	buzzers: Array.from({length: teams.length}, () => [])
+};
+
+// Default settings
+var settings = {
+	buzzers_enabled: true,
+	single_buzz: false
+};
+
 // Check for intro_poster
 var intro_poster = false;
 if (fs.existsSync(files.intro_poster + '.png'))
@@ -125,12 +138,6 @@ else if (fs.existsSync(files.intro_poster + '.jpg'))
 
 if (intro_poster)
 	app.use('/media/' + intro_poster, express.static(__dirname + '/_data/' + intro_poster));
-
-// Default settings
-var settings = {
-	buzzers_enabled: true,
-	single_buzz: false
-};
 
 /*
  * Socket events
@@ -145,6 +152,23 @@ io.on('connection', function(socket) {
 	io.emit() → to all clients
 	*/
 	
+	{
+		let url = socket.handshake.headers.referer,
+		    host = socket.request.headers.host,
+		    path = url.slice(url.indexOf(host) + host.length),
+		    reg = /\/(\w+)\/?(\w*)/g.exec(path);
+		
+		socket.client_view = reg[1];
+		socket.client_subview = reg[2];
+	}
+	
+	const update_clients = function() {
+		io.emit('update_clients', {
+			players: clients.players.length,
+			buzzers: clients.buzzers.map(a => a.length)
+		});
+	};
+	
 	/* Connections */
 	
 	socket.on('connection_player', function() {
@@ -158,7 +182,10 @@ io.on('connection', function(socket) {
 			settings: settings
 		});
 		
+		clients.players.push(socket.id);
+		update_clients();
 		console.info('Player connected');
+		
 	});
 	
 	socket.on('connection_admin', function() {
@@ -171,7 +198,10 @@ io.on('connection', function(socket) {
 			settings: settings
 		});
 		
+		clients.admins.push(socket.id);
+		update_clients();
 		console.info('Admin connected');
+		
 	});
 	
 	socket.on('connection_receiver', function() {
@@ -181,6 +211,7 @@ io.on('connection', function(socket) {
 		});
 		
 		console.info('Receiver connected');
+		
 	});
 	
 	socket.on('connection_buzzer', function(team_id) {
@@ -189,20 +220,47 @@ io.on('connection', function(socket) {
 			teams: teams
 		});
 		
-		if (teams[team_id] !== undefined)
+		if (teams[team_id] !== undefined) {
+			
+			clients.buzzers[team_id].push(socket.id);
+			update_clients();
 			console.info(`Buzzer #${team_id} (${teams[team_id].name}) connected`);
-		else if (team_id === null)
+			
+		} else if (team_id === null)
 			console.info('Buzzer list displayed');
+			
 		else
 			console.error('Buzzer of undefined team tried to connect: #' + team_id);
+		
+	});
+	
+	/* Disconnections */
+	
+	socket.on('disconnect', (reason) => {
+		
+		switch (socket.client_view) {
+			case 'player':
+			case 'admin':
+				clients[`${socket.client_view}s`].splice(clients[`${socket.client_view}s`].indexOf(socket.id), 1);
+				console.info(socket.client_view.charAt(0).toUpperCase() + socket.client_view.slice(1) + 'disconnected');
+				break;
+			case 'buzzers':
+				if (socket.client_subview) {
+					clients.buzzers[socket.client_subview].splice(clients.buzzers[socket.client_subview].indexOf(socket.id), 1);
+					console.info(`Buzzer #${socket.client_subview} (${teams[socket.client_subview].name}) disconnected`);
+				}
+				break;
+		}
+		
+		update_clients();
+		
 	});
 	
 	/* Single score change (inc) and update */
 	
 	const update_scores = function() {
 		save_scores();
-		socket.emit('update_scores', scores);
-		socket.broadcast.emit('update_scores', scores);
+		io.emit('update_scores', scores);
 	};
 	
 	socket.on('change_score', function(data) {

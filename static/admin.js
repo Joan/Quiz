@@ -51,10 +51,6 @@
 		init(data);
 	});
 	
-	socket.on('update_player_activation_state', function(has_been_active) {
-		$('.player_activation_notice')[has_been_active ? 'removeClass' : 'addClass']('--enabled');
-	});
-	
 	/* Specific CSS styles */
 	
 	const update_css_colors = function() {
@@ -107,7 +103,7 @@
 		add_team: function(team_id) {
 			let $clone = scoreboard.$team_template.clone();
 			$clone.attr('id', 'team_' + team_id).addClass('team_color_' + team_id);
-			$clone.find('.team-name').text(teams[team_id].name);
+			$clone.find('.team-name-text').text(teams[team_id].name);
 			$clone.find('input').on('change.scoreboard', scoreboard.input_change);
 			$clone.find('button').on('click.scoreboard', scoreboard.buttons_click);
 			$clone.find('[data-team]').attr('data-team', team_id);
@@ -290,7 +286,7 @@
 					let team_input_val = $('#team_' + i + ' .team_edit-name input').val()
 					if (team_input_val !== '') {
 						teams[i].name = team_input_val;
-						$('#team_' + i + ' .team-name').text(team_input_val)
+						$('#team_' + i + ' .team-name-text').text(team_input_val)
 					}
 				}
 				
@@ -508,6 +504,9 @@
 			controls.all_commands = Object.values(shortcuts);
 			controls.commands_shortcuts = Object.fromEntries(Object.entries(shortcuts).map(([k, v]) => [v, toInt(k)]));
 			
+			controls.warning_messages = {};
+			controls.virtual_buzzer_used = false;
+			
 		},
 		
 		keydown_handler: function(e) {
@@ -552,7 +551,7 @@
 			
 		},
 		
-		update_control_alt(command, is_alt) {
+		update_control_alt: function(command, is_alt) {
 			
 			var $target = $(`[data-command="${command}"][data-display-alt]`);
 			
@@ -563,13 +562,63 @@
 				if (['toggle_scores', 'toggle_answer', 'toggle_qr'].includes(command))
 					$target[!!is_alt ? 'addClass' : 'removeClass']('--highlighted');
 			}
+		},
+		
+		check_clients: function(clients_counts) {
+			
+			// Check for players (not connected or multiple connected)
+			controls.toggle_warning('no_player', clients_counts.players < 1);
+			controls.toggle_warning('multiple_players', clients_counts.players > 1);
+			
+			// Show offline virtual buzzers (if at least one connects)
+			if (Math.max(...clients_counts.buzzers) > 0 || controls.virtual_buzzer_used) {
+				
+				controls.virtual_buzzer_used = true;
+				
+				for (let i in teams) {
+					let $team_bs = $(`#team_${i} .team-name .team-buzzer_status`);
+					
+					if ($team_bs.length === 0)
+						$team_bs = $('<svg class="team-buzzer_status" width="32" height="32"><use href="#dis-buzzer-icon"/></svg>').appendTo(`#team_${i} .team-name`);
+					
+					$team_bs[clients_counts.buzzers[i] === 0 ? 'addClass' : 'removeClass']('--show');
+				}
+				
+			}
+			
+		},
+		
+		toggle_warning: function(message, show) {
+			var $warnings = $('.admin_warnings'),
+			    $message = $(`.admin_warnings-message[data-message=${message}]`);
+			
+			if ($message) {
+				if (show) {
+					$message.css('height', $message.find('span').height()).addClass('--active');
+					controls.warning_messages[message] = true;
+				} else {
+					$message.removeAttr('style').removeClass('--active');
+					controls.warning_messages[message] = false;
+				}
+			}
+			
+			// Hide player_activation message if one of the others is displayed
+			if (controls.warning_messages.no_player || controls.warning_messages.multiple_players)
+				$('.admin_warnings-message[data-message=player_activation]').removeAttr('style').removeClass('--active');
+			// And display again player_activation message if needed
+			if (message !== 'player_activation')
+				controls.toggle_warning('player_activation', !!controls.warning_messages.player_activation)
+			
+			$warnings[$('.admin_warnings-message.--active').length > 0 ? 'addClass' : 'removeClass']('--has_messages');
 		}
 		
 	};
 	
-	socket.on('update_control_alt', (command, alt) => {
-		controls.update_control_alt(command, alt);
-	});
+	socket.on('update_control_alt', (command, alt) => controls.update_control_alt(command, alt));
+	
+	socket.on('update_clients', clients_counts => controls.check_clients(clients_counts));
+	
+	socket.on('update_player_activation_state', has_been_active => controls.toggle_warning('player_activation', !has_been_active));
 	
 	/*
 	 * INITIATE

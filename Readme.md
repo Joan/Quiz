@@ -123,8 +123,7 @@ Enabled in player and admin pages.
 
 ## Todo
 
-- [ ] Connection status indicator in admin (for player and buzzers if at least one is connected)
 - [ ] Scoreboard only mode (if quiz.json is empty)
-- [ ] Enable answer reveal for all medias and toggle (instead of one-way switch)
-- [ ] Mobile admin: horizontal slide for teams and riddles?
+- [ ] Enable answer reveal for all medias, and add toggle capacity (instead of one-way switch)
 - [ ] Simple i18n
+- [ ] Mobile admin: horizontal slide for teams and riddles?
