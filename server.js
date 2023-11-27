@@ -55,13 +55,6 @@ app.get('/buzzers(/[0-9]+)?', function (req, res) {
 	res.sendFile(__dirname + views_dir + '/buzzers.html');
 });
 
-// No favicon to serve (send 204 No-content status)
-app.use(function(req, res, next) {
-	if (req.originalUrl && req.originalUrl.split('/').pop().includes('favicon'))
-		return res.sendStatus(204);
-	return next();
-});
-
 /*
  * Data retrieval
  *
