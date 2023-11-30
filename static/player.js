@@ -941,11 +941,12 @@
 			
 			socket.emit('get_domain', function(local_domain) {
 				
-				var full_url = window.location.protocol + '//' + local_domain;
+				var full_url = (local_domain.startsWith('http') ? '' : 'https://') + local_domain,
+				    domain = full_url.split('//')[1];
 				
 				qr_helper.$el = $('<div class="qr_helper"/>').insertAfter($body.children(':not(script):not(style)').last()).append('<div class="qr_helper-image"/>');
 				
-				$('<div class="qr_helper-url"/>').text(local_domain).appendTo(qr_helper.$el);
+				$('<div class="qr_helper-url"/>').text(domain).appendTo(qr_helper.$el);
 				
 				var $helper_image = qr_helper.$el.find('.qr_helper-image');
 				

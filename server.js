@@ -16,8 +16,8 @@ const app = express(),
 // Process script arguments
 var argvs = {};
 process.argv.slice(2).forEach(arg => {
-	let spl = arg.split(/:|=/)
-	argvs[spl[0]] = spl[1];
+	let ind = arg.indexOf('=');
+	argvs[arg.substring(0, ind)] = arg.substring(ind + 1);
 });
 
 const port = argvs.port ? argvs.port : 8080,
