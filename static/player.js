@@ -54,6 +54,7 @@
 		
 		buzzer.set_buzzers_enabled(data.settings.buzzers_enabled);
 		buzzer.set_single_buzz(data.settings.single_buzz);
+		scoreboard.toggle_large(data.settings.large_scoreboard);
 		
 	};
 	
@@ -65,6 +66,21 @@
 		player.send_riddle_change(current_riddle_num);
 		socket.emit('update_player_activation_state', user_activation.has_been_active);
 		buzzer.send_buzz_change();
+	});
+	
+	socket.on('set_setting', (setting, val) => {
+		switch (setting) {
+			case 'buzzers_enabled':
+				buzzer.set_buzzers_enabled(val);
+				break;
+			case 'single_buzz':
+				buzzer.set_single_buzz(val);
+				buzzer.send_buzz_change();
+				break;
+			case 'large_scoreboard':
+				scoreboard.toggle_large(val);
+				break;
+		}
 	});
 	
 	/* Specific CSS styles */
@@ -436,7 +452,7 @@
 		
 		reveal: function() {
 			
-			if (current_riddle.filename_answer === undefined || current_riddle.filename_answer === '')
+			if (!player.launched || current_riddle.filename_answer === undefined || current_riddle.filename_answer === '')
 				return;
 			
 			var show_answer = !player.answer_displayed;
@@ -768,18 +784,6 @@
 		buzzer.key_buzz(team_keycode);
 	});
 	
-	socket.on('set_setting', (setting, val) => {
-		switch (setting) {
-			case 'buzzers_enabled':
-				buzzer.set_buzzers_enabled(val);
-				break;
-			case 'single_buzz':
-				buzzer.set_single_buzz(val);
-				buzzer.send_buzz_change();
-				break;
-		}
-	});
-	
 	/*
 	 * SCORES
 	 *
@@ -884,6 +888,10 @@
 			for (let i in sorted)
 				$('#team_' + sorted[i].team_id).attr('data-position', parseInt(i) + 1);
 			
+		},
+		
+		toggle_large: function(enabled) {
+			scoreboard.$el[enabled ? 'addClass' : 'removeClass']('--large');
 		}
 		
 	};
@@ -1095,7 +1103,9 @@
 	 */
 	
 	$(function() {
+		
 		socket.emit('connection_player');
+		
 	});
 	
 	/* That's all Folks! */

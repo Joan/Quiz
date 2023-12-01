@@ -181,6 +181,12 @@ body {
 	-webkit-overflow-scrolling: touch;
 }
 
+	.scoreboard.--large {
+		bottom: 50%;
+		transform: translateY(50%);
+		font-size: 3em;
+	}
+	
 	.scoreboard .team {
 		display: flex;
 		position: absolute;

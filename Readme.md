@@ -43,11 +43,12 @@ You can store your game sessions by renaming it `_data-<whatever>` afterwards.
 Nb: the `_data-sample` folder is automatically copied to `_data` upon installation, and you can use it later to create a fresh `_data` for a new game.
 
 * **Riddles** are in `_data/quiz.json`.  
-Edit it directly or use [this spreadsheet](https://docs.google.com/spreadsheets/d/1gINMhwLp5sicssOqDFx4RDUT5UNfG8hwdR5GXiGQ-Q4/copy) to export as JSON.
+Edit it directly or use [this spreadsheet](https://docs.google.com/spreadsheets/d/1gINMhwLp5sicssOqDFx4RDUT5UNfG8hwdR5GXiGQ-Q4/copy) to paste in all JSON data.
   * `type`: `video` / `audio` / `image`
   * `filename`: riddle file (without the path, just the filename)
   * `filename_answer`: file to use as an answer – like a movie poster with and without the name, or a part of a music and another more famous (optional - filename and filename_answer must be the same type)
   * `answer` and `answer_subtitle`: displayed in the admin panel
+You can use only the scoreboard & buzzers by emptying `_data/quiz.json` (or by putting an empty array `[]`).
 
 * **Teams** can be edited directly in the Admin screen.  
 You can also edit them in `_data/teams.json`.
@@ -123,6 +124,5 @@ Enabled in player and admin pages.
 
 ## Todo
 
-- [ ] Scoreboard only mode (if quiz.json is empty)
 - [ ] Simple i18n
 - [ ] Mobile admin: horizontal slide for teams and riddles?

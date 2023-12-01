@@ -126,7 +126,8 @@ var clients = {
 // Default settings
 var settings = {
 	buzzers_enabled: true,
-	single_buzz: false
+	single_buzz: false,
+	large_scoreboard: false
 };
 
 // Check for intro_poster
