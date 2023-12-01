@@ -13,22 +13,15 @@
 	 *
 	 */
 	
-	const $window = $(window),
-		$body = $('body');
-	
-	// Window size
-	
-	var windowWidth = window.innerWidth,
-	windowHeight = window.innerHeight,
-	window_updateSizes = function() { // binded at the end
-		windowWidth = window.innerWidth;
-		windowHeight = window.innerHeight;
+	const pathes = {
+		videos: '/media/videos/',
+		audios: '/media/audios/',
+		images: '/media/images/',
+		poster: '/media/'
 	};
 	
-	const videos_path = '/media/videos/',
-	      audios_path = '/media/audios/',
-	      images_path = '/media/images/',
-	      poster_path = '/media/';
+	const $window = $(window),
+	      $body = $('body');
 	
 	const socket = io();
 	
@@ -93,7 +86,7 @@
 		for (let i = 1; i <= l; i++)
 			css += `.buzzer:nth-child(${i}){left: ${i!==1 ? (i*10+5)+'vh' : '0'};}`;
 		// Scoreboard height (.5 for the bottom margin)
-		css += `.scoreboard{height: ${l*2+.5}em;}`;
+		css += `.scoreboard{height: ${l*2+0.5}em;}`;
 		// Scoreboard teams position
 		for (let i = 1; i <= l; i++)
 			css += `.scoreboard .team[data-position="${i}"]{top: ${(i-1)*2}em;}`;
@@ -170,6 +163,7 @@
 			player.launched = false;
 			player.paused = false;
 			player.poster_displayed = false;
+			player.answer_displayed = false;
 			
 			audio_bars.init();
 			
@@ -194,7 +188,7 @@
 		},
 		
 		init_poster: function() {
-			player.$poster = $(`<div class="poster"><img src="${poster_path + player.intro_poster}"></div>`).insertAfter(player.$el).css('opacity', 0);
+			player.$poster = $(`<div class="poster"><img src="${pathes.poster + player.intro_poster}"></div>`).insertAfter(player.$el).css('opacity', 0);
 			player.$poster.animate({opacity: 1}, 500);
 			player.poster_displayed = true;
 		},
@@ -261,59 +255,61 @@
 			
 			player.loaded = false;
 			player.launched = false;
-			player.type = null;
 			player.is_playable = false;
 			player.playable_el = null;
+			player.answer_displayed = false;
 			
 		},
 		
-		load: function(riddle_num, callback) {
+		update_src: function(filename, type) {
 			
-			var riddle = riddles[riddle_num - 1];
+			player[`$${type}_player`].attr('src', pathes[`${type}s`] + filename);
+			
+			player.is_playable = type === 'video' || type === 'audio';
+			
+			if (player.is_playable) {
+				player[type].load();
+				player.playable_el = player[type];
+			}
+		},
+		
+		load: function(riddle_num, immediate) {
+			
+			var riddle = riddles[riddle_num - 1],
+			    type = riddle.type;
 			
 			// Stop and unload everything
 			
 			player.unload();
 			
-			// Load new riddle
+			// Verify riddle type
 			
-			switch(riddle.type) {
-				
-				case 'video':
-					player.$video_player.attr('src', videos_path + riddle.filename);
-					player.video.load();
-					player.$video.show();
-					player.type = riddle.type;
-					player.is_playable = true;
-					player.playable_el = player.video;
-					break;
-				
-				case 'audio':
-					player.$audio_player.attr('src', audios_path + riddle.filename);
-					player.audio.load();
-					player.$audio.show();
-					player.type = riddle.type;
-					player.is_playable = true;
-					player.playable_el = player.audio;
-					break;
-				
-				case 'image':
-					player.$image_player.attr('src', images_path + riddle.filename);
-					player.$image.show();
-					player.type = riddle.type;
-					player.is_playable = false;
-					break;
-				
+			if (!['video', 'audio', 'image'].includes(type)) {
+				console.error('Unknown file type: ' + type);
+				return;
 			}
 			
-			console.info('Loaded riddle #' + riddle_num + ' (' + riddle.type + ')');
+			// Load new riddle
+			
+			current_riddle_num = riddle_num;
+			current_riddle = riddles[current_riddle_num - 1];
+			
+			player.update_src(current_riddle.filename, type);
+			
+			player[`$${type}`].show();
+			
+			console.info('Loaded riddle #' + riddle_num + ' (' + type + ')');
 			
 			if (riddle_num > 1) // Allow testing buzzers before starting the quiz
 				buzzer.buzzable = false;
 			
 			player.loaded = true;
 			
-			callback(riddle_num);
+			player.send_riddle_change(riddle_num);
+			buzzer.reset_buzz_counts();
+			
+			if (immediate)
+				player.launch(true);
 			
 		},
 		
@@ -337,7 +333,7 @@
 			buzzer.buzzable = true;
 			buzzer.reset_buzz_counts();
 			
-			console.info('Launching riddle #' + current_riddle_num + (immediate ? ' immediatly' : ' normaly'));
+			console.info('Launching riddle #' + current_riddle_num + (immediate ? ' immediatly' : ' normally'));
 			
 			var step_function = player.is_playable ? player.set_volume : null;
 			
@@ -431,18 +427,7 @@
 					
 					// Load next one if there's any
 					
-					player.load(riddle_num, function(riddle_num) {
-						
-						current_riddle_num = riddle_num;
-						current_riddle = riddles[current_riddle_num - 1];
-						player.send_riddle_change(riddle_num);
-						buzzer.reset_buzz_counts();
-						
-						// Display directly if needed
-						if (immediate)
-							player.launch(true);
-						
-					});
+					player.load(riddle_num, immediate);
 					
 				}
 			});
@@ -451,21 +436,26 @@
 		
 		reveal: function() {
 			
-			if (player.type != 'image' || current_riddle.filename_answer === undefined || current_riddle.filename_answer === '')
+			if (current_riddle.filename_answer === undefined || current_riddle.filename_answer === '')
 				return;
 			
+			var show_answer = !player.answer_displayed;
+			
+			player.update_src(show_answer ? current_riddle.filename_answer : current_riddle.filename, current_riddle.type);
+			
+			player.answer_displayed = show_answer;
+			buzzer.buzzable = !show_answer;
+			
 			buzzer.empty_queue();
-			buzzer.buzzable = false;
-			player.$image_player.attr('src', images_path + current_riddle.filename_answer);
 			player.$image.show();
 			player.play();
-			socket.emit('update_control_alt', 'toggle_answer', true);
+			socket.emit('update_control_alt', 'toggle_answer', player.answer_displayed);
 			
 		},
 		
 		send_riddle_change: function(riddle_num) {
 			socket.emit('riddle_change', riddle_num);
-			socket.emit('update_control_alt', 'toggle_answer', false);
+			socket.emit('update_control_alt', 'toggle_answer', player.answer_displayed);
 		},
 		
 		handle_cursor_display: function() {
@@ -1105,12 +1095,7 @@
 	 */
 	
 	$(function() {
-		
-		window_updateSizes();
-		$window.on('resize.window_updateSizes', window_updateSizes);
-		
 		socket.emit('connection_player');
-		
 	});
 	
 	/* That's all Folks! */

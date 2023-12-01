@@ -46,7 +46,7 @@ Nb: the `_data-sample` folder is automatically copied to `_data` upon installati
 Edit it directly or use [this spreadsheet](https://docs.google.com/spreadsheets/d/1gINMhwLp5sicssOqDFx4RDUT5UNfG8hwdR5GXiGQ-Q4/copy) to export as JSON.
   * `type`: `video` / `audio` / `image`
   * `filename`: riddle file (without the path, just the filename)
-  * `filename_answer`: for images only, the same image with the answer – like a movie poster with and without the name (optional)
+  * `filename_answer`: file to use as an answer – like a movie poster with and without the name, or a part of a music and another more famous (optional - filename and filename_answer must be the same type)
   * `answer` and `answer_subtitle`: displayed in the admin panel
 
 * **Teams** can be edited directly in the Admin screen.  
@@ -116,7 +116,7 @@ Enabled in player and admin pages.
 | <kbd>Enter</kbd> | Go to next riddle with normal transition |
 | <kbd>←</kbd> / <kbd>→</kbd> | Go to previous / next riddle immediatly and play |
 | <kbd>Esc</kbd> | Remove all buzzers from queue |
-| <kbd>A</kbd> | Reveal answer image (if available) |
+| <kbd>A</kbd> | Reveal answer (if available) |
 | <kbd>S</kbd> | Toggle scoreboard (scoreboard is displayed immediatly when you change scores from the admin panel) |
 | <kbd>Q</kbd> | Toggle display of the virtual buzzers QR Code and URL |
 | <kbd>B</kbd> | Toggle buzzers activation |
@@ -124,6 +124,5 @@ Enabled in player and admin pages.
 ## Todo
 
 - [ ] Scoreboard only mode (if quiz.json is empty)
-- [ ] Enable answer reveal for all medias, and add toggle capacity (instead of one-way switch)
 - [ ] Simple i18n
 - [ ] Mobile admin: horizontal slide for teams and riddles?

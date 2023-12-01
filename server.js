@@ -242,7 +242,7 @@ io.on('connection', function(socket) {
 			case 'player':
 			case 'admin':
 				clients[`${socket.client_view}s`].splice(clients[`${socket.client_view}s`].indexOf(socket.id), 1);
-				console.info(socket.client_view.charAt(0).toUpperCase() + socket.client_view.slice(1) + 'disconnected');
+				console.info(socket.client_view.charAt(0).toUpperCase() + socket.client_view.slice(1) + ' disconnected');
 				break;
 			case 'buzzers':
 				if (socket.client_subview) {
