@@ -122,6 +122,7 @@
 				user_activation.has_been_active = true;
 				user_activation.trigger_queue();
 				$window.off('.user_activation');
+				$('.user_activation_warning').remove();
 				socket.emit('update_player_activation_state', true);
 			}
 		},
@@ -134,7 +135,7 @@
 		},
 		
 		trigger_queue: function() {
-			for (const s of user_activation.queue)
+			for (let s of user_activation.queue)
 				s();
 		}
 		
