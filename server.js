@@ -67,9 +67,9 @@ const files = {
 	intro_poster: __dirname + data_dir + '/intro-poster'
 };
 
-var riddles = JSON.parse(fs.readFileSync(files.quiz)),
-    teams   = JSON.parse(fs.readFileSync(files.teams)),
-    scores  = JSON.parse(fs.readFileSync(files.scores));
+var riddles = JSON.parse(fs.readFileSync(files.quiz, 'utf8') || '[]'),
+    teams   = JSON.parse(fs.readFileSync(files.teams, 'utf8') || '[]'),
+    scores  = JSON.parse(fs.readFileSync(files.scores, 'utf8') || '[]');
 
 const shortcuts = {
 	13: 'next',           // Enter ↩
