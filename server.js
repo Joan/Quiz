@@ -3,9 +3,10 @@
  *
  */
 
-const express = require('express'),
-      http = require('http'),
+const http = require('http'),
+      path = require('path'),
       fs = require('fs'),
+      express = require('express'),
       ip = require('ip');
 
 const app = express(),
@@ -20,15 +21,17 @@ process.argv.slice(2).forEach(arg => {
 	argvs[arg.substring(0, ind)] = arg.substring(ind + 1);
 });
 
+// Set pathes
 const port = argvs.port ? argvs.port : 8080,
-      views_dir = '/views',
-      data_dir  = '/' + (argvs.data_dir ? argvs.data_dir : '_data'),
-      media_dir = '/' + (argvs.media_dir ? argvs.media_dir : '_media'),
+      static_dir  = path.join(__dirname, '/static'),
+      views_dir   = path.join(__dirname, '/views'),
+      data_dir    = path.join(__dirname, argvs.data_dir ? argvs.data_dir : '_data'),
+      media_dir   = path.join(__dirname, argvs.media_dir ? argvs.media_dir : '_media'),
       admin_route = '/' + (argvs.admin_route ? argvs.admin_route : 'admin');
 
-app.use('/data', express.static(__dirname + data_dir));
-app.use('/media', express.static(__dirname + media_dir));
-app.use('/static', express.static(__dirname + '/static'));
+app.use('/data', express.static(data_dir));
+app.use('/media', express.static(media_dir));
+app.use('/static', express.static(static_dir));
 
 /*
  * Routes
@@ -40,19 +43,19 @@ app.get('/', function (req, res) {
 });
 
 app.get('/player', function (req, res) {
-	res.sendFile(__dirname + views_dir + '/player.html');
+	res.sendFile(path.join(views_dir, 'player.html'));
 });
 
 app.get(admin_route, function (req, res) {
-	res.sendFile(__dirname + views_dir + '/admin.html');
+	res.sendFile(path.join(views_dir, 'admin.html'));
 });
 
 app.get('/receiver', function (req, res) {
-	res.sendFile(__dirname + views_dir + '/receiver.html');
+	res.sendFile(path.join(views_dir, 'receiver.html'));
 });
 
 app.get('/buzzers(/[0-9]+)?', function (req, res) {
-	res.sendFile(__dirname + views_dir + '/buzzers.html');
+	res.sendFile(path.join(views_dir, 'buzzers.html'));
 });
 
 /*
@@ -61,10 +64,10 @@ app.get('/buzzers(/[0-9]+)?', function (req, res) {
  */
 
 const files = {
-	quiz:   __dirname + data_dir + '/quiz.json',
-	teams:  __dirname + data_dir + '/teams.json',
-	scores: __dirname + data_dir + '/scores.json',
-	intro_poster: __dirname + data_dir + '/intro-poster'
+	quiz:         path.join(data_dir, 'quiz.json'),
+	teams:        path.join(data_dir, 'teams.json'),
+	scores:       path.join(data_dir, 'scores.json'),
+	intro_poster: path.join(data_dir, 'intro-poster')
 };
 
 var riddles = JSON.parse(fs.readFileSync(files.quiz, 'utf8') || '[]'),
@@ -138,7 +141,7 @@ else if (fs.existsSync(files.intro_poster + '.jpg'))
 	intro_poster = 'intro-poster.jpg';
 
 if (intro_poster)
-	app.use('/media/' + intro_poster, express.static(__dirname + '/_data/' + intro_poster));
+	app.use('/media/' + intro_poster, express.static(path.join(data_dir, intro_poster)));
 
 /*
  * Socket events
