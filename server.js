@@ -58,11 +58,6 @@ i18next
 
 app.use(i18next_middleware.handle(i18next)); // Set `t()` globally
 
-app.use((req, res, next) => { // Set `locale` globally
-	res.locals.locale = i18next.language;
-	next();
-});
-
 /*
  * Routes
  *
