@@ -18,7 +18,7 @@
 		
 		<ul class="teams"></ul>
 		
-		<div class="settings-meta_row team_edit"><button class="button" id="button-add_team"><%= t('add_team') %></button></div>
+		<div class="settings-meta_row team_edit"><button class="button" data-action="team_edit_add_team"><%= t('add_team') %></button></div>
 		
 		<div class="settings">
 			<div class="settings-row">
@@ -43,11 +43,11 @@
 				</label>
 			</div>
 			<div class="settings-row">
-				<button class="button" id="button-edit_teams"><%= t('edit_teams') %></button>
-				<button class="button --primary team_edit" id="button-edit_teams_end"><%= t('finish_editing') %></button>
+				<button class="button" data-action="edit_teams"><%= t('edit_teams') %></button>
+				<button class="button --primary team_edit" data-action="end_edit_teams"><%= t('finish_editing') %></button>
 			</div>
 			<div class="settings-row">
-				<button class="button" id="button-reset" data-confirm="<%= t('confirm_reset_scores') %>"><%= t('reset_scores_') %></button>
+				<button class="button" data-action="reset_scores" data-confirm="<%= t('confirm_reset_scores') %>"><%= t('reset_scores_') %></button>
 			</div>
 		</div>
 		
@@ -107,7 +107,7 @@
 				
 				<div class="controls-group">
 					
-					<button class="control button" data-action="control" data-command="clear">
+					<button class="control button" data-command="clear">
 						<span class="control-label">
 							<svg class="control-label-icon" width="32" height="32" viewBox="0 0 32 32"><path d="m29.94 14.94-9.38-9.36c-.37-.37-.88-.58-1.41-.58H3.5C2.67 5 2 5.67 2 6.5v19c0 .83.67 1.5 1.5 1.5h15.65c.53 0 1.04-.21 1.41-.58l9.38-9.36c.59-.58.59-1.53 0-2.12ZM19 19.6c.49.49.49 1.28 0 1.77-.24.24-.56.37-.88.37s-.64-.12-.88-.37l-3.54-3.54-3.54 3.54c-.24.24-.56.37-.88.37s-.64-.12-.88-.37a1.25 1.25 0 0 1 0-1.77l3.54-3.54-3.54-3.54c-.49-.49-.49-1.28 0-1.77s1.28-.49 1.77 0l3.54 3.54 3.54-3.54c.49-.49 1.28-.49 1.77 0s.49 1.28 0 1.77l-3.54 3.54 3.54 3.54Z"/></svg>
 							<span class="control-label-text"><%= t('clear_buzzes') %></span>
@@ -116,7 +116,7 @@
 						<kbd class="control-short"><%= t('key-esc') %></kbd>
 					</button>
 					
-					<button class="control button" data-action="control" data-command="toggle_answer" data-display-alt="">
+					<button class="control button" data-command="toggle_answer" data-display-alt="">
 						<span class="control-label">
 							<svg class="control-label-icon --display_alt-hide" width="32" height="32" viewBox="0 0 32 32"><path d="m25.85 7.27-4.01-4.08a3.932 3.932 0 0 0-2.82-1.18H6.49c-.82 0-1.49.67-1.49 1.5V28.5c0 .83.67 1.5 1.49 1.5h19.02c.82 0 1.49-.67 1.49-1.5V10.08c0-1.05-.41-2.07-1.15-2.82Zm-3.14 6.44-8 8c-.2.2-.45.29-.71.29s-.51-.1-.71-.29l-4-4a.996.996 0 1 1 1.41-1.41l3.29 3.29 7.29-7.29a.996.996 0 1 1 1.41 1.41Z"/></svg>
 							<svg class="control-label-icon --display_alt-show" width="32" height="32" viewBox="0 0 32 32"><path d="M19.03 2H6.49C5.67 2 5 2.67 5 3.5v25c0 .83.67 1.5 1.49 1.5h19.02c.82 0 1.49-.67 1.49-1.5V10.08c0-1.05-.41-2.07-1.15-2.82l-4.01-4.08A3.932 3.932 0 0 0 19.02 2Z"/></svg>
@@ -127,7 +127,7 @@
 						<kbd class="control-short">A</kbd>
 					</button>
 					
-					<button class="control --primary button" data-action="control" data-command="play_pause" data-display-alt="">
+					<button class="control --primary button" data-command="play_pause" data-display-alt="">
 						<span class="control-label">
 							<svg class="control-label-icon --display_alt-hide" width="32" height="32" viewBox="0 0 32 32"><path d="M28.87 14.7 7.22 2.2c-1-.58-2.25.14-2.25 1.3v25c0 1.15 1.25 1.88 2.25 1.3l21.65-12.5c1-.58 1-2.02 0-2.6Z"/></svg>
 							<svg class="control-label-icon --display_alt-show" width="32" height="32" viewBox="0 0 32 32"><rect height="28" rx="1.5" width="9.5" x="19" y="2"/><rect height="28" rx="1.5" width="9.5" x="3.5" y="2"/></svg>
@@ -148,7 +148,7 @@
 						
 						<div class="controls-group">
 							
-							<button class="control button" data-action="control" data-command="backward">
+							<button class="control button" data-command="backward">
 								<span class="control-label">
 									<svg class="control-label-icon" width="32" height="32" viewBox="0 0 32 32"><path d="m2.58 17.3 18.18 10.5c1 .58 2.25-.14 2.25-1.3v-21c0-1.15-1.25-1.88-2.25-1.3l-18.18 10.5c-1 .58-1 2.02 0 2.6z"/><rect height="24" rx="1.5" transform="matrix(-1 0 0 -1 56 32)" width="4" x="26" y="4"/></svg>
 									<span class="control-label-text"><%= t('prev') %></span>
@@ -156,7 +156,7 @@
 								<kbd class="control-short">←</kbd>
 							</button>
 							
-							<button class="control button" data-action="control" data-command="forward">
+							<button class="control button" data-command="forward">
 								<span class="control-label">
 									<svg class="control-label-icon" width="32" height="32" viewBox="0 0 32 32"><path d="m29.43 14.7-18.18-10.5c-1-.58-2.25.14-2.25 1.3v21c0 1.15 1.25 1.88 2.25 1.3l18.18-10.5c1-.58 1-2.02 0-2.6z"/><rect height="24" rx="1.5" width="4" x="2" y="4"/></svg>
 									<span class="control-label-text"><%= t('next') %></span>
@@ -168,7 +168,7 @@
 						
 					</div>
 					
-					<button class="control --primary button" data-action="control" data-command="next">
+					<button class="control --primary button" data-command="next">
 						<span class="control-label">
 							<svg class="control-label-icon" width="32" height="32" viewBox="0 0 32 32"><path d="M28.5 1.95h-2c-.83 0-1.5.67-1.5 1.5v10.2L5.25 2.25c-1-.58-2.25.14-2.25 1.3v25c0 1.15 1.25 1.88 2.25 1.3L25 18.45v10.01c0 .83.67 1.5 1.5 1.5h2c.83 0 1.5-.67 1.5-1.5V3.45c0-.83-.67-1.5-1.5-1.5Z"/></svg>
 							<span class="control-label-text"><%= t('next_question') %></span>
@@ -181,7 +181,7 @@
 				
 				<div class="controls-group">
 					
-					<button class="control button" data-action="control" data-command="toggle_qr" data-display-alt="">
+					<button class="control button" data-command="toggle_qr" data-display-alt="">
 						<span class="control-label">
 							<svg class="control-label-icon --display_alt-hide" width="32" height="32" viewBox="0 0 32 32"><path d="M13.5 5.5v8h-8v-8h8M14 4H5c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h9c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1Z"/><path d="M7 7h5v5H7zM26.5 5.5v8h-8v-8h8M27 4h-9c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h9c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1Z"/><path d="M20 7h5v5h-5zM13.5 18.5v8h-8v-8h8M14 17H5c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h9c.55 0 1-.45 1-1v-9c0-.55-.45-1-1-1Z"/><path d="M7 20h5v5H7zM17 17h1.5v4.5H17zM20 17h1.5v1.5H20zM17 24.5h3v3h1.5V23H17v1.5zM26 26h1.5v1.5H26z"/><path d="M17 26h1.5v1.5H17zM26 17v6h-3v4.5h1.5v-3h3V17H26z"/><path d="M24.5 21.5V17H23v3h-3v1.5h4.5z"/></svg>
 							<svg class="control-label-icon --display_alt-show" width="32" height="32" viewBox="0 0 32 32"><path d="M7 7h5v5H7zM20 17h1.5v1.5H20zM17 24.5h3v3h1.5V23H17v1.5zM26 26h1.5v1.5H26z"/><path d="M17 26h1.5v1.5H17zM26 17v6h-3v4.5h1.5v-3h3V17H26z"/><path d="M24.5 21.5V17H23v3h-3v1.5h4.5zM21.26 12H25V7h-1.14l-2.6 5z"/><path d="M27 4h-1.59l-.78 1.5h1.87v8h-6.01l-.78 1.5H27c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1ZM23.19 1.17c-.74-.38-1.64-.09-2.02.64L20.03 4H18c-.55 0-1 .45-1 1v4.85l-2 3.86V5c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h9c.13 0 .25-.03.37-.07L13.29 17H5c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h2.59l-.42.81A1.501 1.501 0 0 0 8.5 31c.54 0 1.07-.3 1.33-.81l14-27c.38-.74.09-1.64-.64-2.02ZM13.5 13.5h-8v-8h8v8Zm5-8h.75l-.75 1.45V5.5Zm-13 21v-8h7.01l-.78 1.5H7v5h2.14l-.78 1.5H5.49ZM14 28c.55 0 1-.45 1-1v-2.92L12.97 28H14ZM17 20.22v1.28h1.5v-4.17L17 20.22z"/></svg>
@@ -209,7 +209,7 @@
 						<kbd class="control-short">B</kbd>
 					</label>
 					
-					<button class="control button" data-action="control" data-command="toggle_scores" data-display-alt="">
+					<button class="control button" data-command="toggle_scores" data-display-alt="">
 						<span class="control-label">
 							<svg class="control-label-icon --display_alt-hide" width="32" height="32" viewBox="0 0 32 32"><path d="M18.75 8h-5.5c-.83 0-1.5.67-1.5 1.5v14c0 .83.67 1.5 1.5 1.5h5.5c.83 0 1.5-.67 1.5-1.5v-14c0-.83-.67-1.5-1.5-1.5ZM9 11H3.5c-.83 0-1.5.67-1.5 1.5v11c0 .83.67 1.5 1.5 1.5H9c.83 0 1.5-.67 1.5-1.5v-11c0-.83-.67-1.5-1.5-1.5ZM28.5 14H23c-.83 0-1.5.67-1.5 1.5v8c0 .83.67 1.5 1.5 1.5h5.5c.83 0 1.5-.67 1.5-1.5v-8c0-.83-.67-1.5-1.5-1.5Z"/></svg>
 							<svg class="control-label-icon --display_alt-show" width="32" height="32" viewBox="0 0 32 32"><path d="M28.5 14H23c-.83 0-1.5.67-1.5 1.5v8c0 .83.67 1.5 1.5 1.5h5.5c.83 0 1.5-.67 1.5-1.5v-8c0-.83-.67-1.5-1.5-1.5ZM13.25 25h5.5c.83 0 1.5-.67 1.5-1.5v-9.12l-7.08 10.61h.08ZM23.69 3.96c-.57-.38-1.35-.23-1.73.35L19.4 8.16c-.2-.09-.41-.15-.65-.15h-5.5c-.83 0-1.5.67-1.5 1.5v10.12l-1.25 1.88V12.5c0-.83-.67-1.5-1.5-1.5H3.5c-.83 0-1.5.67-1.5 1.5v11c0 .83.67 1.5 1.5 1.5h4.66l-2.2 3.31c-.38.57-.23 1.35.35 1.73a1.242 1.242 0 0 0 1.73-.35l16-24c.38-.57.23-1.35-.35-1.73Z"/></svg>

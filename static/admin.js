@@ -77,20 +77,27 @@
 			
 			scoreboard.scroll_to_active_team = true;
 			scoreboard.current_buzzer_team_id = -1;
+			scoreboard.editing_teams = false;
 			
 			scoreboard.update_teams();
 			scoreboard.update_scores();
 			
-			scoreboard.$reset_scores_button = $('#button-reset');
-			scoreboard.$edit_teams_button = $('#button-edit_teams');
-			scoreboard.$edit_teams_end_button = $('#button-edit_teams_end');
-			scoreboard.$edit_teams_add = $('#button-add_team');
-			// TODO: switch to `data-action` instead of `id`
+			$('[data-action]').on('click', scoreboard.action_handler);
 			
-			scoreboard.$reset_scores_button.on('click.scoreboard', scoreboard.reset_scores);
-			scoreboard.$edit_teams_button.on('click.scoreboard', scoreboard.edit_teams.start);
-			scoreboard.$edit_teams_end_button.on('click.scoreboard', scoreboard.edit_teams.end);
+			scoreboard.$edit_teams_button = $('[data-action="edit_teams"]');
 			
+			scoreboard.reset_scores_confirm_text = $('[data-action="reset_scores"][data-confirm]').attr('data-confirm')
+			
+		},
+		
+		action_handler: function(e) {
+			e.preventDefault();
+			switch ($(this).attr('data-action')) {
+				case 'reset_scores': scoreboard.reset_scores(); break;
+				case 'edit_teams': scoreboard.edit_teams.start(); break;
+				case 'end_edit_teams': scoreboard.edit_teams.end(); break;
+				case 'team_edit_add_team': scoreboard.edit_teams.add(); break;
+			}
 		},
 		
 		update_teams: function() {
@@ -128,7 +135,7 @@
 		},
 		
 		reset_scores: function() {
-			if (window.confirm(scoreboard.$reset_scores_button.attr('data-confirm')))
+			if (window.confirm(scoreboard.reset_scores_confirm_text))
 				socket.emit('reset_scores');
 		},
 		
@@ -186,20 +193,19 @@
 		},
 		
 		edit_teams: {
-			initiated: false,
 			
 			start: function() {
 				
-				scoreboard.edit_teams.initiated = true;
+				if (scoreboard.editing_teams) // If fired while already editing
+					return;
+				
+				scoreboard.editing_teams = true;
 				
 				// Check if each team has fields
 				for (let i in teams) {
 					if (!$('#team_' + i).hasClass('--edit_ready'))
 						scoreboard.edit_teams.add_edit_fields_to_team(i);
 				}
-				
-				// Be sure to bind event on this button
-				scoreboard.$edit_teams_add.off('click.edit_teams').on('click.edit_teams', scoreboard.edit_teams.add);
 				
 				scoreboard.edit_teams.serialized_teams = JSON.stringify(teams);
 				scoreboard.$el.addClass('--edit_teams');
@@ -238,6 +244,9 @@
 			},
 			
 			add: function() {
+				if (!scoreboard.editing_teams) // If fired while not editing
+					return;
+				
 				var next_keycode = 0,
 					random_default_color = teams_default_colors[Math.floor(Math.random() * teams_default_colors.length)];
 				
@@ -303,9 +312,9 @@
 			end: function(abort) {
 				if (abort !== true)
 					scoreboard.edit_teams.save();
-				scoreboard.$edit_teams_add.off('click.edit_teams')
 				scoreboard.$edit_teams_button.show();
 				scoreboard.$el.removeClass('--edit_teams');
+				scoreboard.editing_teams = false;
 			}
 			
 		}
@@ -322,7 +331,7 @@
 	});
 	
 	socket.on('update_teams', function(team_data) {
-		if (scoreboard.edit_teams.initiated)
+		if (scoreboard.editing_teams)
 			scoreboard.edit_teams.end(true);
 		teams = team_data;
 		scoreboard.update_teams();
@@ -497,7 +506,7 @@
 			
 			$window.on('keydown', controls.keydown_handler);
 			
-			$('[data-action="control"]').on('click', controls.click_handler);
+			$('[data-command]').on('click', controls.action_handler);
 			
 			controls.teams_keycodes = [];
 			for (let i in teams)
@@ -543,7 +552,7 @@
 			
 		},
 		
-		click_handler: function(e) {
+		action_handler: function(e) {
 			e.preventDefault();
 			
 			var command = $(this).attr('data-command');
