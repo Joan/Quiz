@@ -128,7 +128,7 @@
 		},
 		
 		reset_scores: function() {
-			if (window.confirm('Remettre les scores à zéro ?'))
+			if (window.confirm(scoreboard.$reset_scores_button.attr('data-confirm')))
 				socket.emit('reset_scores');
 		},
 		
@@ -259,9 +259,10 @@
 			
 			delete: function(e) {
 				var team_id = parseInt(e.target.getAttribute('data-team')),
-					team_name = teams[team_id].name || $('#team_' + team_id + ' .team_edit-name input').val(); // If we didn't updated the teams object yet
-				
-				if (!window.confirm(('Supprimer l’équipe ' + team_name + ' ?').replace('  ', ' ')))
+				    team_name = teams[team_id].name || $('#team_' + team_id + ' .team_edit-name input').val(), // If we didn't updated the teams object yet
+				    confirm_texts = $(this).attr('data-confirm').split('|'),
+				    confirm_text = team_name ? confirm_texts[1].formatSprintf({team_name: team_name}) : confirm_texts[0];
+				if (!window.confirm(confirm_text))
 					 return;
 				
 				teams.splice(team_id, 1);
@@ -340,6 +341,7 @@
 			riddleboard.$helper = $('.helper-list');
 			
 			riddleboard.$riddle_template = $($('#riddle-template').html());
+			riddleboard.riddle_type_names = JSON.parse($('#riddle-template').attr('data-riddle-type-names'));
 			
 			riddleboard.create_riddles();
 			
@@ -357,7 +359,7 @@
 				let $clone = riddleboard.$riddle_template.clone(),
 					num = toInt(i) + 1;
 				$clone.attr('id', 'riddle_' + num).attr('data-riddle', num);
-				$clone.find('.riddle-type').text(riddles[i].type);
+				$clone.find('.riddle-type').text(riddleboard.riddle_type_names[riddles[i].type]);
 				$clone.find('.riddle-count').text(num + ' / ' + riddle_count);
 				$clone.find('.riddle-answer').text(riddles[i].answer);
 				$clone.find('.riddle-answer_subtitle').text(riddles[i].answer_subtitle);
@@ -636,6 +638,9 @@
 })(this, this.document);
 
 /* Helpers */
+
+// Javascript Sprintf - http://stackoverflow.com/a/18234317/1113376
+if (!String.prototype.formatSprintf) {String.prototype.formatSprintf = function() {var str = this.toString();if (!arguments.length) return str;var args = typeof arguments[0],args = (("string" == args || "number" == args) ? arguments : arguments[0]);for (arg in args) str = str.replace(RegExp("\\{" + arg + "\\}", "gi"), args[arg]);return str;}}
 
 // parse(Int|Float) are buggy
 function toFloat(n) {

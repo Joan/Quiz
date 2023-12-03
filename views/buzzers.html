@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="fr">
+<html lang="<%= locale %>">
 <head>
 	<meta charset="utf-8">
-	<title>QUIZ Buzzers</title>
+	<title><%= t('quiz') %> – <%= t('title-buzzer') %></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="manifest" href="/static/site.webmanifest">
 	<meta name="theme-color" content="#222">
@@ -16,7 +16,7 @@
 	
 	<template id="teams-template">
 		<ul class="teams">
-			<li>Quelle équipe ?</li>
+			<li><%= t('which_team') %></li>
 		</ul>
 	</template>
 	

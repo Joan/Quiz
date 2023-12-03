@@ -7,6 +7,10 @@ const http = require('http'),
       path = require('path'),
       fs = require('fs'),
       express = require('express'),
+      ejs = require('ejs'),
+      i18next = require('i18next'),
+      i18next_backend = require('i18next-fs-backend'),
+      i18next_middleware = require('i18next-http-middleware'),
       ip = require('ip');
 
 const app = express(),
@@ -15,13 +19,15 @@ const app = express(),
       io = new Server(server);
 
 // Process script arguments
+
 var argvs = {};
 process.argv.slice(2).forEach(arg => {
 	let ind = arg.indexOf('=');
 	argvs[arg.substring(0, ind)] = arg.substring(ind + 1);
 });
 
-// Set pathes
+// Set pathes and statics
+
 const port = argvs.port ? argvs.port : 8080,
       static_dir  = path.join(__dirname, '/static'),
       views_dir   = path.join(__dirname, '/views'),
@@ -33,6 +39,30 @@ app.use('/data', express.static(data_dir));
 app.use('/media', express.static(media_dir));
 app.use('/static', express.static(static_dir));
 
+app.engine('html', ejs.__express);
+app.set('views', views_dir);
+app.set('view engine', 'html');
+
+// Initiate i18n
+
+i18next
+	.use(i18next_backend)
+	.use(i18next_middleware.LanguageDetector)
+	.init({
+		preload: ['en', 'fr'],
+		fallbackLng: 'en',
+		backend: {
+			loadPath: path.join(views_dir, '/locales/{{ns}}-{{lng}}.json')
+		}
+	});
+
+app.use(i18next_middleware.handle(i18next)); // Set `t()` globally
+
+app.use((req, res, next) => { // Set `locale` globally
+	res.locals.locale = i18next.language;
+	next();
+});
+
 /*
  * Routes
  *
@@ -43,19 +73,19 @@ app.get('/', function (req, res) {
 });
 
 app.get('/player', function (req, res) {
-	res.sendFile(path.join(views_dir, 'player.html'));
+	res.render('player');
 });
 
 app.get(admin_route, function (req, res) {
-	res.sendFile(path.join(views_dir, 'admin.html'));
+	res.render('admin');
 });
 
 app.get('/receiver', function (req, res) {
-	res.sendFile(path.join(views_dir, 'receiver.html'));
+	res.render('receiver');
 });
 
 app.get('/buzzers(/[0-9]+)?', function (req, res) {
-	res.sendFile(path.join(views_dir, 'buzzers.html'));
+	res.render('buzzers');
 });
 
 /*

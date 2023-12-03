@@ -124,5 +124,4 @@ Enabled in player and admin pages.
 
 ## Todo
 
-- [ ] Simple i18n
 - [ ] Mobile admin: horizontal slide for teams and riddles?
