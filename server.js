@@ -50,6 +50,8 @@ i18next
 	.use(i18next_middleware.LanguageDetector)
 	.init({
 		preload: ['en', 'fr'],
+		supportedLngs: ['en', 'fr'],
+		nonExplicitSupportedLngs: true,
 		fallbackLng: 'en',
 		backend: {
 			loadPath: path.join(views_dir, '/locales/{{ns}}-{{lng}}.json')
