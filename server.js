@@ -56,7 +56,12 @@ i18next
 		}
 	});
 
-app.use(i18next_middleware.handle(i18next)); // Set `t()` globally
+app.use(i18next_middleware.handle(i18next));
+
+app.use((req, res, next) => {
+	res.locals.locale = req.i18n.resolvedLanguage; // Set `locale` (as actually used language) globally
+	next();
+});
 
 /*
  * Routes
