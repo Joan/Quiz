@@ -38,38 +38,37 @@ npm install
 
 ### Quiz data
 
-All the data of one game session is in the **`_data`** folder: riddles, teams and scores.  
-You can store your game sessions by renaming it `_data-<whatever>` afterwards.  
-Nb: the `_data-sample` folder is automatically copied to `_data` upon installation, and you can use it later to create a fresh `_data` for a new game.
+All the data of one game session is in the **`data`** folder: riddles, teams and scores.  
+Nb: the `data-sample` folder is automatically copied to `data` upon installation. You can use it later to create a fresh `data` for a new game.
 
-* **Riddles** are in `_data/quiz.json`.  
+* **Riddles** are in `data/quiz.json`.  
 Edit it directly or use [this spreadsheet](https://docs.google.com/spreadsheets/d/1gINMhwLp5sicssOqDFx4RDUT5UNfG8hwdR5GXiGQ-Q4/copy) to paste in all JSON data.
   * `type`: `video` / `audio` / `image`
   * `filename`: riddle file (without the path, just the filename)
   * `filename_answer`: file to use as an answer – like a movie poster with and without the name, or a part of a music and another more famous (optional - filename and filename_answer must be the same type)
   * `answer` and `answer_subtitle`: displayed in the admin panel
-You can use only the scoreboard & buzzers by emptying `_data/quiz.json` (or by putting an empty array `[]`).
+You can use only the scoreboard & buzzers by emptying `data/quiz.json` (or by putting an empty array `[]`).
 
 * **Teams** can be edited directly in the Admin screen.  
-You can also edit them in `_data/teams.json`.
+You can also edit them in `data/teams.json`.
   * `name`: displayed team name
   * `color`: team color (hexa: `#000000`)
   * `keycode`: triggered keyboard key for this team. Each team has to have its own keycode, and it must not be an app shortcut. ([Keycode.info](https://keycode.info/) might be useful here.)
   * `keycode_name` is here as a comment to remember the assigned key (not used in the app)
 
-* **Scores** are in `_data/scores.json` and it doesn’t need to be edited (scores are managed in the admin panel).
+* **Scores** are in `data/scores.json` and it doesn’t need to be edited (scores are managed in the admin panel).
 
-You can change the data directory path by passing the name you want at startup: `npm start -- data_dir=_data-game_session_836`
+You can change the data folder name by passing the name you want at startup: `npm start -- data_dir=data-game_session_836` (or juste rename the `data` folder to `data-<whatever>` after the game if you want to store your game sessions).
 
 ### Media files
 
-All your media files go in **`_media/`**: `_media/videos`, `_media/audios` and `_media/images`.  
+All your media files go in **`media/`**: `media/videos`, `media/audios` and `media/images`.  
 Use MP4 videos, MP3 audio files and ~MP2~ JPEG images to ensure your browser can read them (these filetypes are supported by all major browser at this time).
 
-A **poster image** can be displayed before the first riddle, by adding a PNG image at `_data/intro-poster.png`.  
+A **poster image** can be displayed before the first riddle, by adding an image (PNG / JPEG) named `intro-poster.png` (or `.jpg`) in your data folder.  
 <kbd>Enter</kbd> to hide it and load the first riddle.
 
-You can change the media directory path by passing the name you want at startup: `npm start -- data_dir=_data-game_session_836 media_dir=_media-game_session_836`
+You can change the media directory path by passing the name you want at startup: `npm start -- data_dir=data-game_session_836 media_dir=media-game_session_836`
 
 ### Buzzers
 

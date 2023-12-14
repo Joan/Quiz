@@ -31,8 +31,8 @@ process.argv.slice(2).forEach(arg => {
 const port = argvs.port ? argvs.port : 8080,
       static_dir  = path.join(__dirname, '/static'),
       views_dir   = path.join(__dirname, '/views'),
-      data_dir    = path.join(__dirname, argvs.data_dir ? argvs.data_dir : '_data'),
-      media_dir   = path.join(__dirname, argvs.media_dir ? argvs.media_dir : '_media'),
+      data_dir    = path.join(__dirname, argvs.data_dir ? argvs.data_dir : 'data'),
+      media_dir   = path.join(__dirname, argvs.media_dir ? argvs.media_dir : 'media'),
       admin_route = '/' + (argvs.admin_route ? argvs.admin_route : 'admin');
 
 app.use('/data', express.static(data_dir));

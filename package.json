@@ -18,8 +18,8 @@
 	},
 	"scripts": {
 		"postinstall": "run-script-os",
-		"postinstall:win32": "Xcopy /E _data-sample _data/",
-		"postinstall:darwin:linux": "cp -R _data-sample _data/",
+		"postinstall:win32": "Xcopy /E data-sample data/",
+		"postinstall:darwin:linux": "cp -R data-sample data/",
 		"start": "node server.js"
 	},
 	"nodemonConfig": {

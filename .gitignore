@@ -1,2 +1,4 @@
+/data*
+!/data-sample
 /_data*
 !/_data-sample
