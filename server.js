@@ -33,10 +33,12 @@ const port = argvs.port ? argvs.port : 8080,
       views_dir   = path.join(__dirname, '/views'),
       data_dir    = path.join(__dirname, argvs.data_dir ? argvs.data_dir : 'data'),
       media_dir   = path.join(__dirname, argvs.media_dir ? argvs.media_dir : 'media'),
+      _media_dir  = path.join(__dirname, argvs.data_dir ? argvs.data_dir : 'data', 'temp_media'),
       admin_route = '/' + (argvs.admin_route ? argvs.admin_route : 'admin');
 
 app.use('/data', express.static(data_dir));
 app.use('/media', express.static(media_dir));
+app.use('/_media', express.static(_media_dir));
 app.use('/static', express.static(static_dir));
 
 app.engine('html', ejs.__express);

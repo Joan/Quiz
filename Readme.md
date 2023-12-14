@@ -70,6 +70,9 @@ A **poster image** can be displayed before the first riddle, by adding an image 
 
 You can change the media directory path by passing the name you want at startup: `npm start -- data_dir=data-game_session_836 media_dir=media-game_session_836`
 
+If some of your media files are specific to a single game session and you do want them in the `media` folder, add a `_` to the beginning of their filename, and place them in a `temp_media` folder in you data folder.  
+Every filename beggining with a `_` will be searched in this folder: `a.jpg` must be in `media/images/a.jpg`, and `_a.jpg` must be in `data/temp_media/images/_a.jpg` (or the name of your data folder).
+
 ### Buzzers
 
 If you want to use **physical buzzers**, you may map these to the teams keycodes.

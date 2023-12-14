@@ -279,7 +279,12 @@
 		
 		update_src: function(filename, type) {
 			
-			player[`$${type}_player`].attr('src', pathes[`${type}s`] + filename);
+			var path = pathes[`${type}s`] + filename;
+			
+			if (filename.startsWith('_')) // If the filename starts with `_`, the file is in a different folder
+				path = path.replace('/media/', '/_media/');
+			
+			player[`$${type}_player`].attr('src', path);
 			
 			player.is_playable = type === 'video' || type === 'audio';
 			
