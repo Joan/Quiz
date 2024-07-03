@@ -455,7 +455,7 @@
 			
 		},
 		
-		reveal: function() {
+		toggle_answer: function() {
 			
 			if (!player.launched || current_riddle.filename_answer === undefined || current_riddle.filename_answer === '')
 				return;
@@ -468,7 +468,6 @@
 			buzzer.buzzable = !show_answer;
 			
 			buzzer.empty_queue();
-			player.$image.show();
 			player.play();
 			socket.emit('update_control_alt', 'toggle_answer', player.answer_displayed);
 			
@@ -1074,7 +1073,7 @@
 				
 				// Display image answer
 				case 'toggle_answer':
-					player.reveal();
+					player.toggle_answer();
 					break;
 				
 				// Toggle buzzer activation
