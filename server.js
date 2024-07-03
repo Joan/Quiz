@@ -164,7 +164,9 @@ var clients = {
 var settings = {
 	buzzers_enabled: true,
 	single_buzz: false,
-	large_scoreboard: false
+	large_scoreboard: false,
+	loop_media: false,
+	video_end_visible: false
 };
 
 // Check for intro_poster

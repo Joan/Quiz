@@ -10,6 +10,8 @@
 	"unique_buzz_per_question": "Unique buzz per question",
 	"scroll_to_active_team": "Scroll to active team",
 	"show_scores_in_large": "Show scores in large",
+	"loop_media": "Loop audio and videos",
+	"video_end_visible": "Keep video end displayed",
 	"edit_teams": "Edit teams",
 	"finish_editing": "Finish editing",
 	"reset_scores_": "Reset scores…",

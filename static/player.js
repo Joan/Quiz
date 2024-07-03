@@ -28,7 +28,8 @@
 	var riddles,
 	    teams,
 	    scores,
-	    shortcuts;
+	    shortcuts,
+	    settings;
 	
 	var current_riddle = null,
 	    current_riddle_num = 0,
@@ -41,6 +42,7 @@
 		scores = data.scores;
 		player.intro_poster = data.intro_poster;
 		shortcuts = data.shortcuts;
+		settings = data.settings;
 		
 		riddle_count = riddles.length;
 		
@@ -52,9 +54,9 @@
 		qr_helper.init();
 		controls.init();
 		
-		buzzer.set_buzzers_enabled(data.settings.buzzers_enabled);
-		buzzer.set_single_buzz(data.settings.single_buzz);
-		scoreboard.toggle_large(data.settings.large_scoreboard);
+		buzzer.set_buzzers_enabled(settings.buzzers_enabled);
+		buzzer.set_single_buzz(settings.single_buzz);
+		scoreboard.toggle_large(settings.large_scoreboard);
 		
 	};
 	
@@ -69,6 +71,7 @@
 	});
 	
 	socket.on('set_setting', (setting, val) => {
+		settings[setting] = val;
 		switch (setting) {
 			case 'buzzers_enabled':
 				buzzer.set_buzzers_enabled(val);
@@ -79,6 +82,14 @@
 				break;
 			case 'large_scoreboard':
 				scoreboard.toggle_large(val);
+				break;
+			case 'loop_media':
+				if (player.media_ended && !buzzer.has_queue)
+					player.play();
+				break;
+			case 'video_end_visible':
+				if (current_riddle.type === 'video' && player.media_ended)
+					player.$el[val ? 'addClass' : 'removeClass']('playing');
 				break;
 		}
 	});
@@ -177,7 +188,8 @@
 			
 			player.loaded = false;
 			player.launched = false;
-			player.paused = false;
+			player.paused = true;
+			player.media_ended = false;
 			player.poster_displayed = false;
 			player.answer_displayed = false;
 			
@@ -186,9 +198,7 @@
 			player.send_riddle_change(0);
 			
 			// Attach event when audio or video reaches the end
-			player.$video_player.add(player.$audio_player).on('ended', function() {
-				player.pause();
-			});
+			player.$video_player.add(player.$audio_player).on('ended', player.media_end_handler);
 			
 			if (player.intro_poster !== false) // Set at main init
 				player.init_poster();
@@ -197,7 +207,7 @@
 			
 			player.cursor_display_timeout = null;
 			player.cursor_idle = true;
-			$body.on('mousemove.cursor_display', player.handle_cursor_display);
+			$body.on('mousemove.cursor_display', player.mousemove_cursor_handler);
 			
 			console.info('Player ready');
 			
@@ -226,29 +236,37 @@
 			}
 			
 			player.paused = false;
+			player.media_ended = false;
 			socket.emit('update_control_alt', 'play_pause', true);
 			
 			scoreboard.hide();
 			qr_helper.hide();
 		},
 		
+		media_end_handler: function() {
+			if (settings.loop_media) {
+				player.playable_el.play();
+				
+			} else {
+				if (current_riddle.type !== 'video' || !settings.video_end_visible)
+					player.pause();
+				player.media_ended = true;
+			}
+		},
+		
 		pause: function() {
 			if (player.is_playable)
-				player[current_riddle.type].pause();
+				player.playable_el.pause();
 			player.$el.removeClass('playing');
 			player.paused = true;
 			socket.emit('update_control_alt', 'play_pause', false);
 		},
 		
 		toggle: function() {
-			
-			var paused = player.is_playable ? player[current_riddle.type].paused : !player.$el.hasClass('playing');
-			
-			if (paused)
+			if (player.paused)
 				player.play();
 			else
 				player.pause();
-			
 		},
 		
 		unload: function() {
@@ -271,6 +289,8 @@
 			
 			player.loaded = false;
 			player.launched = false;
+			player.paused = true;
+			player.media_ended = false;
 			player.is_playable = false;
 			player.playable_el = null;
 			player.answer_displayed = false;
@@ -478,7 +498,7 @@
 			socket.emit('update_control_alt', 'toggle_answer', player.answer_displayed);
 		},
 		
-		handle_cursor_display: function() {
+		mousemove_cursor_handler: function() {
 			if (player.cursor_idle)
 				$body.addClass('--cursor_moving');
 			var later = function() {
@@ -488,7 +508,7 @@
 			player.cursor_idle = false;
 			clearTimeout(player.cursor_display_timeout);
 			player.cursor_display_timeout = setTimeout(later, 150);
-		}
+		},
 		
 	};
 	
