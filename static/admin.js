@@ -14,7 +14,7 @@
 	 */
 	
 	const $window = $(window),
-		$body = $('body');
+	      $body = $('body');
 	
 	const socket = io();
 	
@@ -22,12 +22,12 @@
 	    teams,
 	    scores,
 	    shortcuts,
-		
-		current_riddle = null,
-		current_riddle_num = 0,
-		riddle_count = 0,
-		
-		teams_default_colors = ['#62b529', '#ed1d24', '#e8ae00', '#1782e1'];
+	
+	    current_riddle = null,
+	    current_riddle_num = 0,
+	    riddle_count = 0,
+	
+	    teams_default_colors = ['#62b529', '#ed1d24', '#e8ae00', '#1782e1'];
 	
 	const init = function(data) {
 		
@@ -568,17 +568,18 @@
 			
 		},
 		
-		update_control_alt: function(command, is_alt) {
+		update_control_state: function(command, state) {
 			
-			var $target = $(`[data-command="${command}"][data-display-alt]`);
+			var $targets = $(`[data-control-state-display="${command}-${state}"]`),
+			    $siblings = $(`[data-control-state-display^="${command}-"]:not([data-control-state-display="${command}-${state}"])`),
+			    $highlights = $(`[data-highlight-on="${command}-${state}"]`),
+			    $highlights_siblings = $(`[data-highlight-on^="${command}-"]:not([data-highlight-on="${command}-${state}"])`);
 			
-			if ($target.length >= 0) {
-				
-				$target.attr('data-display-alt', !!is_alt);
-				
-				if (['toggle_scores', 'toggle_answer', 'toggle_qr'].includes(command))
-					$target[!!is_alt ? 'addClass' : 'removeClass']('--highlighted');
-			}
+			$targets.addClass('--show');
+			$siblings.removeClass('--show');
+			$highlights.addClass('--highlighted');
+			$highlights_siblings.removeClass('--highlighted');
+			
 		},
 		
 		check_clients: function(clients_counts) {
@@ -631,7 +632,7 @@
 		
 	};
 	
-	socket.on('update_control_alt', (command, alt) => controls.update_control_alt(command, alt));
+	socket.on('update_control_state', (command, state) => controls.update_control_state(command, state));
 	
 	socket.on('update_clients', clients_counts => controls.check_clients(clients_counts));
 	

@@ -80,6 +80,10 @@
 	socket.on('get_player_state', function() {
 		player.send_riddle_change(current_riddle_num);
 		socket.emit('update_player_activation_state', user_activation.has_been_active);
+		socket.emit('update_control_state', 'play_pause', player.paused ? 'play' : 'pause');
+		socket.emit('update_control_state', 'toggle_answer', player.answer_displayed ? 'hide' : 'show');
+		socket.emit('update_control_state', 'toggle_scores', scoreboard.displayed ? 'hide' : 'show');
+		socket.emit('update_control_state', 'toggle_qr', qr_helper.displayed ? 'hide' : 'show');
 		buzzer.send_buzz_change();
 	});
 	
@@ -250,7 +254,7 @@
 			
 			player.paused = false;
 			player.media_ended = false;
-			socket.emit('update_control_alt', 'play_pause', true);
+			socket.emit('update_control_state', 'play_pause', 'pause');
 			
 			scoreboard.hide();
 			qr_helper.hide();
@@ -272,7 +276,8 @@
 				player.playable_el.pause();
 			player.$el.removeClass('playing');
 			player.paused = true;
-			socket.emit('update_control_alt', 'play_pause', false);
+			if (!buzzer.has_queue)
+				socket.emit('update_control_state', 'play_pause', 'play');
 		},
 		
 		toggle: function() {
@@ -502,13 +507,13 @@
 			
 			buzzer.empty_queue();
 			player.play();
-			socket.emit('update_control_alt', 'toggle_answer', player.answer_displayed);
+			socket.emit('update_control_state', 'toggle_answer', player.answer_displayed ? 'hide' : 'show');
 			
 		},
 		
 		send_riddle_change: function(riddle_num) {
 			socket.emit('riddle_change', riddle_num);
-			socket.emit('update_control_alt', 'toggle_answer', player.answer_displayed);
+			socket.emit('update_control_state', 'toggle_answer', player.answer_displayed ? 'hide' : 'show');
 		},
 		
 		mousemove_cursor_handler: function() {
@@ -705,10 +710,10 @@
 				return;
 			
 			let was_first = !buzzer.has_queue;
+			buzzer.has_queue = true;
+			teams[team_id].queued = true;
 			
 			player.pause();
-			teams[team_id].queued = true;
-			buzzer.has_queue = true;
 			
 			$('<div class="buzzer"/>')
 				.addClass('team_color_' + team_id)
@@ -800,6 +805,10 @@
 				state: state,
 				buzz_counts: buzzer.buzz_counts
 			});
+			
+			if (buzzer.has_queue)
+				socket.emit('update_control_state', 'play_pause', 'next_buzz');
+			
 		},
 		
 		set_buzzers_enabled: function(enabled) {
@@ -838,6 +847,7 @@
 			scoreboard.$el = $('.scoreboard');
 			scoreboard.update_teams();
 			scoreboard.update_scores();
+			scoreboard.displayed = false;
 			
 		},
 		
@@ -883,12 +893,14 @@
 		
 		show: function() {
 			scoreboard.$el.addClass('show').removeClass('hide');
-			socket.emit('update_control_alt', 'toggle_scores', true);
+			scoreboard.displayed = true;
+			socket.emit('update_control_state', 'toggle_scores', 'hide');
 		},
 		
 		hide: function() {
 			scoreboard.$el.addClass('hide').removeClass('show');
-			socket.emit('update_control_alt', 'toggle_scores', false);
+			scoreboard.displayed = false;
+			socket.emit('update_control_state', 'toggle_scores', 'show');
 		},
 		
 		toggle: function() {
@@ -960,7 +972,7 @@
 		
 		init: function() {
 			
-			qr_helper.hidden = true;
+			qr_helper.displayed = false;
 			
 		},
 		
@@ -1010,22 +1022,22 @@
 		show_img: function() {
 			if (qr_helper.$el) {
 				qr_helper.$el.addClass('show').removeClass('hide');
-				qr_helper.hidden = false;
+				qr_helper.displayed = true;
 				player.pause();
-				socket.emit('update_control_alt', 'toggle_qr', true);
+				socket.emit('update_control_state', 'toggle_qr', 'hide');
 			}
 		},
 		
 		hide: function() {
 			if (qr_helper.$el) {
 				qr_helper.$el.addClass('hide').removeClass('show');
-				qr_helper.hidden = true;
-				socket.emit('update_control_alt', 'toggle_qr', false);
+				qr_helper.displayed = false;
+				socket.emit('update_control_state', 'toggle_qr', 'show');
 			}
 		},
 		
 		toggle: function() {
-			qr_helper[qr_helper.hidden ? 'show' : 'hide']();
+			qr_helper[qr_helper.displayed ? 'hide' : 'show']();
 		}
 		
 	};

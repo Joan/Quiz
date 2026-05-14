@@ -741,8 +741,7 @@ body {
 			border-color: #f4f4f4;
 		}
 		
-		.control:not([data-display-alt="true"]) .--display_alt-show,
-		.control[data-display-alt="true"] .--display_alt-hide {display: none;}
+		[data-control-state-display]:not(.--show) {display: none;}
 	
 	@media (min-width: 600px) and (max-width: 899px) {
 		

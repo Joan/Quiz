@@ -408,8 +408,8 @@ io.on('connection', function(socket) {
 		socket.broadcast.emit('control', command);
 	});
 	
-	socket.on('update_control_alt', function(command, alt) {
-		socket.broadcast.emit('update_control_alt', command, alt);
+	socket.on('update_control_state', function(command, state) {
+		socket.broadcast.emit('update_control_state', command, state);
 	});
 	
 	socket.on('update_player_activation_state', function(has_been_active) {
