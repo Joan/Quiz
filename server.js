@@ -88,8 +88,8 @@ app.get('/receiver', function (req, res) {
 	res.render('receiver');
 });
 
-app.get('/buzzers(/[0-9]+)?', function (req, res) {
-	res.render('buzzers');
+app.get(['/buzzers', '/buzzers/:id'], function (req, res) {
+	res.render('touch_buzzer');
 });
 
 /*
@@ -129,9 +129,9 @@ const shortcuts = {
 
 const save_teams = function() {
 	fs.writeFileSync(files.teams, JSON.stringify(teams, null, "\t"));
-},
+};
 
-save_scores = function() {
+const save_scores = function() {
 	fs.writeFileSync(files.scores, JSON.stringify(scores));
 };
 
@@ -157,7 +157,8 @@ check_scores_consistency();
 var clients = {
 	players: [],
 	admins: [],
-	buzzers: Array.from({length: teams.length}, () => [])
+	teams_buzzers: Array.from({length: teams.length}, () => []),
+	buzzers: []
 };
 
 // Default settings
@@ -195,17 +196,26 @@ io.on('connection', function(socket) {
 	{
 		let url = socket.handshake.headers.referer,
 		    host = socket.request.headers.host,
-		    path = url.slice(url.indexOf(host) + host.length),
-		    reg = /\/(\w+)\/?(\w*)/g.exec(path);
+		    reg;
 		
-		socket.client_view = reg[1];
-		socket.client_subview = reg[2];
+		if (url && host) {
+			let path = url.slice(url.indexOf(host) + host.length);
+			reg = /\/(\w+)\/?(\w*)/g.exec(path);
+			socket.client_view = reg[1];
+			socket.client_subview = reg[2];
+			if (socket.client_view === 'buzzers')
+				socket.client_view = 'touch_buzzer'; // Touch buzzers are at the `buzzers` route.
+		}
+		// Without any referer, assuming this is a buzzers bridge
+		else
+			socket.client_view = 'buzzers';
+		
 	}
 	
 	const update_clients = function() {
 		io.emit('update_clients', {
 			players: clients.players.length,
-			buzzers: clients.buzzers.map(a => a.length)
+			teams_buzzers: clients.teams_buzzers.map(a => a.length)
 		});
 	};
 	
@@ -214,12 +224,12 @@ io.on('connection', function(socket) {
 	socket.on('connection_player', function() {
 		
 		socket.emit('init_data', {
-			riddles: riddles,
-			teams: teams,
-			scores: scores,
-			intro_poster: intro_poster,
-			shortcuts: shortcuts,
-			settings: settings
+			riddles,
+			teams,
+			scores,
+			intro_poster,
+			shortcuts,
+			settings
 		});
 		
 		clients.players.push(socket.id);
@@ -231,15 +241,14 @@ io.on('connection', function(socket) {
 	socket.on('connection_admin', function() {
 		
 		socket.emit('init_data', {
-			riddles: riddles,
-			teams: teams,
-			scores: scores,
-			shortcuts: shortcuts,
-			settings: settings
+			riddles,
+			teams,
+			scores,
+			shortcuts,
+			settings
 		});
 		
 		clients.admins.push(socket.id);
-		update_clients();
 		console.info('Admin connected');
 		
 	});
@@ -247,47 +256,65 @@ io.on('connection', function(socket) {
 	socket.on('connection_receiver', function() {
 		
 		socket.emit('init_data', {
-			teams: teams
+			teams,
+			shortcuts
 		});
 		
 		console.info('Receiver connected');
 		
 	});
 	
-	socket.on('connection_buzzer', function(team_id) {
+	socket.on('connection_touch_buzzer', function(team_id) {
 		
 		socket.emit('init_data', {
-			teams: teams
+			teams
 		});
 		
 		if (teams[team_id] !== undefined) {
 			
-			clients.buzzers[team_id].push(socket.id);
+			clients.teams_buzzers[team_id].push(socket.id);
 			update_clients();
-			console.info(`Buzzer #${team_id} (${teams[team_id].name}) connected`);
+			console.info(`Touch buzzer of team ${teams[team_id].name} (#${team_id}) connected`);
 			
-		} else if (team_id === null)
-			console.info('Buzzer list displayed');
-			
+		}
+		else if (team_id === null) {
+			// console.info('Touch buzzer list displayed');
+		}
 		else
-			console.error('Buzzer of undefined team tried to connect: #' + team_id);
+			console.error('Touch buzzer of undefined team tried to connect: #' + team_id);
+		
+	});
+	
+	socket.on('connection_buzzers', function(bz) {
+		
+		clients.buzzers.push(socket.id);
+		console.info(`Buzzers connected: Xbox BB ${bz.xbox_bb ? '✓' : '✗'} | PS3 Wbuzz ${bz.ps3_wbuzz ? '✓' : '✗'}`);
 		
 	});
 	
 	/* Disconnections */
 	
-	socket.on('disconnect', (reason) => {
+	socket.on('disconnect', () => {
+		
+		var [client_key, client_name] = ({
+			player: ['players', 'Player'],
+			admin: ['admins', 'Admin'],
+			buzzers: ['buzzers', 'Buzzers'],
+			receiver: ['receiver', 'Receiver']
+		}[socket.client_view] ?? [socket.client_view, '']);
 		
 		switch (socket.client_view) {
 			case 'player':
 			case 'admin':
-				clients[`${socket.client_view}s`].splice(clients[`${socket.client_view}s`].indexOf(socket.id), 1);
-				console.info(socket.client_view.charAt(0).toUpperCase() + socket.client_view.slice(1) + ' disconnected');
-				break;
 			case 'buzzers':
+				clients[client_key].splice(clients[client_key].indexOf(socket.id), 1);
+			case 'receiver':
+				console.info(client_name + ' disconnected');
+				break;
+			case 'touch_buzzer':
 				if (socket.client_subview) {
-					clients.buzzers[socket.client_subview].splice(clients.buzzers[socket.client_subview].indexOf(socket.id), 1);
-					console.info(`Buzzer #${socket.client_subview} (${teams[socket.client_subview].name}) disconnected`);
+					clients.teams_buzzers[socket.client_subview].splice(clients.teams_buzzers[socket.client_subview].indexOf(socket.id), 1);
+					console.info(`Touch buzzer of team ${teams[socket.client_subview].name} (#${socket.client_subview}) disconnected`);
 				}
 				break;
 		}
@@ -361,8 +388,13 @@ io.on('connection', function(socket) {
 		socket.broadcast.emit('update_buzzer', buzzer_data);
 	});
 	
-	socket.on('buzzer_press', function(team_keycode) {
-		socket.broadcast.emit('buzzer_press', team_keycode);
+	socket.on('team_keycode_press', function(keycode) {
+		socket.broadcast.emit('team_keycode_press', keycode);
+	});
+	
+	socket.on('buzzer_press', function(data) {
+		if (data.buzzer)
+			socket.broadcast.emit('buzzer_press', data.buzzer);
 	});
 	
 	/* Settings and controls */
@@ -416,7 +448,7 @@ io.on('connection', function(socket) {
 		
 	});
 	
-	socket.on('team_edited', function(teams_data) {
+	socket.on('teams_edited', function(teams_data) {
 		
 		teams = teams_data;
 		check_scores_consistency();
@@ -440,5 +472,5 @@ var url = 'http://' + ip.address() + ':' + port;
 console.info(`Quiz server ready.
 Player: ${url}/player
 Admin: ${url}${admin_route}
-Mobile buzzers: ${url} (/buzzers)
-Buzzer receiver: ${url}/receiver`);
+Touch buzzers: ${url} (/buzzers)
+Keycodes receiver: ${url}/receiver`);

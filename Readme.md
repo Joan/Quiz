@@ -53,8 +53,9 @@ You can use only the scoreboard & buzzers by emptying `data/quiz.json` (or by pu
 You can also edit them in `data/teams.json`.
   * `name`: displayed team name
   * `color`: team color (hexa: `#000000`)
-  * `keycode`: triggered keyboard key for this team. Each team has to have its own keycode, and it must not be an app shortcut. ([Keycode.info](https://keycode.info/) might be useful here.)
-  * `keycode_name` is here as a comment to remember the assigned key (not used in the app)
+  * `buzzer_name`: buzzer name/id from Buzzer Bridge
+  * `buzzer_keycode`: buzzer keyboard shortcut for this team. Must not be an app shortcut. ([Keycode.info](https://keycode.info/) might be useful here.)
+  * `buzzer_keycode_name` is here as a comment to remember the assigned key (not used in the app)
 
 * **Scores** are in `data/scores.json` and it doesn’t need to be edited (scores are managed in the admin panel).
 
@@ -75,13 +76,9 @@ Every filename beggining with a `_` will be searched in this folder: `a.jpg` mus
 
 ### Buzzers
 
-If you want to use **physical buzzers**, you may map these to the teams keycodes.
+You can use **physical buzzers** by using [RPi Buzzers Bridge](https://github.com/Joan/RPi-Buzzers-Bridge) or any keyboard-mapped buzzers.
 
-For the Xbox Big Buttons, under Linux (using the `/receiver` URL, and as a VM if needed):
-* Install https://github.com/micolous/xbox360bb to enable receiver, and activate it with `sudo modprobe -v xbox360bb`
-* Install https://github.com/AntiMicro/antimicro and set it up to map these controllers to your teams keys
-
-Alternatively, you can use the **virtual buzzers**: display the QR code so that players can access it on their phone.  
+Alternatively, you can use included **virtual buzzers** by displaying a QR code for players to access a buzzer on their phone.  
 If the players' phone are not on the same local network, you can use a tunnelling service (like Serveo.net) and display the external URL in the QR code (instead of local IP) by passing it at startup: `npm start -- buzzer_domain=abc123.serveo.net`.
 
 ## Usage

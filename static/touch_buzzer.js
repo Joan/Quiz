@@ -1,6 +1,6 @@
 /*
  * QUIZ
- * buzzers.js
+ * touch_buzzer.js
  * 
  */
 
@@ -122,7 +122,7 @@
 		},
 		
 		buzz: function() {
-			socket.emit('buzzer_press', teams[team].keycode);
+			socket.emit('buzzer_press', teams[team].buzzer_keycode);
 		}
 		
 	};
@@ -134,7 +134,7 @@
 	
 	$(function() {
 		
-		socket.emit('connection_buzzer', team);
+		socket.emit('connection_touch_buzzer', team);
 		
 	});
 	

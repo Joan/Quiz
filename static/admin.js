@@ -32,7 +32,7 @@
 	const init = function(data) {
 		
 		riddles = data.riddles;
-		teams = data.teams;
+		update_teams_data(data.teams);
 		scores = data.scores;
 		shortcuts = data.shortcuts;
 		
@@ -45,6 +45,15 @@
 		controls.init();
 		socket.emit('get_player_state');
 		
+	};
+	
+	var all_teams_keycodes = [];
+	
+	const update_teams_data = function(teams_data) {
+		teams = teams_data;
+		for (let i = 0, il = teams.length; i < il; i++) {
+			all_teams_keycodes.push(teams[i].buzzer_keycode);
+		}
 	};
 	
 	socket.on('init_data', function(data) {
@@ -251,13 +260,14 @@
 					random_default_color = teams_default_colors[Math.floor(Math.random() * teams_default_colors.length)];
 				
 				for (let i in teams)
-					next_keycode = next_keycode > teams[i].keycode ? next_keycode : teams[i].keycode + 1;
+					next_keycode = next_keycode > teams[i].buzzer_keycode ? next_keycode : teams[i].buzzer_keycode + 1;
 				
 				var team_id = teams.push({
 					name: '',
 					color: random_default_color,
-					keycode: next_keycode,
-					keycode_name: String.fromCharCode(next_keycode)
+					buzzer_name: '',
+					buzzer_keycode: next_keycode,
+					buzzer_keycode_name: String.fromCharCode(next_keycode)
 				}) - 1;
 				
 				scoreboard.add_team(team_id);
@@ -306,7 +316,7 @@
 				
 				// Send everything
 				if (scoreboard.edit_teams.serialized_teams !== JSON.stringify(teams)) // Send only if has changes
-					socket.emit('team_edited', teams);
+					socket.emit('teams_edited', teams);
 			},
 			
 			end: function(abort) {
@@ -333,7 +343,7 @@
 	socket.on('update_teams', function(team_data) {
 		if (scoreboard.editing_teams)
 			scoreboard.edit_teams.end(true);
-		teams = team_data;
+		update_teams_data(team_data);
 		scoreboard.update_teams();
 	});
 	
@@ -508,10 +518,6 @@
 			
 			$('[data-command]').on('click', controls.action_handler);
 			
-			controls.teams_keycodes = [];
-			for (let i in teams)
-				controls.teams_keycodes.push(teams[i].keycode);
-			
 			controls.all_commands = Object.values(shortcuts);
 			controls.commands_shortcuts = Object.fromEntries(Object.entries(shortcuts).map(([k, v]) => [v, toInt(k)]));
 			
@@ -530,9 +536,9 @@
 				return;
 			
 			// Teams keycodes
-			if (controls.teams_keycodes.includes(keycode)) {
+			if (all_teams_keycodes.includes(keycode)) {
 				e.preventDefault();
-				socket.emit('buzzer_press', keycode);
+				socket.emit('team_keycode_press', keycode);
 				return;
 			}
 			
@@ -582,7 +588,7 @@
 			controls.toggle_warning('multiple_players', clients_counts.players > 1);
 			
 			// Show offline virtual buzzers (if at least one connects)
-			if (Math.max(...clients_counts.buzzers) > 0 || controls.virtual_buzzer_used) {
+			if (Math.max(...clients_counts.teams_buzzers) > 0 || controls.virtual_buzzer_used) {
 				
 				controls.virtual_buzzer_used = true;
 				

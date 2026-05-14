@@ -2,25 +2,36 @@
 	{
 		"name": "Verts",
 		"color": "#62b529",
-		"keycode": 49,
-		"keycode_name": "Digit1 (&)"
+		"buzzer_name": "xbox_bb_green",
+		"buzzer_keycode": 49,
+		"buzzer_keycode_name": "Digit1 (&)"
 	},
 	{
 		"name": "Rouges",
 		"color": "#ed1d24",
-		"keycode": 50,
-		"keycode_name": "Digit2 (é)"
+		"buzzer_name": "xbox_bb_red",
+		"buzzer_keycode": 50,
+		"buzzer_keycode_name": "Digit2 (é)"
 	},
 	{
 		"name": "Jaunes",
 		"color": "#e8ae00",
-		"keycode": 51,
-		"keycode_name": "Digit3 (”)"
+		"buzzer_name": "xbox_bb_yellow",
+		"buzzer_keycode": 51,
+		"buzzer_keycode_name": "Digit3 (”)"
 	},
 	{
 		"name": "Bleus",
 		"color": "#1782e1",
-		"keycode": 52,
-		"keycode_name": "Digit4 (’)"
+		"buzzer_name": "xbox_bb_blue",
+		"buzzer_keycode": 52,
+		"buzzer_keycode_name": "Digit4 (’)"
+	},
+	{
+		"name": "Violets",
+		"color": "#b300f4",
+		"buzzer_name": "ps3_wbuzz_0",
+		"buzzer_keycode": 53,
+		"buzzer_keycode_name": "Digit5 (()"
 	}
 ]

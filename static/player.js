@@ -38,7 +38,7 @@
 	const init = function(data) {
 		
 		riddles = data.riddles;
-		teams = data.teams;
+		update_teams_data(data.teams);
 		scores = data.scores;
 		player.intro_poster = data.intro_poster;
 		shortcuts = data.shortcuts;
@@ -58,6 +58,19 @@
 		buzzer.set_single_buzz(settings.single_buzz);
 		scoreboard.toggle_large(settings.large_scoreboard);
 		
+	};
+	
+	var all_teams_keycodes = [],
+	    keycodes_teams = {},
+	    buzzer_names_teams = {};
+	
+	const update_teams_data = function(teams_data) {
+		teams = teams_data;
+		for (let i = 0, il = teams.length; i < il; i++) {
+			all_teams_keycodes.push(teams[i].buzzer_keycode);
+			keycodes_teams[teams[i].buzzer_keycode] = i;
+			buzzer_names_teams[teams[i].buzzer_name] = i;
+		}
 	};
 	
 	socket.on('init_data', function(data) {
@@ -668,38 +681,39 @@
 			
 		},
 		
-		key_buzz: function(keycode) {
-			
-			// Buzzers keys
-			
-			if (buzzer.buzzable && buzzer.enabled) {
-				for (let i in teams) {
-					if (keycode === teams[i].keycode) {
-						if (!(buzzer.single_buzz && buzzer.buzz_counts[i] > 0) || !player.launched)
-							buzzer.add_to_queue(i);
-						return;
-						break;
-					}
-				}
-			}
-			
+		team_buzz: function(team_id) {
+			if (buzzer.enabled &&
+				buzzer.buzzable &&
+				(!(buzzer.single_buzz && buzzer.buzz_counts[team_id] > 0) || !player.launched)
+			)
+				buzzer.add_to_queue(team_id);
 		},
 		
-		add_to_queue: function(id) {
+		buzzer_press: function(buzzer_name) {
+			if (buzzer_names_teams.hasOwnProperty(buzzer_name))
+				buzzer.team_buzz(buzzer_names_teams[buzzer_name]);
+		},
+		
+		team_keycode_press: function(keycode) {
+			if (keycodes_teams.hasOwnProperty(keycode))
+				buzzer.team_buzz(keycodes_teams[keycode]);
+		},
+		
+		add_to_queue: function(team_id) {
 			
-			if (teams[id].queued || !buzzer.buzzable)
+			if (teams[team_id].queued || !buzzer.buzzable)
 				return;
 			
 			let was_first = !buzzer.has_queue;
 			
 			player.pause();
-			teams[id].queued = true;
+			teams[team_id].queued = true;
 			buzzer.has_queue = true;
 			
 			$('<div class="buzzer"/>')
-				.addClass('team_color_' + id)
-				.attr('data-id', id)
-				.html('<span class="letter">' + teams[id].name.charAt(0) + '</span>')
+				.addClass('team_color_' + team_id)
+				.attr('data-id', team_id)
+				.html('<span class="letter">' + teams[team_id].name.charAt(0) + '</span>')
 				.appendTo(buzzer.$el);
 			
 			if (was_first)
@@ -804,8 +818,12 @@
 		
 	};
 	
-	socket.on('buzzer_press', function(team_keycode) {
-		buzzer.key_buzz(team_keycode);
+	socket.on('buzzer_press', function(buzzer_name) {
+		buzzer.buzzer_press(buzzer_name);
+	});
+	
+	socket.on('team_keycode_press', function(keycode) {
+		buzzer.team_keycode_press(keycode);
 	});
 	
 	/*
@@ -928,8 +946,8 @@
 		scoreboard.change_score(data);
 	});
 	
-	socket.on('update_teams', function(team_data) {
-		teams = team_data;
+	socket.on('update_teams', function(teams_data) {
+		update_teams_data(teams_data);
 		scoreboard.update_teams();
 	});
 	
@@ -1023,10 +1041,6 @@
 			
 			$window.on('keydown', controls.keydown_handler);
 			
-			controls.teams_keycodes = [];
-			for (let i in teams)
-				controls.teams_keycodes.push(teams[i].keycode);
-			
 			controls.all_commands = Object.values(shortcuts);
 			controls.commands_shortcuts = Object.fromEntries(Object.entries(shortcuts).map(([k, v]) => [v, toInt(k)]));
 			
@@ -1041,9 +1055,9 @@
 				return;
 			
 			// Teams keycodes
-			if (controls.teams_keycodes.includes(keycode)) {
+			if (all_teams_keycodes.includes(keycode)) {
 				e.preventDefault();
-				buzzer.key_buzz(keycode);
+				buzzer.team_keycode_press(keycode);
 				return;
 			}
 			
