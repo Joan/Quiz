@@ -11,7 +11,8 @@
 	const socket = io();
 	
 	var all_teams_keycodes = [],
-	    all_shortcuts_keycodes = [];
+	    all_shortcuts_keycodes = [],
+	    shortcuts;
 	
 	const update_teams_data = function(teams_data) {
 		for (let i = 0, il = teams.length; i < il; i++)
@@ -24,6 +25,7 @@
 			all_teams_keycodes.push(team.buzzer_keycode);
 		
 		all_shortcuts_keycodes = Object.keys(data.shortcuts).map(Number);
+		shortcuts = data.shortcuts;
 		
 		$(window).on('keydown', keydown_handler);
 		
@@ -47,6 +49,12 @@
 		if (all_teams_keycodes.includes(keycode)) {
 			e.preventDefault();
 			socket.emit('team_keycode_press', keycode);
+			return;
+		}
+		
+		else if (all_shortcuts_keycodes.includes(keycode)) {
+			e.preventDefault();
+			socket.emit('control', shortcuts[keycode]);
 			return;
 		}
 		
