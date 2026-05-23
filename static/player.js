@@ -57,6 +57,7 @@
 		buzzer.set_buzzers_enabled(settings.buzzers_enabled);
 		buzzer.set_single_buzz(settings.single_buzz);
 		scoreboard.toggle_large(settings.large_scoreboard);
+		scoreboard.toggle_left(settings.left_scoreboard);
 		
 	};
 	
@@ -103,6 +104,9 @@
 			case 'large_scoreboard':
 				scoreboard.toggle_large(val);
 				break;
+			case 'left_scoreboard':
+				scoreboard.toggle_left(val);
+				break;
 			case 'loop_media':
 				if (player.media_ended && !buzzer.has_queue)
 					player.play();
@@ -133,13 +137,14 @@
 		for (let i = 1; i <= l; i++)
 			css += `.buzzer:nth-child(${i}){left: ${i!==1 ? (i*10+5)+'vh' : '0'};}`;
 		// Scoreboard height (.5 for the bottom margin)
-		css += `.scoreboard{height: ${l*2+0.5}em;}`;
+		css += `.scoreboard{height: ${l*2+2.5}em;}`;
 		// Scoreboard teams position
 		for (let i = 1; i <= l; i++)
-			css += `.scoreboard .team[data-position="${i}"]{top: ${(i-1)*2}em;}`;
+			css += `.scoreboard .team[data-position="${i}"]{top: ${(i-1)*2+1}em; z-index:${i-1}}`;
 		// Scoreboard teams apparition
 		for (let i = 1; i <= l; i++)
-			css += `.scoreboard.show .team[data-position="${i}"],.scoreboard.hide .team[data-position="${l+1-i}"] {animation-delay: ${(i-1)*50}ms;}`;
+			css += `.scoreboard .team[data-position="${i}"] {animation-delay: ${(i-1)*50}ms;}`;
+			// Inverted hiding oder version: css += `.scoreboard.show .team[data-position="${i}"],.scoreboard.hide .team[data-position="${l+1-i}"] {animation-delay: ${(i-1)*50}ms;}`;
 		
 		$('body').append('<style id="teams_misc">' + css + '</style>');
 	};
@@ -952,6 +957,10 @@
 		
 		toggle_large: function(enabled) {
 			scoreboard.$el[enabled ? 'addClass' : 'removeClass']('--large');
+		},
+		
+		toggle_left: function(enabled) {
+			scoreboard.$el[enabled ? 'addClass' : 'removeClass']('--left');
 		}
 		
 	};

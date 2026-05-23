@@ -167,6 +167,7 @@ var settings = {
 	show_buzzers_disabled: true,
 	single_buzz: false,
 	large_scoreboard: false,
+	left_scoreboard: false,
 	loop_media: false,
 	video_end_visible: false
 };
