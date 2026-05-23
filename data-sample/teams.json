@@ -30,7 +30,7 @@
 	{
 		"name": "Violets",
 		"color": "#b300f4",
-		"buzzer_name": "ps3_wbuzz_0",
+		"buzzer_name": "ps3_wbuzz_1",
 		"buzzer_keycode": 53,
 		"buzzer_keycode_name": "Digit5 (()"
 	}

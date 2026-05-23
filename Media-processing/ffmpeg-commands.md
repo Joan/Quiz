@@ -32,3 +32,19 @@ for i in in/*.mp4; do ./videously.sh -a -i "$i" -o "out/${${i:3}%.*}.mp4"; done
 ```
 for i in in/*; do ffmpeg -ss 00:00:00 -i "$i" -t 00:00:20 -af "afade=t=out:st=19:d=1" "out/${${i:3}%.*}.mp3"; done
 ```
+
+# Subs shifting and burn-in
+
+Specify first subtitle timing
+```
+pipx install pysubs2
+chmod +x subs.sh
+./subs.sh -i Test.srt -t 00.00.02.280
+```
+
+Burn subtitles in
+```
+brew install ffmpeg-full
+alias ffmpeg-full='/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg'
+for f in movie.mp4; do ffmpeg-full -i $f -vf "subtitles=${f%.*}.srt:force_style='FontSize=20,Bold=1'" -c:v libx264 -c:a copy ${f%.*}-srt.mp4; done
+```

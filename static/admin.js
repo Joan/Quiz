@@ -599,7 +599,7 @@
 					if ($team_bs.length === 0)
 						$team_bs = $('<svg class="team-buzzer_status" width="32" height="32"><use href="#dis-buzzer-icon"/></svg>').appendTo(`#team_${i} .team-name`);
 					
-					$team_bs[clients_counts.buzzers[i] === 0 ? 'addClass' : 'removeClass']('--show');
+					$team_bs[clients_counts.teams_buzzers[i] === 0 ? 'addClass' : 'removeClass']('--show');
 				}
 				
 			}
