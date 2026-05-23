@@ -22,17 +22,17 @@
 		
 		<div class="settings">
 			<div class="settings-row">
-				<label class="setting" data-setting="single_buzz">
-					<input class="setting-control" type="checkbox">
-					<span class="setting-switch"></span>
-					<span class="setting-label"><%= t('unique_buzz_per_question') %></span>
-				</label>
-			</div>
-			<div class="settings-row">
 				<label class="setting" data-setting="scroll_to_active_team">
 					<input class="setting-control" type="checkbox">
 					<span class="setting-switch"></span>
 					<span class="setting-label"><%= t('scroll_to_active_team') %></span>
+				</label>
+			</div>
+			<div class="settings-row">
+				<label class="setting" data-setting="single_buzz">
+					<input class="setting-control" type="checkbox">
+					<span class="setting-switch"></span>
+					<span class="setting-label"><%= t('unique_buzz_per_question') %></span>
 				</label>
 			</div>
 			<div class="settings-row">
@@ -54,6 +54,13 @@
 					<input class="setting-control" type="checkbox">
 					<span class="setting-switch"></span>
 					<span class="setting-label"><%= t('video_end_visible') %></span>
+				</label>
+			</div>
+			<div class="settings-row">
+				<label class="setting" data-setting="show_buzzers_disabled">
+					<input class="setting-control" type="checkbox">
+					<span class="setting-switch"></span>
+					<span class="setting-label"><%= t('show_buzzers_disabled') %></span>
 				</label>
 			</div>
 			<div class="settings-row">

@@ -164,6 +164,7 @@ var clients = {
 // Default settings
 var settings = {
 	buzzers_enabled: true,
+	show_buzzers_disabled: true,
 	single_buzz: false,
 	large_scoreboard: false,
 	loop_media: false,

@@ -93,6 +93,9 @@
 			case 'buzzers_enabled':
 				buzzer.set_buzzers_enabled(val);
 				break;
+			case 'show_buzzers_disabled':
+				buzzer.set_buzzers_enabled(buzzer.enabled);
+				break;
 			case 'single_buzz':
 				buzzer.set_single_buzz(val);
 				buzzer.send_buzz_change();
@@ -813,7 +816,10 @@
 		
 		set_buzzers_enabled: function(enabled) {
 			buzzer.enabled = enabled;
-			player.$el[enabled ? 'removeClass' : 'addClass']('--buzzer_disabled');
+			if (settings.show_buzzers_disabled)
+				player.$el[enabled ? 'removeClass' : 'addClass']('--buzzer_disabled');
+			else
+				player.$el.removeClass('--buzzer_disabled');
 		},
 		
 		toggle_enabled: function() {
