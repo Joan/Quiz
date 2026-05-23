@@ -125,7 +125,7 @@
 		var css = '';
 		for (let i in teams)
 			css += '.team_color_' + i + '{color:' + teams[i].color + ';}';
-		$('body').append('<style id="teams_colors">' + css + '</style>');
+		$body.append('<style id="teams_colors">' + css + '</style>');
 	},
 	
 	update_css_misc = function() {
@@ -146,7 +146,7 @@
 			css += `.scoreboard .team[data-position="${i}"] {animation-delay: ${(i-1)*50}ms;}`;
 			// Inverted hiding oder version: css += `.scoreboard.show .team[data-position="${i}"],.scoreboard.hide .team[data-position="${l+1-i}"] {animation-delay: ${(i-1)*50}ms;}`;
 		
-		$('body').append('<style id="teams_misc">' + css + '</style>');
+		$body.append('<style id="teams_misc">' + css + '</style>');
 	};
 	
 	/* userActivation polyfill */
@@ -184,6 +184,15 @@
 				s();
 		}
 		
+	};
+	
+	/* Toggle fullscreen */
+	
+	const toggle_fullscreen = function() {
+		if (!document.fullscreenElement)
+			document.body.requestFullscreen();
+		else
+			document.exitFullscreen();
 	};
 	
 	/*
@@ -1150,6 +1159,11 @@
 				// Toggle QR Code
 				case 'toggle_qr':
 					qr_helper.toggle();
+					break;
+				
+				// Toggle fullscreen
+				case 'toggle_fullscreen':
+					toggle_fullscreen();
 					break;
 				
 			}

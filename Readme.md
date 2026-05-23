@@ -120,6 +120,7 @@ Enabled in player and admin pages.
 | <kbd>S</kbd> | Toggle scoreboard (scoreboard is displayed immediatly when you change scores from the admin panel) |
 | <kbd>Q</kbd> | Toggle display of the virtual buzzers QR Code and URL |
 | <kbd>B</kbd> | Toggle buzzers activation |
+| <kbd>F</kbd> | Toggle fullscreen |
 
 ## Todo
 

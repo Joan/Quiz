@@ -109,15 +109,16 @@ var riddles = JSON.parse(fs.readFileSync(files.quiz, 'utf8') || '[]'),
     scores  = JSON.parse(fs.readFileSync(files.scores, 'utf8') || '[]');
 
 const shortcuts = {
-	13: 'next',           // Enter ↩
-	37: 'backward',       // Left ←
-	39: 'forward',        // Right →
-	32: 'play_pause',     // Space
-	27: 'clear',          // Esc
-	65: 'toggle_answer',  // A
-	66: 'toggle_buzzers', // B
-	81: 'toggle_qr',      // Q
-	83: 'toggle_scores'   // S
+	13: 'next',              // Enter ↩
+	37: 'backward',          // Left ←
+	39: 'forward',           // Right →
+	32: 'play_pause',        // Space
+	27: 'clear',             // Esc
+	65: 'toggle_answer',     // A
+	66: 'toggle_buzzers',    // B
+	70: 'toggle_fullscreen', // F
+	81: 'toggle_qr',         // Q
+	83: 'toggle_scores'      // S
 };
 
 /*
